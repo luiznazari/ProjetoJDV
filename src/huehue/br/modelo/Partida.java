@@ -7,6 +7,12 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
 
+/**
+ * Classe responsável pelo controle das partidas, ordem dos jogadores e armazenar todas as jogadas
+ * realizadas.
+ * 
+ * @author Luiz Felipe Nazari
+ */
 public class Partida {
 	
 	@Getter
@@ -20,11 +26,11 @@ public class Partida {
 	@Getter
 	private Jogador vencedor;
 	
-	// Indica se o vencedor foi o primeiro ou o segundo a come�ar a jogar.
+	// Indica se o vencedor foi o primeiro ou o segundo a começar a jogar.
 	private Integer ordemJogadaVencedor;
 	
 	public Partida() {
-		primeiroAJogar = 0;
+		primeiroAJogar = 1;
 		
 		resetaJogadas();
 	}

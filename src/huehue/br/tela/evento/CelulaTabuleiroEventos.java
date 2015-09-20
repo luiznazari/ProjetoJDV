@@ -11,7 +11,7 @@ import java.util.List;
 import javax.swing.JLabel;
 
 /**
- * Eventos relacionados a cada célula do tabuleiro da {@link TelaTabuleiro}.
+ * Eventos relacionados a cada cÃ©lula do tabuleiro da {@link TelaTabuleiro}.
  * 
  * @author Luiz Felipe Nazari
  */

@@ -1,10 +1,16 @@
 package huehue.br.modelo;
 
-import huehue.br.exception.VeiaException;
+import huehue.br.exception.JdvException;
 import huehue.br.tela.TelaTabuleiro;
-import huehue.br.util.VeiaUtil;
+import huehue.br.util.JdvUtils;
 import lombok.Getter;
 
+/**
+ * Classe respons√°vel pelo gerenciamento de jogadores e partidas do jogo da velha, assim como o
+ * controle das l√≥gicas envolvidas do jogo.
+ * 
+ * @author Luiz Felipe Nazari
+ */
 public class Tabuleiro {
 	
 	private Partida partida;
@@ -19,14 +25,14 @@ public class Tabuleiro {
 	
 	public Tabuleiro(TelaTabuleiro tela) {
 		this.tela = tela;
-		novaPartida();
+		partida = new Partida();
 		
-//		setJogadorUm(new JogadorRNA(Caractere.X));
-		setJogadorUm(new JogadorHumano(Caractere.X));
+		setJogadorUm(new JogadorRNA(Caractere.X));
+//		setJogadorUm(new JogadorHumano(Caractere.X));
 //		setJogadorUm(new JogadorAleatorio(Caractere.X));
 		
-		setJogadorDois(new JogadorRNA(Caractere.O));
-//		setJogadorDois(new JogadorHumano(Caractere.O));
+//		setJogadorDois(new JogadorRNA(Caractere.O));
+		setJogadorDois(new JogadorHumano(Caractere.O));
 //		setJogadorDois(new JogadorAleatorio(Caractere.O));
 	}
 	
@@ -34,7 +40,7 @@ public class Tabuleiro {
 		double[] cfgTabuleiroAntiga = tela.getPosicoesTabuleiro();
 		tela.setPosicao(posicaoEscolhida, getJogadorDaVez().getCaractere());
 		
-		// Jogada È incrementada e o jogador da vez È alterado.
+		// Jogada √© incrementada e o jogador da vez √© alterado.
 		partida.novaJogada(cfgTabuleiroAntiga, posicaoEscolhida);
 		
 		Jogador vencedor = computaJogada();
@@ -49,7 +55,7 @@ public class Tabuleiro {
 	public void encadeiaJogada(Jogador jogador) {
 		if (jogador instanceof JogadorAutomato) {
 			int posicaoEscolhida = jogador.novaJogada(tela.getPosicoesTabuleiro());
-			System.out.println("PosiÁ„o escolida: " + posicaoEscolhida);
+			System.out.println("Posi√ß√£o escolida: " + posicaoEscolhida);
 			
 			novaJogada(posicaoEscolhida);
 		} else {
@@ -63,7 +69,7 @@ public class Tabuleiro {
 		if (vencedor != null) {
 			vencedor.pontuar();
 			mensagemFinal = "O jogador " + vencedor.getCaractere().getChave() + " venceu!"
-			        + "\nPontuaÁ„o atual: " + vencedor.getPontuacao();
+			        + "\nPontua√ß√£o atual: " + vencedor.getPontuacao();
 		} else {
 			mensagemFinal = "Empate !";
 		}
@@ -88,8 +94,8 @@ public class Tabuleiro {
 	}
 	
 	private Jogador computaJogada() {
-		if (partida.getNumeroJogadas() > 5) {
-			double valorVencedor = VeiaUtil.Tabuleiro.computaVencedor(tela.getPosicoesTabuleiro());
+		if (partida.getNumeroJogadas() > 4) {
+			double valorVencedor = JdvUtils.Tabuleiro.computaVencedor(tela.getPosicoesTabuleiro());
 			
 			if (valorVencedor == jogadorUm.getCaractere().getValor())
 				return jogadorUm;
@@ -102,22 +108,22 @@ public class Tabuleiro {
 	
 	public void setJogadorUm(Jogador jogadorUm) {
 		if (jogadorDois != null && jogadorDois.getCaractere().equals(jogadorUm.getCaractere()))
-			throw new VeiaException(
-			        "Caractere " + jogadorDois.getCaractere() + " j· est· sendo utilizado por outro jogador!");
+			throw new JdvException(
+			        "Caractere " + jogadorDois.getCaractere() + " j√° est√° sendo utilizado po routro jogador!");
 		
 		this.jogadorUm = jogadorUm;
 	}
 	
 	public void setJogadorDois(Jogador jogadorDois) {
 		if (jogadorUm != null && jogadorUm.getCaractere().equals(jogadorDois.getCaractere()))
-			throw new VeiaException(
-			        "Caractere " + jogadorDois.getCaractere() + " j· est· sendo utilizado por outro jogador!");
+			throw new JdvException(
+			        "Caractere " + jogadorDois.getCaractere() + "j√° est√° sendo utilizado po routro jogador!");
 		
 		this.jogadorDois = jogadorDois;
 	}
 	
 	public void novaPartida() {
-		partida = new Partida();
+		partida.resetaJogadas();
 	}
 	
 }

@@ -1,7 +1,7 @@
 package huehue.br.modelo;
 
 /**
- * Classe representando um jogador autômato, as ações são determinadas por inteligências
+ * Classe representando um jogador autÃ´mato, as aÃ§Ãµes sÃ£o determinadas por inteligÃªncias
  * artificiais.
  * 
  * @author Luiz Felipe Nazari
@@ -20,12 +20,12 @@ public abstract class JogadorAutomato extends Jogador {
 	}
 	
 	/**
-	 * Escolhe uma posição na configuração do tabuleiro atual, apenas posições não ocupadas serão
+	 * Escolhe uma posiÃ§Ã£o na configuraÃ§Ã£o do tabuleiro atual, apenas posiÃ§Ãµes nÃ£o ocupadas serÃ£o
 	 * escolhidas.
 	 * 
 	 * @param cfgTabuleiro
-	 *            configuração do tabuleiro atual.
-	 * @return posicação aleatória escolhida.
+	 *            configuraÃ§Ã£o do tabuleiro atual.
+	 * @return posiÃ§Ã£o aleatÃ³ria escolhida.
 	 */
 	protected int escolhePosicao(double[] cfgTabuleiro) {
 		int posicoesValidasLength = 0;

@@ -1,7 +1,6 @@
 package huehue.br;
 
-import huehue.br.dados.DadosFelizes;
-import huehue.br.util.VeiaUtil;
+import huehue.br.util.JdvUtils;
 
 import java.io.File;
 
@@ -22,8 +21,8 @@ import org.encog.persist.EncogDirectoryPersistence;
 import org.encog.util.simple.EncogUtility;
 
 /**
- * Função de ativação Sigmoid resulta em valores entre 0 e 1.
- * Função de ativação Tanh resulta em valores entre -1 e 1.
+ * FunÃ§Ã£o de ativaÃ§Ã£o Sigmoid resulta em valores entre 0 e 1.
+ * FunÃ§Ã£o de ativaÃ§Ã£o Tanh resulta em valores entre -1 e 1.
  * 
  * @author Luiz
  */
@@ -43,20 +42,22 @@ public class MultilayerPerceptron {
 	
 	private static final String REDE_FEEDFORWARD_TANH = "?:B->TANH->" + NEURONIOS_CAMADA_OCULTA + ":B->TANH->" + NEURONIOS_CAMADA_OCULTA + ":B->TANH->" + NEURONIOS_CAMADA_OCULTA + ":B->TANH->?";
 	
-	private static final String REDE_FEEDFORWARD_SIGMOID = "?:B->SIGMOID->" + NEURONIOS_CAMADA_OCULTA + ":B->SIGMOID->?";
+//	private static final String REDE_FEEDFORWARD_SIGMOID = "?:B->SIGMOID->" + NEURONIOS_CAMADA_OCULTA + ":B->SIGMOID->?";
 	
 //	private static final String REDE_FEEDFORWARD_SIGMOID = "?:B->SIGMOID->" + NEURONIOS_CAMADA_OCULTA + ":B->SIGMOID->" + NEURONIOS_CAMADA_OCULTA + ":B->SIGMOID->" + NEURONIOS_CAMADA_OCULTA + ":B->SIGMOID->?";
 	
-	@SuppressWarnings("unused")
-	private static final String REDE_FEEDFORWARD_SEM_BIAS = "?->SIGMOID->" + NEURONIOS_CAMADA_OCULTA + "->SIGMOID->?";
+	private static final String REDE_FEEDFORWARD_SIGMOID = "?:B->SIGMOID->"
+	        + 18 + ":B->SIGMOID->?";
 	
+	@SuppressWarnings("unused")
+//	private static final String REDE_FEEDFORWARD_SEM_BIAS = "?->SIGMOID->" + NEURONIOS_CAMADA_OCULTA + "->SIGMOID->?";
 	/**
 	 * Entradas dos casos de testes do tabuleiro do jogo da velha.
 	 * 
 	 * <pre>
 	 * 1  = Jogador X
 	 * -1 = Jogador O
-	 * 0  = Posição vazia
+	 * 0  = posiÃ§Ã£o vazia
 	 * </pre>
 	 */
 	private static double TEST_INPUT[][] = {
@@ -80,15 +81,39 @@ public class MultilayerPerceptron {
 	        1, 0, 1,
 	        0, -1, 0,
 	        0, -1, 0
+	    }, { // ---
+	        0, 0, 0,
+	        0, 0, 0,
+	        0, 0, 0
+	    }
+	    , {
+	        1, 0, 0,
+	        0, 0, 0,
+	        0, -1, 0
+	    }
+	    , {
+	        1, 0, 0,
+	        -1, 0, 1,
+	        0, -1, 0
+	    }
+	    , {
+	        1, 0, 1,
+	        -1, 0, 1,
+	        -1, -1, 0
+	    }
+	    , {
+	        1, -1, 1,
+	        -1, 1, 1,
+	        -1, -1, 0
 	    }
 	};
 	
 	/**
-	 * Saídas dos casos de testes do tabuleiro do jogo da velha representados por valores menores do
+	 * SaÃ­das dos casos de testes do tabuleiro do jogo da velha representados por valores menores do
 	 * que zero para
-	 * contemplar a abrangência do resultado da função de ativação utilizada na camada de saída da
+	 * contemplar a abrangÃªncia do resultado da funÃ§Ã£o de ativaÃ§Ã£o utilizada na camada de saÃ­da da
 	 * Rede Neuronal. <br>
-	 * A saída corresponde à posição do tabuleiro, começando do 1.
+	 * A saÃ­da corresponde Ã  posiÃ§Ã£o do tabuleiro, comeÃ§ando do 1.
 	 * 
 	 * <pre>
 	 *  1 | 2 | 3
@@ -109,16 +134,34 @@ public class MultilayerPerceptron {
 		    0.6
 	    }, {
 		    0.2
+	    }, { // --
+		    0.8
+	    }, {
+		    0.4
+	    }, {
+		    0.7
+	    }, {
+		    0.2
+	    }, {
+		    0.9
 	    }
 	};
 	
 	public static BasicNetwork getNetwotk() {
 		return ( BasicNetwork ) EncogDirectoryPersistence.loadObject(new File(
-		        VeiaUtil.Arquivo.DIR_RECURSOS + "hue"));
+		        JdvUtils.Arquivo.DIR_RECURSOS + "hue_14"));
+//		MLMethodFactory methodFactory = new MLMethodFactory();
+//		return ( BasicNetwork ) methodFactory.create(MLMethodFactory.TYPE_FEEDFORWARD,
+//		    REDE_FEEDFORWARD_SIGMOID,
+//		    NEURONIOS_CAMADA_ENTRADA, NEURONIOS_CAMADA_SAIDA);
 	}
 	
 	public static void salvaNetwork(Object object) {
-		EncogDirectoryPersistence.saveObject(new File(VeiaUtil.Arquivo.DIR_RECURSOS + "hue"),
+		salvaNetwork(object, "hue2");
+	}
+	
+	public static void salvaNetwork(Object object, String nomeArquivo) {
+		EncogDirectoryPersistence.saveObject(new File(JdvUtils.Arquivo.DIR_RECURSOS + nomeArquivo),
 		    object);
 	}
 	
@@ -134,9 +177,13 @@ public class MultilayerPerceptron {
 //		MLMethod method = ( MLMethod ) EncogDirectoryPersistence.loadObject(new File(
 //		        VeiaUtil.Arquivo.DIR_RECURSOS + "hue"));
 //		
-		// second, create the data set
+//		 second, create the data set
 //		MLDataSet dataSet = new BasicMLDataSet(TEST_INPUT, TEST_IDEAL);
-		MLDataSet dataSet = new DadosFelizes().carregarDoArquivo().getMLDataSet();
+//		MLDataSet dataSet = new DadosFelizes().carregarDoArquivo().getMLDataSet();
+		MLDataSet dataSet = EncogUtility.loadCSV2Memory(
+		    JdvUtils.Arquivo.DIR_RECURSOS + "20_ConjuntosES.eg",
+		    MultilayerPerceptron.NEURONIOS_CAMADA_ENTRADA,
+		    MultilayerPerceptron.NEURONIOS_CAMADA_SAIDA, false, JdvUtils.Arquivo.FORMATO, false);
 		
 		// third, create the trainer
 		MLTrainFactory trainFactory = new MLTrainFactory();
@@ -150,6 +197,7 @@ public class MultilayerPerceptron {
 		EncogUtility.trainToError(train, MARGEM_DE_ERRO);
 		method = train.getMethod();
 		
+//		salvaNetwork(method);
 //		EncogUtility.saveCSV(new File("hue"), CSVFormat.EG_FORMAT, dataSet);
 //		EncogDirectoryPersistence.saveObject(new File("hue"), method);
 		
@@ -165,7 +213,7 @@ public class MultilayerPerceptron {
 			}
 		});
 		
-		evaluate(( MLRegression ) method, dataSet2);
+		evaluate(( MLRegression ) method, dataSet.get(( int ) (Math.random() * dataSet.size())));
 		
 		// finally, write out what we did
 //		System.out.println("Machine Learning Type: " + methodName);
@@ -178,16 +226,20 @@ public class MultilayerPerceptron {
 	
 	public static void evaluate(final MLRegression network, final MLDataSet training) {
 		for (final MLDataPair pair : training) {
-			final MLData output = network.compute(pair.getInput());
-			System.out.println("Input="
-			        + EncogUtility.formatNeuralData(pair.getInput())
-			        + ", Actual=" + EncogUtility.formatNeuralData(output)
-			        + ", Ideal="
-			        + EncogUtility.formatNeuralData(pair.getIdeal())
-			        + ", IdealHue="
-			        + VeiaUtil.RNA.traduzSaida(Double.valueOf(EncogUtility.formatNeuralData(output)
-			                .replace(",", "."))));
+			evaluate(network, pair);
 		}
+	}
+	
+	public static void evaluate(final MLRegression network, final MLDataPair pair) {
+		final MLData output = network.compute(pair.getInput());
+		System.out.println("Input="
+		        + EncogUtility.formatNeuralData(pair.getInput())
+		        + ", Actual=" + EncogUtility.formatNeuralData(output)
+		        + ", Ideal="
+		        + EncogUtility.formatNeuralData(pair.getIdeal())
+		        + ", IdealHue="
+		        + JdvUtils.RNA.traduzSaida(Double.valueOf(EncogUtility.formatNeuralData(output)
+		                .replace(",", "."))));
 	}
 	
 }

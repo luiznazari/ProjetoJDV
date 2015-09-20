@@ -10,7 +10,7 @@ public class ConjuntosEntradaSaida {
 	 * <pre>
 	 * 1  = Jogador X
 	 * -1 = Jogador O
-	 * 0  = Posição vazia
+	 * 0  = posiÃ§Ã£o vazia
 	 * </pre>
 	 */
 	public static double[][] ENTRADAS = {
@@ -70,11 +70,10 @@ public class ConjuntosEntradaSaida {
 	};
 	
 	/**
-	 * Saídas dos casos de testes do tabuleiro do jogo da velha representados por valores menores do
-	 * que zero para
-	 * contemplar a abrangência do resultado da função de ativação utilizada na camada de saída da
-	 * Rede Neuronal. <br>
-	 * A saída corresponde à posição do tabuleiro, começando do 1.
+	 * SaÃ­das dos casos de testes do tabuleiro do jogo da velha representados por valores menores do
+	 * que zero para contemplar a abrangÃªncia do resultado da funÃ§Ã£o de ativaÃ§Ã£o utilizada na camada
+	 * de saÃ­da da Rede Neuronal. <br>
+	 * A saÃ­da corresponde Ã  posiÃ§Ã£o do tabuleiro, comeÃ§ando do 1.
 	 * 
 	 * <pre>
 	 *  1 | 2 | 3

@@ -1,7 +1,7 @@
 package huehue.br.util;
 
 import huehue.br.MultilayerPerceptron;
-import huehue.br.exception.VeiaException;
+import huehue.br.exception.JdvException;
 import huehue.br.modelo.Caractere;
 
 import java.io.File;
@@ -17,21 +17,21 @@ import org.encog.util.csv.CSVFormat;
 import org.encog.util.simple.EncogUtility;
 
 /**
- * Classe de utilit·rios para auxiliar na manipulaÁ„o de dados e lÛgicas referentes ao Jogo da
+ * Classe de utilit√°rios para auxiliar na manipula√ß√£o de dados e l√≥gicas referentes ao Jogo da
  * Velha.
  * 
  * @author Luiz Felipe Nazari
  */
-public class VeiaUtil {
+public class JdvUtils {
 	
 	/**
-	 * MÈtodos ˙teis para auxiliar no controle das lÛgicas do jogo.
+	 * M√©todos √∫teis para auxiliar no controle das l√≥gicas do jogo.
 	 */
 	public static class Tabuleiro {
 		
 		/**
 		 * Avalia se houve um vencedor em dado momento no jogo. Caso retornar zero, referente ao
-		 * {@link Caractere#VAZIO}, n„o houve vencedor.
+		 * {@link Caractere#VAZIO}, n√£o houve vencedor.
 		 * 
 		 * @param t
 		 *            a array de valores correspondentes ao tabuleiro.
@@ -42,15 +42,15 @@ public class VeiaUtil {
 			int vazio = Caractere.VAZIO.getValor();
 
 			/**
-			 * Õndices do tabuleiro para comparar posiÁıes vencedoras do jogo da velha.
-			 * Esta matriz possui 4 arrays, cada array corresponde h· array.length conbinaÁıes vencedoras.
-			 * Cada array vencedora do tabuleiro È dada pelos Ìndices: array[x], array[x] + y e array[x] + y * 2],
-			 * onde y È o Ìndice da array na matriz + 1.
+			 * √çndices do tabuleiro para comparar posi√ß√µes vencedoras do jogo da velha.
+			 * Esta matriz possui 4 arrays, para cada array corresponde h√° array.length conbina√ß√µes vencedoras.
+			 * Cada array vencedora do tabuleiro √© dada pelos ÔøΩndices: array[x], array[x] + y e array[x] + y * 2],
+			 * onde y √© o √≠ndice da array na matriz + 1.
 			 * 
 			 * Exemplo: array = m[1]
 			 * 			[array[0], array[0] + (1 + 1), array[0] + (1 + 1) * 2]
 			 *			[2, 	   2 + 2,			   2 + 4]
-			 *			[2,		   4,				   6] -> Ìndices do array do tabuleiro, formando a combinaÁ„o vencedora.
+			 *			[2,		   4,				   6] -> √çnndices do array do tabuleiro, formando a combina√ß√£o vencedora.
 			 */
 			int[][] m = { {0, 3, 6}, {2}, {0, 1, 2}, {0} };
 			
@@ -68,33 +68,33 @@ public class VeiaUtil {
 	}
 	
 	/**
-	 * MÈtodos ˙teis para auxiliar a manipulaÁ„o de Redes Neuronais.
+	 * M√©todos √∫teis para auxiliar a manipula√ß√£o de Redes Neuronais.
 	 */
 	public static class RNA {
 		
 		/**
-		 * Traduz o valor da saÌda resultante do processamento da RNA.
+		 * Traduz o valor da sa√≠da resultante do processamento da RNA.
 		 * 
 		 * @param saida
-		 *            a saÌda resultante do processamento da RNA.
-		 * @return valor da saÌda traduzido, onde: 0 <= valor <= 8.
-		 * @throws VeiaException
-		 *             caso o n˙mero de saÌdas for diferente do
+		 *            a sa√≠da resultante do processamento da RNA.
+		 * @return valor da sa√≠da traduzido, onde: 0 <= valor <= 8.
+		 * @throws JdvException
+		 *             caso o n√∫mero de sa√≠das for diferente do
 		 *             {@link MultilayerPerceptron#NEURONIOS_CAMADA_SAIDA}.
-		 * @see {@link VeiaUtil.RNA#traduzSaida(double)}
+		 * @see {@link JdvUtils.RNA#traduzSaida(double)}
 		 */
 		public static int traduzSaida(MLData saida) {
 			int numSaidas = saida == null ? 0 : saida.getData().length;
 			
 			if (numSaidas != MultilayerPerceptron.NEURONIOS_CAMADA_SAIDA)
-				throw new VeiaException(
-				        "MLData resultante do processamento da rede n„o possui o n˙mero esperado de saÌdas! Esperado: " + MultilayerPerceptron.NEURONIOS_CAMADA_SAIDA + ". Obtido: " + numSaidas);
+				throw new JdvException(
+				        "MLData resultante do processamento da rede n√£o possui o n√∫mero esperado de sa√≠das! Esperado: " + MultilayerPerceptron.NEURONIOS_CAMADA_SAIDA + ". Obtido: " + numSaidas);
 			
 			return traduzSaida(saida.getData(0)) - 1;
 		}
 		
 		/**
-		 * Traduz o valor da saÌda resultante do processamento da RNA.
+		 * Traduz o valor da sa√≠da resultante do processamento da RNA.
 		 * 
 		 * <pre>
 		 * Exemplos:
@@ -109,8 +109,8 @@ public class VeiaUtil {
 		 * </pre>
 		 * 
 		 * @param d
-		 *            a saÌda resultante do processamento da RNA.
-		 * @return valor da saÌda traduzido, onde: 1 <= valor <= 9.
+		 *            a sa√≠da resultante do processamento da RNA.
+		 * @return valor da sa√≠da traduzido, onde: 1 <= valor <= 9.
 		 */
 		public static int traduzSaida(double saida) {
 			double d = valorAproximado(saida);
@@ -123,7 +123,7 @@ public class VeiaUtil {
 		}
 		
 		/**
-		 * Arredonda o valor especificado. O arredondamento sempre È realizado para cima.
+		 * Arredonda o valor especificado. O arredondamento sempre √© realizado para cima.
 		 * 
 		 * @param d
 		 *            o valor.
@@ -138,8 +138,8 @@ public class VeiaUtil {
 	}
 	
 	/**
-	 * MÈtodos ˙teis para auxiliar a manipulaÁ„o de arquivos contendo dados sobre estruturas das
-	 * Redes Neuronais e conjunto de dados de entrada e saÌda.
+	 * M√©todos √∫teis para auxiliar a manipula√ß√£o de arquivos contendo dados sobre estruturas das
+	 * Redes Neuronais e conjunto de dados de entrada e sa√≠da.
 	 */
 	public static class Arquivo {
 		
@@ -149,19 +149,21 @@ public class VeiaUtil {
 		
 		public static final String DIR_CONJUNTO_DADOS_ES = DIR_RECURSOS + "ConjuntosES.eg";
 		
+		private static int i = 0;
+		
 		/**
-		 * Carrega o arquivo contendo os conjuntos de entradas e saÌdas.
+		 * Carrega o arquivo contendo os conjuntos de entradas e sa√≠das.
 		 * 
 		 * @return
 		 */
-		private static File carregaArquivoES() throws VeiaException {
-			File arquivo = new File(DIR_CONJUNTO_DADOS_ES);
+		private static File carregaArquivoES() throws JdvException {
+			File arquivo = new File(DIR_RECURSOS + i++ + "_ConjuntosES.eg");
 			return arquivo;
 		}
 		
 		public static void salvarDados(List<MLDataPair> conjuntosES) {
 			if (conjuntosES == null || conjuntosES.size() == 0)
-				throw new VeiaException("Erro ao salvar. Conjunto de dados nulo ou vazio!");
+				throw new JdvException("Erro ao salvar. Conjunto de dados nulo ou vazio!");
 			
 			EncogUtility.saveCSV(carregaArquivoES(), FORMATO, new BasicMLDataSet(conjuntosES));
 		}

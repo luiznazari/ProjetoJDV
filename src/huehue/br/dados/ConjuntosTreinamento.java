@@ -1,7 +1,8 @@
 package huehue.br.dados;
 
-import huehue.br.exception.VeiaException;
-import huehue.br.util.VeiaUtil;
+import huehue.br.exception.JdvException;
+import huehue.br.modelo.JogadorRNA;
+import huehue.br.util.JdvUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,27 +13,33 @@ import org.encog.ml.data.basic.BasicMLData;
 import org.encog.ml.data.basic.BasicMLDataPair;
 import org.encog.ml.data.basic.BasicMLDataSet;
 
-public class DadosFelizes {
+/**
+ * Classe responsável por armazenar todos os conjuntos de dados utilizados no treinamento da rede
+ * neuronal de um {@link JogadorRNA}, assim como aqueles temporários.
+ * 
+ * @author Luiz Felipe Nazari
+ */
+public class ConjuntosTreinamento {
 	
 	private List<MLDataPair> conjuntosES = new ArrayList<MLDataPair>();
 	
 	private List<MLDataPair> conjuntosESTemporarios = new ArrayList<MLDataPair>();
 	
-	public DadosFelizes() {}
+	public ConjuntosTreinamento() {}
 	
-	public DadosFelizes(List<MLDataPair> conjuntos) {
+	public ConjuntosTreinamento(List<MLDataPair> conjuntos) {
 		this.conjuntosES = conjuntos;
 	}
 	
 	public void salvarEmArquivo() {
 		if (conjuntosES == null || conjuntosES.size() == 0)
-			throw new VeiaException("Erro ao salvar. Conjunto de dados nulo ou vazio!");
+			throw new JdvException("Erro ao salvar. Conjunto de dados nulo ou vazio!");
 		
-		VeiaUtil.Arquivo.salvarDados(conjuntosES);
+		JdvUtils.Arquivo.salvarDados(conjuntosES);
 	}
 	
-	public DadosFelizes carregarDoArquivo() {
-		BasicMLDataSet set = new BasicMLDataSet(VeiaUtil.Arquivo.carregarDados());
+	public ConjuntosTreinamento carregarDoArquivo() {
+		BasicMLDataSet set = new BasicMLDataSet(JdvUtils.Arquivo.carregarDados());
 		conjuntosES = set.getData();
 		
 		return this;

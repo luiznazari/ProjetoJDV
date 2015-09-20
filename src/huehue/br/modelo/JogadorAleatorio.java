@@ -1,7 +1,7 @@
 package huehue.br.modelo;
 
 /**
- * Representa um jogador que utiliza um algorótimo para determinar posições aleatórias.
+ * Representa um jogador que utiliza um algoritimo para determinar posiÃ§Ãµes aleatÃ³rias.
  * 
  * @author Luiz Felipe Nazari
  */
@@ -13,7 +13,7 @@ public class JogadorAleatorio extends JogadorAutomato {
 	
 	@Override
 	public int novaJogada(double[] entradas) {
-		return escolhePosicao(entradas);
+		return super.escolhePosicao(entradas);
 	}
 	
 }

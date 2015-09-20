@@ -58,9 +58,9 @@ public class TelaTabuleiro implements TabuleiroListener {
 	}
 	
 	/**
-	 * Busca a configuração das posições do tabuleiro atual.
+	 * Busca a configuraÃ§Ã£o das posiÃ§Ãµes do tabuleiro atual.
 	 * 
-	 * @return array contendo os valores das posições do tabuleiro atual.
+	 * @return array contendo os valores das posiÃ§Ãµes do tabuleiro atual.
 	 */
 	public double[] getPosicoesTabuleiro() {
 		double[] posicoesAtuais = new double[9];

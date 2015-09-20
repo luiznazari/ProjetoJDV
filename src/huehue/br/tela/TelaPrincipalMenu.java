@@ -108,7 +108,7 @@ public class TelaPrincipalMenu {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				JOptionPane.showMessageDialog(null,
-				    "Nenhuma ajuda disponível no momento.", "Comandos",
+				    "Nenhuma ajuda disponÃ­vel no momento.", "Comandos",
 				    JOptionPane.INFORMATION_MESSAGE);
 			}
 		});

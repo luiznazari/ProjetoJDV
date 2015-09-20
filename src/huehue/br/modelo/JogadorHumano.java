@@ -1,9 +1,9 @@
 package huehue.br.modelo;
 
-import huehue.br.exception.VeiaException;
+import huehue.br.exception.JdvException;
 
 /**
- * Classe representando um jogador humano, requer interaÁ„o via entrada de dados
+ * Classe representando um jogador humano, requer intera√ß√£o via entrada de dados
  * pelo jogador.
  * 
  * @author Luiz Felipe Nazari
@@ -16,8 +16,8 @@ public final class JogadorHumano extends Jogador {
 	
 	@Override
 	public final int novaJogada(double[] entradas) {
-		throw new VeiaException(
-		        "MÈtodo n„o suportado! A entrada da posiÁ„o ecolhida depende da aÁ„o do usu·rio.");
+		throw new JdvException(
+		        "M√©todo n√£o suportado! A entrada da posi√ß√£o ecolhida depende da a√ß√£o do usu√°rio.");
 	}
 	
 }

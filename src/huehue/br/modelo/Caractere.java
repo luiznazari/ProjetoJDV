@@ -5,6 +5,11 @@ import java.security.InvalidParameterException;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * Representa um caractere utilizado nas partidas do Jogo da Velha.
+ * 
+ * @author Luiz Felipe Nazari
+ */
 @Getter
 public enum Caractere {
 	
@@ -28,6 +33,6 @@ public enum Caractere {
 				return c;
 		}
 		
-		throw new InvalidParameterException("Caractere [" + chave + "] n„o conhecido!");
+		throw new InvalidParameterException("Caractere [" + chave + "] n√£o conhecido!");
 	}
 }

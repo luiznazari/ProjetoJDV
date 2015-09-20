@@ -5,11 +5,11 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 
 /**
+ * Classe utilizada para auxiliar na manipulaÃ§Ã£o de componentes com {@link GridBagLayout}.
+ * 
  * @author Alessandro Beleboni Belini
  * @author Luiz Felipe Nazari
  * @version 1.2.1
- *          Classe utilizada para auxiliar na manipulação de
- *          componentes com {@link GridBagLayout}.
  */
 public class GridBuilder extends GridBagConstraints {
 	private static final long serialVersionUID = -3673408843629080010L;
