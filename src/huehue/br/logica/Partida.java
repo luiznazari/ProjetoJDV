@@ -1,4 +1,6 @@
-package huehue.br.modelo;
+package huehue.br.logica;
+
+import huehue.br.modelo.Jogador;
 
 import java.util.ArrayList;
 import java.util.List;

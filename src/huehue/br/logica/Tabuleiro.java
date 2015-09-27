@@ -1,6 +1,11 @@
-package huehue.br.modelo;
+package huehue.br.logica;
 
 import huehue.br.exception.JdvException;
+import huehue.br.modelo.Caractere;
+import huehue.br.modelo.Jogador;
+import huehue.br.modelo.JogadorAleatorio;
+import huehue.br.modelo.JogadorAutomato;
+import huehue.br.modelo.JogadorRNA;
 import huehue.br.tela.TelaTabuleiro;
 import huehue.br.util.JdvUtils;
 import lombok.Getter;
@@ -32,8 +37,8 @@ public class Tabuleiro {
 //		setJogadorUm(new JogadorAleatorio(Caractere.X));
 		
 //		setJogadorDois(new JogadorRNA(Caractere.O));
-		setJogadorDois(new JogadorHumano(Caractere.O));
-//		setJogadorDois(new JogadorAleatorio(Caractere.O));
+//		setJogadorDois(new JogadorHumano(Caractere.O));
+		setJogadorDois(new JogadorAleatorio(Caractere.O));
 	}
 	
 	public void novaJogada(Integer posicaoEscolhida) {
@@ -69,7 +74,7 @@ public class Tabuleiro {
 		if (vencedor != null) {
 			vencedor.pontuar();
 			mensagemFinal = "O jogador " + vencedor.getCaractere().getChave() + " venceu!"
-			        + "\nPontuação atual: " + vencedor.getPontuacao();
+				+ "\nPontuação atual: " + vencedor.getPontuacao();
 		} else {
 			mensagemFinal = "Empate !";
 		}
@@ -109,7 +114,9 @@ public class Tabuleiro {
 	public void setJogadorUm(Jogador jogadorUm) {
 		if (jogadorDois != null && jogadorDois.getCaractere().equals(jogadorUm.getCaractere()))
 			throw new JdvException(
-			        "Caractere " + jogadorDois.getCaractere() + " já está sendo utilizado po routro jogador!");
+					"Caractere "
+						+ jogadorDois.getCaractere()
+						+ " já está sendo utilizado po routro jogador!");
 		
 		this.jogadorUm = jogadorUm;
 	}
@@ -117,7 +124,9 @@ public class Tabuleiro {
 	public void setJogadorDois(Jogador jogadorDois) {
 		if (jogadorUm != null && jogadorUm.getCaractere().equals(jogadorDois.getCaractere()))
 			throw new JdvException(
-			        "Caractere " + jogadorDois.getCaractere() + "já está sendo utilizado po routro jogador!");
+					"Caractere "
+						+ jogadorDois.getCaractere()
+						+ "já está sendo utilizado po routro jogador!");
 		
 		this.jogadorDois = jogadorDois;
 	}

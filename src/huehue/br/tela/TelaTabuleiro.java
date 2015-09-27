@@ -1,7 +1,7 @@
 package huehue.br.tela;
 
+import huehue.br.logica.Tabuleiro;
 import huehue.br.modelo.Caractere;
-import huehue.br.modelo.Tabuleiro;
 import huehue.br.tela.evento.CelulaTabuleiroEventos;
 import huehue.br.tela.evento.TabuleiroListener;
 

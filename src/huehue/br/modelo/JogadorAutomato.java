@@ -1,5 +1,7 @@
 package huehue.br.modelo;
 
+import huehue.br.logica.Partida;
+
 /**
  * Classe representando um jogador autômato, as ações são determinadas por inteligências
  * artificiais.

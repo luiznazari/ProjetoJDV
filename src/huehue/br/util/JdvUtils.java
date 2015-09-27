@@ -1,18 +1,19 @@
 package huehue.br.util;
 
-import huehue.br.MultilayerPerceptron;
-import huehue.br.exception.JdvException;
 import huehue.br.modelo.Caractere;
+import huehue.br.modelo.rede.JdvRede;
 
 import java.io.File;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.List;
 
 import org.encog.ml.data.MLData;
 import org.encog.ml.data.MLDataPair;
 import org.encog.ml.data.MLDataSet;
+import org.encog.ml.data.basic.BasicMLData;
 import org.encog.ml.data.basic.BasicMLDataSet;
+import org.encog.neural.networks.BasicNetwork;
+import org.encog.persist.EncogDirectoryPersistence;
 import org.encog.util.csv.CSVFormat;
 import org.encog.util.simple.EncogUtility;
 
@@ -44,13 +45,13 @@ public class JdvUtils {
 			/**
 			 * Índices do tabuleiro para comparar posições vencedoras do jogo da velha.
 			 * Esta matriz possui 4 arrays, para cada array corresponde há array.length conbinações vencedoras.
-			 * Cada array vencedora do tabuleiro é dada pelos �ndices: array[x], array[x] + y e array[x] + y * 2],
+			 * Cada array vencedora do tabuleiro é dada pelos índices: array[x], array[x] + y e array[x] + y * 2],
 			 * onde y é o índice da array na matriz + 1.
 			 * 
 			 * Exemplo: array = m[1]
 			 * 			[array[0], array[0] + (1 + 1), array[0] + (1 + 1) * 2]
 			 *			[2, 	   2 + 2,			   2 + 4]
-			 *			[2,		   4,				   6] -> Ínndices do array do tabuleiro, formando a combinação vencedora.
+			 *			[2,		   4,				   6] -> Índices do array do tabuleiro, formando a combinação vencedora.
 			 */
 			int[][] m = { {0, 3, 6}, {2}, {0, 1, 2}, {0} };
 			
@@ -73,53 +74,38 @@ public class JdvUtils {
 	public static class RNA {
 		
 		/**
-		 * Traduz o valor da saída resultante do processamento da RNA.
+		 * Converte um arquivo de dados (conjuntos de entradas e saídas) de uma rede à outra.<br>
+		 * // TODO Aprimorar método, como está atualmente converte apenas de um tipo de rede com uma
+		 * saída para outra de nove saídas.
 		 * 
-		 * @param saida
-		 *            a saída resultante do processamento da RNA.
-		 * @return valor da saída traduzido, onde: 0 <= valor <= 8.
-		 * @throws JdvException
-		 *             caso o número de saídas for diferente do
-		 *             {@link MultilayerPerceptron#NEURONIOS_CAMADA_SAIDA}.
-		 * @see {@link JdvUtils.RNA#traduzSaida(double)}
+		 * @param redeBase
+		 * @param redeObjetivo
 		 */
-		public static int traduzSaida(MLData saida) {
-			int numSaidas = saida == null ? 0 : saida.getData().length;
+		public static void converteArquivosDeDadosEntreRedes(JdvRede redeBase, JdvRede redeObjetivo) {
+			MLDataSet set1 = Arquivo.carregarDados(redeBase);
+			MLDataSet set2 = new BasicMLDataSet();
 			
-			if (numSaidas != MultilayerPerceptron.NEURONIOS_CAMADA_SAIDA)
-				throw new JdvException(
-				        "MLData resultante do processamento da rede não possui o número esperado de saídas! Esperado: " + MultilayerPerceptron.NEURONIOS_CAMADA_SAIDA + ". Obtido: " + numSaidas);
+			for (MLDataPair pair : set1)
+				set2.add(pair.getInput(), converteDadosUmParaNove(pair.getIdeal()));
 			
-			return traduzSaida(saida.getData(0)) - 1;
+			Arquivo.salvarDados(redeObjetivo, set2);
 		}
 		
 		/**
-		 * Traduz o valor da saída resultante do processamento da RNA.
+		 * Converte os dados de saída de uma {@link JdvRede} com uma saída para outra de nove
+		 * saídas.
 		 * 
-		 * <pre>
-		 * Exemplos:
-		 * 
-		 * 0.04325	-> 0.0	-> 1
-		 * 0.9831	-> 1.0	-> 9
-		 * 0.9287	-> 0.9	-> 9
-		 * 0.296	-> 0.3	-> 3
-		 * 0.4328	-> 0.4	-> 4
-		 * 0.5007	-> 0.5	-> 5
-		 * 0.5984	-> 0.6	-> 6
-		 * </pre>
-		 * 
-		 * @param d
-		 *            a saída resultante do processamento da RNA.
-		 * @return valor da saída traduzido, onde: 1 <= valor <= 9.
+		 * @param data
+		 *            dados de saída do arquivo original.
+		 * @return dados de saída convertidos.
 		 */
-		public static int traduzSaida(double saida) {
-			double d = valorAproximado(saida);
+		public static MLData converteDadosUmParaNove(MLData data) {
+			double d = data.getData(0);
+			double[] dd = new double[9];
 			
-			if (d >= 1)
-				return 9;
-			if (d <= 0)
-				return 1;
-			return ( int ) (d * 10);
+			dd[( int ) d] = 1;
+			
+			return new BasicMLData(dd);
 		}
 		
 		/**
@@ -143,39 +129,55 @@ public class JdvUtils {
 	 */
 	public static class Arquivo {
 		
-		public static final CSVFormat FORMATO = CSVFormat.EG_FORMAT;
+		private static final CSVFormat FORMATO = CSVFormat.EG_FORMAT;
 		
-		public static final String DIR_RECURSOS = "resources/";
+		private static final String DIR_RECURSOS = "resources/";
 		
-		public static final String DIR_CONJUNTO_DADOS_ES = DIR_RECURSOS + "ConjuntosES.eg";
-		
-		private static int i = 0;
-		
-		/**
-		 * Carrega o arquivo contendo os conjuntos de entradas e saídas.
-		 * 
-		 * @return
-		 */
-		private static File carregaArquivoES() throws JdvException {
-			File arquivo = new File(DIR_RECURSOS + i++ + "_ConjuntosES.eg");
-			return arquivo;
+		public static String getNomeArquivoRede(String nomeArquivo) {
+			return DIR_RECURSOS + nomeArquivo;
 		}
 		
-		public static void salvarDados(List<MLDataPair> conjuntosES) {
-			if (conjuntosES == null || conjuntosES.size() == 0)
-				throw new JdvException("Erro ao salvar. Conjunto de dados nulo ou vazio!");
+		public static String getNomeArquivoDados(String nomeArquivo) {
+			return DIR_RECURSOS + nomeArquivo + "_ES.eg";
+		}
+		
+		public static void salvarDados(JdvRede rede, MLDataSet set) {
+			EncogUtility.saveCSV(new File(getNomeArquivoDados(rede.getNome())), FORMATO, set);
+		}
+		
+		public static BasicMLDataSet carregarDados(JdvRede rede) {
+			String caminho = getNomeArquivoDados(rede.getNome());
 			
-			EncogUtility.saveCSV(carregaArquivoES(), FORMATO, new BasicMLDataSet(conjuntosES));
+			try {
+				return ( BasicMLDataSet ) EncogUtility.loadCSV2Memory(caminho,
+						rede.getNumeroEntradas(), rede.getNumeroSaidas(), false, FORMATO, false);
+				
+			} catch (Exception e) {
+				
+				System.out.println("Arquivo de entrada e saída \""
+					+ caminho + "\" não encontrado! Criado conjunto vazio.");
+				return new BasicMLDataSet();
+			}
 		}
 		
-		public static MLDataSet carregarDados() {
-			MLDataSet set = EncogUtility.loadCSV2Memory(DIR_CONJUNTO_DADOS_ES,
-			    MultilayerPerceptron.NEURONIOS_CAMADA_ENTRADA,
-			    MultilayerPerceptron.NEURONIOS_CAMADA_SAIDA, false, FORMATO, false);
+		public static void salvarRede(JdvRede rede) {
+			EncogDirectoryPersistence.saveObject(new File(getNomeArquivoRede(rede.getNome())), rede);
+		}
+		
+		public static BasicNetwork carregarRede(JdvRede rede) {
+			String caminho = getNomeArquivoRede(rede.getNome());
 			
-			return set;
+			try {
+				return ( BasicNetwork ) EncogDirectoryPersistence.loadObject(new File(caminho));
+				
+			} catch (Exception e) {
+				
+				System.out.println("Arquivo de rede \""
+					+ caminho + "\" não encontrado! Criada uma nova rede.");
+				return rede.construirRede();
+			}
+			
 		}
-		
 	}
 	
 }

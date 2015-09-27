@@ -1,4 +1,4 @@
-package huehue.br.dados;
+package huehue.br.rede.dados;
 
 import org.encog.ml.data.basic.BasicMLDataSet;
 

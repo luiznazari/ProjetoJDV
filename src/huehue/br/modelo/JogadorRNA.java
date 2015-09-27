@@ -1,13 +1,10 @@
 package huehue.br.modelo;
 
-import huehue.br.MultilayerPerceptron;
-import huehue.br.dados.ConjuntosTreinamento;
+import huehue.br.logica.Partida;
+import huehue.br.modelo.rede.JdvRedeAbstrata;
+import huehue.br.modelo.rede.MultilayerPerceptron2;
+import huehue.br.rede.dados.ConjuntosDados;
 import huehue.br.util.JdvUtils;
-
-import org.encog.Encog;
-import org.encog.ml.data.MLData;
-import org.encog.ml.data.basic.BasicMLData;
-import org.encog.neural.networks.BasicNetwork;
 
 /**
  * Classe representando um jogador com Inteligência Artificial utilizando uma
@@ -17,28 +14,26 @@ import org.encog.neural.networks.BasicNetwork;
  */
 public class JogadorRNA extends JogadorAutomato {
 	
-	private BasicNetwork rede;
+	private JdvRedeAbstrata rede;
 	
 	// Conjuntos de dados conhecidos pela rede e utilizados no treinamento.
-	private ConjuntosTreinamento dados;
+	private ConjuntosDados dados;
 	
 	public JogadorRNA(Caractere caractere) {
 		super(caractere);
-		dados = new ConjuntosTreinamento();
-		dados.carregarDoArquivo();
-		rede = MultilayerPerceptron.getNetwotk();
+		rede = new MultilayerPerceptron2();
+		dados = new ConjuntosDados(JdvUtils.Arquivo.carregarDados(rede));
 	}
 	
 	@Override
 	public int novaJogada(double[] entradas) {
 		entradas = validaEntradasDaRede(entradas);
-		MLData saida = rede.compute(converteArrayEmMlData(entradas));
-		int posicaoEscolhida = JdvUtils.RNA.traduzSaida(saida);
+		int posicaoEscolhida = rede.processar(entradas);
 		
 		// Escolheu uma posição já ocupada.
 		if (entradas[posicaoEscolhida] != Caractere.VAZIO.getValor()) {
 			System.out
-			        .println("A Rede computou uma posição inválida. Escolhendo novo movimento...");
+					.println("A Rede computou uma posição inválida. Escolhendo novo movimento...");
 			posicaoEscolhida = super.escolhePosicao(entradas);
 		}
 		
@@ -49,13 +44,12 @@ public class JogadorRNA extends JogadorAutomato {
 	public void notificarResultado(Partida partida) {
 		if (partida.getVencedor() == this && this.getCaractere().equals(Caractere.X)) {
 			partida.getJogadasVencedor().forEach(
-			    j -> dados.adicionarDadoES(j.getConfiguracao(), validaResultadoDaRede(j
-			            .getPosicaoEscolhida())));
+					j -> dados.adicionarDadoES(j.getConfiguracao(),
+							validaPosicaoEscolhida(j.getPosicaoEscolhida())));
 		} else {
 			partida.getJogadasVencedor().forEach(
-			    j -> dados.adicionarDadoES(validaEntradasDaRede(j.getConfiguracao()),
-			        validaResultadoDaRede(j
-			                .getPosicaoEscolhida())));
+					j -> dados.adicionarDadoES(validaEntradasDaRede(j.getConfiguracao()),
+							validaPosicaoEscolhida(j.getPosicaoEscolhida())));
 		}
 		aprenderJogadas();
 	}
@@ -63,37 +57,15 @@ public class JogadorRNA extends JogadorAutomato {
 	int i = 0;
 	
 	private void aprenderJogadas() {
-//		rede = MultilayerPerceptron.getNetwotk(); // TEMP
-//		
-//		MLTrainFactory trainFactory = new MLTrainFactory();
-//		MLTrain train = trainFactory.create(rede, dados.getMLDataSet(),
-//		    MultilayerPerceptron.treinamento, "");
-//		
-//		// FIXME Temporário
-//		dados.salvarEmArquivo();
-//		// ----------------
-//		
-//		LocalDateTime inicio = LocalDateTime.now();
-//		System.out.println("Iniciando treinamento.");
-//		EncogUtility.trainToError(train, MultilayerPerceptron.MARGEM_DE_ERRO);
-//		System.out.println("Treinamento finalizado. Tempo total: " + Duration.between(inicio,
-//		    LocalDateTime.now()));
-//		
-//		// FIXME Temporário
-//		MultilayerPerceptron.salvaNetwork(rede, "hue_" + i++);
-//		// ----------------
-	}
-	
-	/**
-	 * Busca a configuração das posições do tabuleiro atual e constroi os dados
-	 * a serem utilizados pelo Framework {@link Encog}.
-	 * 
-	 * @param entradas
-	 *            array de entradas representando o estado do tabuleiro.
-	 * @return os dados do tabuleiro atual.
-	 */
-	private MLData converteArrayEmMlData(double[] entradas) {
-		return new BasicMLData(entradas);
+		// FIXME Temporário
+		JdvUtils.Arquivo.salvarDados(rede, dados.getMLDataSet());
+		// ----------------
+		
+		rede.treinar(dados);
+		
+		// FIXME Temporário
+//		MultilayerPerceptron.salvaNetwork(rede, "hue_2" + i++);
+		// ----------------
 	}
 	
 	/**
@@ -113,7 +85,7 @@ public class JogadorRNA extends JogadorAutomato {
 		return entradas;
 	}
 	
-	private double validaResultadoDaRede(double resultado) {
-		return (resultado + 1) / 10;
+	private double[] validaPosicaoEscolhida(int posicao) {
+		return rede.traduzirPosicaoTabuleiro(posicao).getData();
 	}
 }

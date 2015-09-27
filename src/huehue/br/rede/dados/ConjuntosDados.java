@@ -1,8 +1,6 @@
-package huehue.br.dados;
+package huehue.br.rede.dados;
 
-import huehue.br.exception.JdvException;
 import huehue.br.modelo.JogadorRNA;
-import huehue.br.util.JdvUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,44 +17,32 @@ import org.encog.ml.data.basic.BasicMLDataSet;
  * 
  * @author Luiz Felipe Nazari
  */
-public class ConjuntosTreinamento {
+public class ConjuntosDados {
 	
 	private List<MLDataPair> conjuntosES = new ArrayList<MLDataPair>();
 	
 	private List<MLDataPair> conjuntosESTemporarios = new ArrayList<MLDataPair>();
 	
-	public ConjuntosTreinamento() {}
+	public ConjuntosDados() {}
 	
-	public ConjuntosTreinamento(List<MLDataPair> conjuntos) {
+	public ConjuntosDados(List<MLDataPair> conjuntos) {
 		this.conjuntosES = conjuntos;
 	}
 	
-	public void salvarEmArquivo() {
-		if (conjuntosES == null || conjuntosES.size() == 0)
-			throw new JdvException("Erro ao salvar. Conjunto de dados nulo ou vazio!");
-		
-		JdvUtils.Arquivo.salvarDados(conjuntosES);
-	}
-	
-	public ConjuntosTreinamento carregarDoArquivo() {
-		BasicMLDataSet set = new BasicMLDataSet(JdvUtils.Arquivo.carregarDados());
-		conjuntosES = set.getData();
-		
-		return this;
+	public ConjuntosDados(BasicMLDataSet set) {
+		this(set.getData());
 	}
 	
 	public void adicionarDadoESTemporario(double[] entradas, double saida) {
 		conjuntosESTemporarios.add(new BasicMLDataPair(new BasicMLData(entradas), new BasicMLData(
-		        new double[] {
-			        saida
-		        })));
+				new double[] {
+					saida
+				})));
 	}
 	
-	public void adicionarDadoES(double[] entradas, double saida) {
-		adicionarDadoNaoRepetido(new BasicMLDataPair(new BasicMLData(entradas), new BasicMLData(
-		        new double[] {
-			        saida
-		        })));
+	public void adicionarDadoES(double[] entradas, double[] saida) {
+		adicionarDadoNaoRepetido(new BasicMLDataPair(new BasicMLData(entradas),
+				new BasicMLData(saida)));
 	}
 	
 	private void adicionarDadoNaoRepetido(MLDataPair dado) {

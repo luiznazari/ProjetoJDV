@@ -3,7 +3,7 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="resources"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.8.0_31"/>
-	<classpathentry kind="lib" path="lib/encog-core-3.1.0.jar" sourcepath="D:/Meus Documentos/Downloads/encog-core-3.1.0/src"/>
 	<classpathentry kind="lib" path="lib/lombok-1.16.2.jar"/>
+	<classpathentry kind="lib" path="lib/encog-core-3.3.0.jar" sourcepath="D:/Meus Documentos/Downloads/encog-core-3.3.0/src"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
