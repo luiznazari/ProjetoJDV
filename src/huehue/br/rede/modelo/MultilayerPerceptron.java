@@ -1,4 +1,4 @@
-package huehue.br.modelo.rede;
+package huehue.br.rede.modelo;
 
 import huehue.br.util.JdvUtils;
 import lombok.Getter;

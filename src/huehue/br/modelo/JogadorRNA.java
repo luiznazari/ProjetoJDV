@@ -1,9 +1,9 @@
 package huehue.br.modelo;
 
 import huehue.br.logica.Partida;
-import huehue.br.modelo.rede.JdvRedeAbstrata;
-import huehue.br.modelo.rede.MultilayerPerceptron2;
 import huehue.br.rede.dados.ConjuntosDados;
+import huehue.br.rede.modelo.JdvRedeAbstrata;
+import huehue.br.rede.modelo.MultilayerPerceptron2;
 import huehue.br.util.JdvUtils;
 
 /**

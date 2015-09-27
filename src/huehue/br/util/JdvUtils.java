@@ -1,7 +1,7 @@
 package huehue.br.util;
 
 import huehue.br.modelo.Caractere;
-import huehue.br.modelo.rede.JdvRede;
+import huehue.br.rede.modelo.JdvRede;
 
 import java.io.File;
 import java.math.BigDecimal;
