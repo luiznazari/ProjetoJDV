@@ -27,12 +27,12 @@ public class JogadorRNA extends JogadorAutomato {
 	
 	@Override
 	public int novaJogada(double[] entradas) {
-		entradas = validaEntradasDaRede(entradas);
+		entradas = validaEntradasParaRede(entradas);
 		int posicaoEscolhida = rede.processar(entradas);
 		
 		// Escolheu uma posição já ocupada.
 		if (entradas[posicaoEscolhida] != Caractere.VAZIO.getValor()) {
-			System.out
+			System.err
 					.println("A Rede computou uma posição inválida. Escolhendo novo movimento...");
 			posicaoEscolhida = super.escolhePosicao(entradas);
 		}
@@ -43,14 +43,15 @@ public class JogadorRNA extends JogadorAutomato {
 	@Override
 	public void notificarResultado(Partida partida) {
 		if (partida.getVencedor() == this && this.getCaractere().equals(Caractere.X)) {
-			partida.getJogadasVencedor().forEach(
-					j -> dados.adicionarDadoES(j.getConfiguracao(),
-							validaPosicaoEscolhida(j.getPosicaoEscolhida())));
+			partida.getJogadasVencedor().forEach(j -> dados.adicionarDadoES(
+					rede.traduzirEntrada(j.getConfiguracao()),
+					rede.traduzirPosicaoTabuleiro(j.getPosicaoEscolhida())));
 		} else {
-			partida.getJogadasVencedor().forEach(
-					j -> dados.adicionarDadoES(validaEntradasDaRede(j.getConfiguracao()),
-							validaPosicaoEscolhida(j.getPosicaoEscolhida())));
+			partida.getJogadasVencedor().forEach(j -> dados.adicionarDadoES(
+					rede.traduzirEntrada(validaEntradasParaRede(j.getConfiguracao())),
+					rede.traduzirPosicaoTabuleiro(j.getPosicaoEscolhida())));
 		}
+		
 		aprenderJogadas();
 	}
 	
@@ -64,7 +65,7 @@ public class JogadorRNA extends JogadorAutomato {
 		rede.treinar(dados);
 		
 		// FIXME Temporário
-//		MultilayerPerceptron.salvaNetwork(rede, "hue_2" + i++);
+//		JdvUtils.Arquivo.salvarRede(rede);
 		// ----------------
 	}
 	
@@ -77,15 +78,11 @@ public class JogadorRNA extends JogadorAutomato {
 	 * @param entradas
 	 * @return
 	 */
-	private double[] validaEntradasDaRede(double[] entradas) {
+	private double[] validaEntradasParaRede(double[] entradas) {
 		if (getCaractere().equals(Caractere.O))
 			for (int i = 0; i < entradas.length; i++)
 				entradas[i] *= -1;
 		
 		return entradas;
-	}
-	
-	private double[] validaPosicaoEscolhida(int posicao) {
-		return rede.traduzirPosicaoTabuleiro(posicao).getData();
 	}
 }

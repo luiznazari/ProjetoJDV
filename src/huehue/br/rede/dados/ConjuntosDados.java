@@ -5,6 +5,7 @@ import huehue.br.modelo.JogadorRNA;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.encog.ml.data.MLData;
 import org.encog.ml.data.MLDataPair;
 import org.encog.ml.data.MLDataSet;
 import org.encog.ml.data.basic.BasicMLData;
@@ -40,9 +41,8 @@ public class ConjuntosDados {
 				})));
 	}
 	
-	public void adicionarDadoES(double[] entradas, double[] saida) {
-		adicionarDadoNaoRepetido(new BasicMLDataPair(new BasicMLData(entradas),
-				new BasicMLData(saida)));
+	public void adicionarDadoES(MLData entrada, MLData saida) {
+		adicionarDadoNaoRepetido(new BasicMLDataPair(entrada, saida));
 	}
 	
 	private void adicionarDadoNaoRepetido(MLDataPair dado) {
@@ -50,7 +50,7 @@ public class ConjuntosDados {
 		
 		for (int i = 0; i < len; i++) {
 			if (isMLDataPairEquals(conjuntosES.get(i), dado)) {
-				conjuntosES.set(i, dado);
+//				conjuntosES.set(i, dado);
 				return;
 			}
 		}

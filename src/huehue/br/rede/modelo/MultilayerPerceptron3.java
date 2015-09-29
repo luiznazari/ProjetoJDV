@@ -8,16 +8,30 @@ import org.encog.ml.data.MLData;
 import org.encog.ml.data.basic.BasicMLData;
 
 @Getter
-public class MultilayerPerceptron2 extends JdvRedeAbstrata {
+public class MultilayerPerceptron3 extends JdvRedeAbstrata {
 	
-	public MultilayerPerceptron2() {
-		super(9, 9);
+	public MultilayerPerceptron3() {
+		super(18, 9);
 		margemDeErro = 0.0001D; // 0.01%
 	}
 	
 	@Override
 	public String getEstruturaRede() {
 		return "?:B->SIGMOID->81:B->SIGMOID->54:B->SIGMOID->?";
+	}
+	
+	@Override
+	public MLData traduzirEntrada(double[] entradas) {
+		double[] entradasXO = new double[18];
+		
+		for (int i = 0; i < 9; i++) {
+			if (entradas[i] == 1)
+				entradasXO[i] = entradas[i];
+			else if (entradas[i] == -1)
+				entradasXO[i + 9] = entradas[i];
+		}
+		
+		return super.traduzirEntrada(entradasXO);
 	}
 	
 	@Override
@@ -45,7 +59,7 @@ public class MultilayerPerceptron2 extends JdvRedeAbstrata {
 	}
 	
 	public static void main(String[] args) {
-		JdvRedeAbstrata rede = new MultilayerPerceptron2();
+		JdvRedeAbstrata rede = new MultilayerPerceptron3();
 		ConjuntosDados dados = new ConjuntosDados(JdvUtils.Arquivo.carregarDados(rede));
 		rede.treinar(dados);
 	}

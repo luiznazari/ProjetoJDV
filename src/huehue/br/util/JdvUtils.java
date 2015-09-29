@@ -131,14 +131,16 @@ public class JdvUtils {
 		
 		private static final CSVFormat FORMATO = CSVFormat.EG_FORMAT;
 		
-		private static final String DIR_RECURSOS = "resources/";
+		private static final String DIR_RECURSOS = "resources/testes/";
 		
 		public static String getNomeArquivoRede(String nomeArquivo) {
 			return DIR_RECURSOS + nomeArquivo;
 		}
 		
+		private static int i = 0;
+		
 		public static String getNomeArquivoDados(String nomeArquivo) {
-			return DIR_RECURSOS + nomeArquivo + "_ES.eg";
+			return DIR_RECURSOS + i++ + "_" + nomeArquivo + "_ES.eg";
 		}
 		
 		public static void salvarDados(JdvRede rede, MLDataSet set) {
@@ -161,7 +163,8 @@ public class JdvUtils {
 		}
 		
 		public static void salvarRede(JdvRede rede) {
-			EncogDirectoryPersistence.saveObject(new File(getNomeArquivoRede(rede.getNome())), rede);
+			EncogDirectoryPersistence.saveObject(new File(getNomeArquivoRede(rede.getNome())),
+					rede.getRede());
 		}
 		
 		public static BasicNetwork carregarRede(JdvRede rede) {

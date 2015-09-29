@@ -27,7 +27,7 @@ public abstract class JogadorAutomato extends Jogador {
 	 * 
 	 * @param cfgTabuleiro
 	 *            configuração do tabuleiro atual.
-	 * @return posição aleatória escolhida.
+	 * @return o índice da posição escolhida.
 	 */
 	protected int escolhePosicao(double[] cfgTabuleiro) {
 		int posicoesValidasLength = 0;

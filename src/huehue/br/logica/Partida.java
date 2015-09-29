@@ -75,7 +75,7 @@ public class Partida {
 	@Getter
 	@AllArgsConstructor
 	@ToString(of = {
-	    "configuracao", "posicaoEscolhida"
+		"configuracao", "posicaoEscolhida"
 	}, callSuper = false)
 	public class Jogada {
 		

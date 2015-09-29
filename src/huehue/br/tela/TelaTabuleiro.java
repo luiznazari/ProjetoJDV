@@ -12,7 +12,6 @@ import java.awt.GridLayout;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import lombok.Getter;
@@ -40,7 +39,7 @@ public class TelaTabuleiro implements TabuleiroListener {
 	}
 	
 	public void fimPartida(String mensagem) {
-		JOptionPane.showMessageDialog(null, mensagem);
+//		JOptionPane.showMessageDialog(null, mensagem);
 		novaPartida();
 	}
 	

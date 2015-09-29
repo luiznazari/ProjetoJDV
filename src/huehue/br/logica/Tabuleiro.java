@@ -60,8 +60,6 @@ public class Tabuleiro {
 	public void encadeiaJogada(Jogador jogador) {
 		if (jogador instanceof JogadorAutomato) {
 			int posicaoEscolhida = jogador.novaJogada(tela.getPosicoesTabuleiro());
-			System.out.println("Posição escolida: " + posicaoEscolhida);
-			
 			novaJogada(posicaoEscolhida);
 		} else {
 			System.out.println("Esperando movimento do jogador...");

@@ -58,6 +58,20 @@ public abstract class JdvRedeAbstrata implements JdvRede {
 	}
 	
 	/**
+	 * Traduz o valor de entrada da rede ao conjunto de dados reconhecidos pela mesma (i.e.
+	 * normaliza os valores e adapta os números correspondendo ao número de neurônios na camada de
+	 * entrada).<br>
+	 * Por padrão, retorna um conjunto de dados representando as entradas recebidas sem tratamentos.
+	 * 
+	 * @param entradas
+	 *            recebidas pela rede.
+	 * @return conjunto de dados representando a entrada da rede.
+	 */
+	public MLData traduzirEntrada(double[] entradas) {
+		return new BasicMLData(entradas);
+	}
+	
+	/**
 	 * Traduz o valor da saída resultante do processamento da RNA. É o processo inverso do método
 	 * {@link JdvRedeAbstrata#traduzirPosicaoTabuleiro(int)}.
 	 * 
@@ -68,8 +82,8 @@ public abstract class JdvRedeAbstrata implements JdvRede {
 	abstract public int traduzirSaida(MLData saida);
 	
 	/**
-	 * Traduz o valor da saída resultante do processamento da RNA. É o processo inverso do método
-	 * {@link JdvRedeAbstrata#traduzirSaida(MLData)}.
+	 * Traduz uma posição do tabuleiro em um conjuntos de dados reconhecidos pela RNA. É o processo
+	 * inverso do método {@link JdvRedeAbstrata#traduzirSaida(MLData)}.
 	 * 
 	 * @param posica
 	 *            a posição do tabuleiro.
@@ -83,7 +97,7 @@ public abstract class JdvRedeAbstrata implements JdvRede {
 	 * @return posicão escolhida pela rede;
 	 */
 	public int processar(double[] entradas) {
-		MLData dadosEntrada = new BasicMLData(entradas);
+		MLData dadosEntrada = traduzirEntrada(entradas);
 		MLData dadosSaida = rede.compute(dadosEntrada);
 		
 		return traduzirSaida(dadosSaida);
