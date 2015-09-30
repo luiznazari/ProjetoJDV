@@ -1,6 +1,5 @@
 package huehue.br.rede.modelo;
 
-import huehue.br.rede.dados.ConjuntosDados;
 import huehue.br.util.JdvUtils;
 import lombok.Getter;
 
@@ -12,12 +11,6 @@ public class MultilayerPerceptron3 extends JdvRedeAbstrata {
 	
 	public MultilayerPerceptron3() {
 		super(18, 9);
-		margemDeErro = 0.0001D; // 0.01%
-	}
-	
-	@Override
-	public String getEstruturaRede() {
-		return "?:B->SIGMOID->81:B->SIGMOID->54:B->SIGMOID->?";
 	}
 	
 	@Override
@@ -26,9 +19,9 @@ public class MultilayerPerceptron3 extends JdvRedeAbstrata {
 		
 		for (int i = 0; i < 9; i++) {
 			if (entradas[i] == 1)
-				entradasXO[i] = entradas[i];
+				entradasXO[i] = 1;
 			else if (entradas[i] == -1)
-				entradasXO[i + 9] = entradas[i];
+				entradasXO[i + 9] = 1;
 		}
 		
 		return super.traduzirEntrada(entradasXO);
@@ -56,12 +49,6 @@ public class MultilayerPerceptron3 extends JdvRedeAbstrata {
 		return JdvUtils.RNA.converteDadosUmParaNove(new BasicMLData(new double[] {
 			posicao
 		}));
-	}
-	
-	public static void main(String[] args) {
-		JdvRedeAbstrata rede = new MultilayerPerceptron3();
-		ConjuntosDados dados = new ConjuntosDados(JdvUtils.Arquivo.carregarDados(rede));
-		rede.treinar(dados);
 	}
 	
 }

@@ -46,17 +46,15 @@ public interface JdvRede {
 	}
 	
 	@Deprecated
-	default BasicNetwork construirRede2() {
+	default BasicNetwork _construirRede() {
 		BasicNetwork rede = new BasicNetwork();
 		
 		Layer entrada = new BasicLayer(new ActivationLinear(), true, getNumeroEntradas());
-		Layer oculta1 = new BasicLayer(new ActivationSigmoid(), true, 81);
-		Layer oculta2 = new BasicLayer(new ActivationSigmoid(), true, 54);
+		Layer oculta1 = new BasicLayer(new ActivationSigmoid(), true, 5);
 		Layer saida = new BasicLayer(new ActivationSigmoid(), true, getNumeroSaidas());
 		
 		rede.addLayer(entrada);
 		rede.addLayer(oculta1);
-		rede.addLayer(oculta2);
 		rede.addLayer(saida);
 		
 		rede.getStructure().finalizeStructure();

@@ -3,8 +3,8 @@ package huehue.br.logica;
 import huehue.br.exception.JdvException;
 import huehue.br.modelo.Caractere;
 import huehue.br.modelo.Jogador;
-import huehue.br.modelo.JogadorAleatorio;
 import huehue.br.modelo.JogadorAutomato;
+import huehue.br.modelo.JogadorHumano;
 import huehue.br.modelo.JogadorRNA;
 import huehue.br.tela.TelaTabuleiro;
 import huehue.br.util.JdvUtils;
@@ -37,8 +37,8 @@ public class Tabuleiro {
 //		setJogadorUm(new JogadorAleatorio(Caractere.X));
 		
 //		setJogadorDois(new JogadorRNA(Caractere.O));
-//		setJogadorDois(new JogadorHumano(Caractere.O));
-		setJogadorDois(new JogadorAleatorio(Caractere.O));
+		setJogadorDois(new JogadorHumano(Caractere.O));
+//		setJogadorDois(new JogadorAleatorio(Caractere.O));
 	}
 	
 	public void novaJogada(Integer posicaoEscolhida) {

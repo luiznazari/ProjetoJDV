@@ -3,7 +3,10 @@ package huehue.br.rede.dados;
 import huehue.br.modelo.JogadorRNA;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+
+import lombok.Getter;
 
 import org.encog.ml.data.MLData;
 import org.encog.ml.data.MLDataPair;
@@ -20,6 +23,7 @@ import org.encog.ml.data.basic.BasicMLDataSet;
  */
 public class ConjuntosDados {
 	
+	@Getter
 	private List<MLDataPair> conjuntosES = new ArrayList<MLDataPair>();
 	
 	private List<MLDataPair> conjuntosESTemporarios = new ArrayList<MLDataPair>();
@@ -80,5 +84,11 @@ public class ConjuntosDados {
 	
 	public MLDataSet getMLDataSet() {
 		return new BasicMLDataSet(conjuntosES);
+	}
+	
+	public List<MLDataPair> embaralhar() {
+		List<MLDataPair> conjuntosEmbaralhados = new ArrayList<>(conjuntosES);
+		Collections.shuffle(conjuntosEmbaralhados);
+		return conjuntosEmbaralhados;
 	}
 }

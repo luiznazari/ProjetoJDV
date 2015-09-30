@@ -7,34 +7,30 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 
 import lombok.Getter;
+import lombok.Setter;
 
 import org.encog.ml.data.MLData;
 import org.encog.ml.data.MLDataPair;
 import org.encog.ml.data.MLDataSet;
 import org.encog.ml.data.basic.BasicMLData;
+import org.encog.ml.data.basic.BasicMLDataSet;
 import org.encog.ml.factory.MLMethodFactory;
 import org.encog.ml.factory.MLTrainFactory;
 import org.encog.ml.train.MLTrain;
 import org.encog.neural.networks.BasicNetwork;
+import org.encog.neural.networks.training.propagation.back.Backpropagation;
 import org.encog.util.simple.EncogUtility;
 
 @Getter
 public abstract class JdvRedeAbstrata implements JdvRede {
 	
-	@SuppressWarnings("unused")
-	private static final String REDE_FEEDFORWARD_TANH = "?:B->TANH->18:B->TANH->?";
+//	private static final String REDE_FEEDFORWARD_TANH = "?:B->TANH->5:B->TANH->?";
 	
-//	private static final String REDE_FEEDFORWARD_TANH = "?:B->TANH->" + NEURONIOS_CAMADA_OCULTA + ":B->TANH->" + NEURONIOS_CAMADA_OCULTA + ":B->TANH->" + NEURONIOS_CAMADA_OCULTA + ":B->TANH->?";
+	private static final String REDE_FEEDFORWARD_SIGMOID = "?:B->SIGMOID->5:B->SIGMOID->?";
 	
-//	private static final String REDE_FEEDFORWARD_SIGMOID = "?:B->SIGMOID->" + NEURONIOS_CAMADA_OCULTA + ":B->SIGMOID->?";
+//	private static final String REDE_FEEDFORWARD_SEM_BIAS = "?->SIGMOID->5->SIGMOID->?";
 	
-//	private static final String REDE_FEEDFORWARD_SIGMOID = "?:B->SIGMOID->" + NEURONIOS_CAMADA_OCULTA + ":B->SIGMOID->" + NEURONIOS_CAMADA_OCULTA + ":B->SIGMOID->" + NEURONIOS_CAMADA_OCULTA + ":B->SIGMOID->?";
-	
-	private static final String REDE_FEEDFORWARD_SIGMOID = "?:B->SIGMOID->18:B->SIGMOID->?";
-	
-//	private static final String REDE_FEEDFORWARD_SEM_BIAS = "?->SIGMOID->" + NEURONIOS_CAMADA_OCULTA + "->SIGMOID->?";
-	
-	protected Double margemDeErro = 0.001; // 0.1%
+	protected Double margemDeErro = 0.1D; // 10.0%
 	
 	protected Integer numeroEntradas;
 	
@@ -44,6 +40,7 @@ public abstract class JdvRedeAbstrata implements JdvRede {
 	
 	protected String tipoRede = MLMethodFactory.TYPE_FEEDFORWARD;
 	
+	@Setter
 	protected BasicNetwork rede;
 	
 	public JdvRedeAbstrata(Integer numeroEntradas, Integer numeroSaidas) {
@@ -104,11 +101,12 @@ public abstract class JdvRedeAbstrata implements JdvRede {
 	}
 	
 	public void treinar(ConjuntosDados dados) {
-		MLTrainFactory trainFactory = new MLTrainFactory();
-		MLTrain train = trainFactory.create(rede, dados.getMLDataSet(), getTipoTreinamento(), "");
+		// TODO verificar forma de melhorar a chamada do método 'embaralhar'.
+		MLDataSet setDados = new BasicMLDataSet(dados.embaralhar());
+		
+		MLTrain train = new Backpropagation(getRede(), setDados, 0.1, 0.4);
 		
 		LocalDateTime inicio = LocalDateTime.now();
-		System.out.println("Iniciando treinamento.");
 		
 		EncogUtility.trainToError(train, getMargemDeErro());
 		

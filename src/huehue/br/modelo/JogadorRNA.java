@@ -52,10 +52,8 @@ public class JogadorRNA extends JogadorAutomato {
 					rede.traduzirPosicaoTabuleiro(j.getPosicaoEscolhida())));
 		}
 		
-		aprenderJogadas();
+//		aprenderJogadas();
 	}
-	
-	int i = 0;
 	
 	private void aprenderJogadas() {
 		// FIXME Temporário
@@ -65,8 +63,10 @@ public class JogadorRNA extends JogadorAutomato {
 		rede.treinar(dados);
 		
 		// FIXME Temporário
-//		JdvUtils.Arquivo.salvarRede(rede);
+		JdvUtils.Arquivo.salvarRede(rede);
 		// ----------------
+		
+		JdvUtils.Arquivo.i++;
 	}
 	
 	/**

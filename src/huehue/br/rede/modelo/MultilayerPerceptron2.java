@@ -12,12 +12,6 @@ public class MultilayerPerceptron2 extends JdvRedeAbstrata {
 	
 	public MultilayerPerceptron2() {
 		super(9, 9);
-		margemDeErro = 0.0001D; // 0.01%
-	}
-	
-	@Override
-	public String getEstruturaRede() {
-		return "?:B->SIGMOID->81:B->SIGMOID->54:B->SIGMOID->?";
 	}
 	
 	@Override

@@ -2,6 +2,7 @@ package huehue.br.util;
 
 import huehue.br.modelo.Caractere;
 import huehue.br.rede.modelo.JdvRede;
+import huehue.br.tela.TelaExibicao;
 
 import java.io.File;
 import java.math.BigDecimal;
@@ -134,13 +135,13 @@ public class JdvUtils {
 		private static final String DIR_RECURSOS = "resources/testes/";
 		
 		public static String getNomeArquivoRede(String nomeArquivo) {
-			return DIR_RECURSOS + nomeArquivo;
+			return DIR_RECURSOS + i + "_" + nomeArquivo;
 		}
 		
-		private static int i = 0;
+		public static int i = 720;
 		
 		public static String getNomeArquivoDados(String nomeArquivo) {
-			return DIR_RECURSOS + i++ + "_" + nomeArquivo + "_ES.eg";
+			return DIR_RECURSOS + i + "_" + nomeArquivo + "_ES.eg";
 		}
 		
 		public static void salvarDados(JdvRede rede, MLDataSet set) {
@@ -181,6 +182,22 @@ public class JdvUtils {
 			}
 			
 		}
+	}
+	
+	public static void main(String[] args) {
+		String c = "A";
+		
+		String caminho = Arquivo.DIR_RECURSOS + c + "1";
+		MLDataSet set = EncogUtility.loadCSV2Memory(caminho,
+				9, 9, false, Arquivo.FORMATO, false);
+		
+		new TelaExibicao(set);
+		
+		caminho = Arquivo.DIR_RECURSOS + c + "2";
+		set = EncogUtility.loadCSV2Memory(caminho,
+				9, 9, false, Arquivo.FORMATO, false);
+		
+		new TelaExibicao(set);
 	}
 	
 }
