@@ -12,6 +12,14 @@ public class MultilayerPerceptron2 extends JdvRedeAbstrata {
 	
 	public MultilayerPerceptron2() {
 		super(9, 9);
+		margemDeErro = 0.07D; // 7%
+		constanteDeAprendizagem = 0.1;
+		momentum = 0.4;
+	}
+	
+	@Override
+	public String getEstruturaRede() {
+		return "?:B->SIGMOID->5:B->SIGMOID->?";
 	}
 	
 	@Override
@@ -42,6 +50,7 @@ public class MultilayerPerceptron2 extends JdvRedeAbstrata {
 		JdvRedeAbstrata rede = new MultilayerPerceptron2();
 		ConjuntosDados dados = new ConjuntosDados(JdvUtils.Arquivo.carregarDados(rede));
 		rede.treinar(dados);
+		System.out.println(rede);
 	}
 	
 }

@@ -40,6 +40,10 @@ public abstract class JdvRedeAbstrata implements JdvRede {
 	
 	protected String tipoRede = MLMethodFactory.TYPE_FEEDFORWARD;
 	
+	protected Double constanteDeAprendizagem = 0.1;
+	
+	protected Double momentum = 0.4;
+	
 	@Setter
 	protected BasicNetwork rede;
 	
@@ -104,14 +108,13 @@ public abstract class JdvRedeAbstrata implements JdvRede {
 		// TODO verificar forma de melhorar a chamada do método 'embaralhar'.
 		MLDataSet setDados = new BasicMLDataSet(dados.embaralhar());
 		
-		MLTrain train = new Backpropagation(getRede(), setDados, 0.1, 0.4);
+		MLTrain train = new Backpropagation(getRede(), setDados, constanteDeAprendizagem, momentum);
 		
 		LocalDateTime inicio = LocalDateTime.now();
 		
 		EncogUtility.trainToError(train, getMargemDeErro());
 		
-		System.out.println("Treinamento finalizado. Tempo total: " + Duration.between(inicio,
-				LocalDateTime.now()));
+		System.out.println("Treinamento finalizado. Tempo total: " + Duration.between(inicio, LocalDateTime.now()));
 	}
 	
 	// TODO
@@ -124,11 +127,9 @@ public abstract class JdvRedeAbstrata implements JdvRede {
 	// TODO
 	public void processarNoConsole(final MLDataPair pair) {
 		final MLData output = getRede().compute(pair.getInput());
-		System.out.println("Input="
-			+ EncogUtility.formatNeuralData(pair.getInput())
-			+ ", Actual=" + EncogUtility.formatNeuralData(output)
-			+ ", Ideal=" + EncogUtility.formatNeuralData(pair.getIdeal())
-			+ ", IdealJDV=" + traduzirSaida(output));
+		System.out.println("Input=" + EncogUtility.formatNeuralData(pair.getInput()) + ", Actual="
+				+ EncogUtility.formatNeuralData(output) + ", Ideal=" + EncogUtility.formatNeuralData(pair.getIdeal())
+				+ ", IdealJDV=" + traduzirSaida(output));
 	}
 	
 }

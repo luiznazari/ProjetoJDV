@@ -40,7 +40,8 @@ public class TelaTabuleiro implements TabuleiroListener {
 	}
 	
 	public void fimPartida(String mensagem) {
-		JOptionPane.showMessageDialog(null, mensagem);
+		if (tabuleiro.isTemJogadorHumano())
+			JOptionPane.showMessageDialog(null, mensagem);
 		novaPartida();
 	}
 	

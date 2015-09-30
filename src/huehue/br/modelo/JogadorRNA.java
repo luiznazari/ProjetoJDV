@@ -32,8 +32,7 @@ public class JogadorRNA extends JogadorAutomato {
 		
 		// Escolheu uma posição já ocupada.
 		if (entradas[posicaoEscolhida] != Caractere.VAZIO.getValor()) {
-			System.err
-					.println("A Rede computou uma posição inválida. Escolhendo novo movimento...");
+			System.err.println("A Rede computou uma posição inválida. Escolhendo novo movimento...");
 			posicaoEscolhida = super.escolhePosicao(entradas);
 		}
 		
@@ -43,16 +42,16 @@ public class JogadorRNA extends JogadorAutomato {
 	@Override
 	public void notificarResultado(Partida partida) {
 		if (partida.getVencedor() == this && this.getCaractere().equals(Caractere.X)) {
-			partida.getJogadasVencedor().forEach(j -> dados.adicionarDadoES(
-					rede.traduzirEntrada(j.getConfiguracao()),
-					rede.traduzirPosicaoTabuleiro(j.getPosicaoEscolhida())));
+			partida.getJogadasVencedor().forEach(
+					j -> dados.adicionarDadoES(rede.traduzirEntrada(j.getConfiguracao()),
+							rede.traduzirPosicaoTabuleiro(j.getPosicaoEscolhida())));
 		} else {
-			partida.getJogadasVencedor().forEach(j -> dados.adicionarDadoES(
-					rede.traduzirEntrada(validaEntradasParaRede(j.getConfiguracao())),
-					rede.traduzirPosicaoTabuleiro(j.getPosicaoEscolhida())));
+			partida.getJogadasVencedor().forEach(
+					j -> dados.adicionarDadoES(rede.traduzirEntrada(validaEntradasParaRede(j.getConfiguracao())),
+							rede.traduzirPosicaoTabuleiro(j.getPosicaoEscolhida())));
 		}
 		
-//		aprenderJogadas();
+		aprenderJogadas();
 	}
 	
 	private void aprenderJogadas() {
