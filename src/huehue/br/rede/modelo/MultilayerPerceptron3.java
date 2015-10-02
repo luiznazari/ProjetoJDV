@@ -1,16 +1,18 @@
 package huehue.br.rede.modelo;
 
+import huehue.br.modelo.Caractere;
+import huehue.br.rede.dados.ConjuntosDados;
 import huehue.br.util.JdvUtils;
-import lombok.Getter;
 
 import org.encog.ml.data.MLData;
-import org.encog.ml.data.basic.BasicMLData;
 
-@Getter
-public class MultilayerPerceptron3 extends JdvRedeAbstrata {
+public class MultilayerPerceptron3 extends MultilayerPerceptron2 {
 	
 	public MultilayerPerceptron3() {
 		super(18, 9);
+		momentum = 0.4;
+		margemDeErro = 0.07D;
+		constanteDeAprendizagem = 0.05;
 	}
 	
 	@Override
@@ -18,9 +20,9 @@ public class MultilayerPerceptron3 extends JdvRedeAbstrata {
 		double[] entradasXO = new double[18];
 		
 		for (int i = 0; i < 9; i++) {
-			if (entradas[i] == 1)
+			if (entradas[i] == Caractere.X.getValor())
 				entradasXO[i] = 1;
-			else if (entradas[i] == -1)
+			else if (entradas[i] == Caractere.O.getValor())
 				entradasXO[i + 9] = 1;
 		}
 		
@@ -28,27 +30,31 @@ public class MultilayerPerceptron3 extends JdvRedeAbstrata {
 	}
 	
 	@Override
-	public int traduzirSaida(MLData saida) {
-		int index = 0;
-		double maior = 0;
+	public double[] converteEntradaEmTabuleiro(MLData entrada) {
+		double[] entradas = entrada.getData();
+		double[] tabuleiro = new double[9];
 		
-		int i = 0;
-		for (double d : saida.getData()) {
-			if (d > maior) {
-				maior = d;
-				index = i;
-			}
-			i++;
+		for (int i = 0; i < 9; i++) {
+			if (entradas[i] == 1)
+				tabuleiro[i] = Caractere.X.getValor();
+			else if (entradas[i + 9] == 1)
+				tabuleiro[i] = Caractere.O.getValor();
 		}
 		
-		return index;
+		return tabuleiro;
 	}
 	
-	@Override
-	public MLData traduzirPosicaoTabuleiro(int posicao) {
-		return JdvUtils.RNA.converteDadosUmParaNove(new BasicMLData(new double[] {
-			posicao
-		}));
+	public static void main(String[] args) {
+		JdvUtils.Arquivo.versionamento(455);
+		JdvRedeAbstrata rede = new MultilayerPerceptron3();
+		ConjuntosDados dados = new ConjuntosDados(JdvUtils.Arquivo.carregarDados(rede));
+		
+		rede.treinar(dados);
+		
+		JdvUtils.Arquivo.incrementaVersao();
+		
+		JdvUtils.Arquivo.salvarRede(rede);
+		JdvUtils.Arquivo.salvarDados(rede, dados.getMLDataSet());
 	}
 	
 }

@@ -14,7 +14,7 @@ public class MultilayerPerceptron extends JdvRedeAbstrata {
 	}
 	
 	/**
-	 * Traduz o valor da saída resultante do processamento da RNA.
+	 * {@inheritDoc}
 	 * 
 	 * <pre>
 	 * Exemplos:
@@ -27,26 +27,22 @@ public class MultilayerPerceptron extends JdvRedeAbstrata {
 	 * 0.7865	-> 0.8	-> 8
 	 * 0.9999	-> 1.0	-> 8
 	 * </pre>
-	 * 
-	 * @param d
-	 *            a saída resultante do processamento da RNA.
-	 * @return valor da saída traduzido, onde: 0 <= valor <= 8.
 	 */
 	@Override
 	public int traduzirSaida(MLData saida) {
 		double d = JdvUtils.RNA.valorAproximado(saida.getData(0));
 		
-		if (d >= 1)
-			return 9;
+		if (d >= 0.9)
+			return 8;
 		if (d <= 0)
 			return 1;
 		return (( int ) (d * 10)) - 1;
 	}
 	
 	@Override
-	public MLData traduzirPosicaoTabuleiro(int posicao) {
+	public MLData convertePosicaoTabuleiroEmSaida(int posicao) {
 		return new BasicMLData(new double[] {
-			posicao / 10
+			( double ) posicao / 10
 		});
 	}
 }

@@ -37,7 +37,7 @@ public class Tabuleiro {
 		partida = new Partida();
 		
 		setJogadorUm(new JogadorRNA(Caractere.X));
-//		setJogadorUm(new JogadorHumano(Caractere.X));
+//		setJogadorUm(new JogadorHxumano(Caractere.X));
 //		setJogadorUm(new JogadorAleatorio(Caractere.X));
 		
 //		setJogadorDois(new JogadorRNA(Caractere.O));
@@ -78,7 +78,7 @@ public class Tabuleiro {
 		if (vencedor != null) {
 			vencedor.pontuar();
 			mensagemFinal = "O jogador " + vencedor.getCaractere().getChave() + " venceu!" + "\nPontuação atual: "
-					+ vencedor.getPontuacao();
+				+ vencedor.getPontuacao();
 		} else {
 			mensagemFinal = "Empate !";
 		}
