@@ -24,7 +24,7 @@ public class JogadorRNA extends JogadorAutomato {
 		
 		JdvUtils.Arquivo.versionamento(true);
 		
-		rede = new MultilayerPerceptron2();
+		rede = new MultilayerPerceptron2().inicializar();
 		dados = new ConjuntosDados(JdvUtils.Arquivo.carregarDados(rede));
 	}
 	

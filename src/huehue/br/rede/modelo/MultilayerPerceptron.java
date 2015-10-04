@@ -36,7 +36,7 @@ public class MultilayerPerceptron extends JdvRedeAbstrata {
 			return 8;
 		if (d <= 0)
 			return 1;
-		return (( int ) (d * 10)) - 1;
+		return ( int ) (d * 10);
 	}
 	
 	@Override
