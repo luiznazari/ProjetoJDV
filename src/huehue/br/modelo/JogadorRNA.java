@@ -22,10 +22,12 @@ public class JogadorRNA extends JogadorAutomato {
 	public JogadorRNA(Caractere caractere) {
 		super(caractere);
 		
-		JdvUtils.Arquivo.versionamento(true);
+		JdvUtils.Arquivo.versionamento(68);
 		
 		rede = new MultilayerPerceptron2();
 		dados = new ConjuntosDados(JdvUtils.Arquivo.carregarDados(rede));
+		
+		JdvUtils.Arquivo.incrementaVersao();
 	}
 	
 	@Override
@@ -45,10 +47,8 @@ public class JogadorRNA extends JogadorAutomato {
 	@Override
 	public void notificarResultado(Partida partida) {
 		partida.getJogadasVencedor().forEach(
-				p -> dados.adicionarDadoES(
-						rede.traduzirEntrada(validaEntradasParaRede(p.getConfiguracao())),
-						rede.convertePosicaoTabuleiroEmSaida(p.getPosicaoEscolhida()))
-				);
+				p -> dados.adicionarDadoES(rede.traduzirEntrada(validaEntradasParaRede(p.getConfiguracao())),
+						rede.convertePosicaoTabuleiroEmSaida(p.getPosicaoEscolhida())));
 		
 		aprenderJogadas();
 	}

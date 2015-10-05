@@ -35,8 +35,8 @@ public class JdvUtils {
 	public static class Tabuleiro {
 		
 		/**
-		 * Avalia se houve um vencedor em dado momento no jogo. Caso retornar zero, referente ao
-		 * {@link Caractere#VAZIO} , não houve vencedor.
+		 * Avalia se houve um vencedor em dado momento no jogo. Caso retornar zero, referente ao {@link Caractere#VAZIO}
+		 * , não houve vencedor.
 		 * 
 		 * @param t
 		 *            a array de valores correspondentes ao tabuleiro.
@@ -51,13 +51,22 @@ public class JdvUtils {
 			 * Esta matriz possui 4 arrays, para cada array corresponde, há array.length conbinações vencedoras.
 			 * Cada array vencedora do tabuleiro é dada pelos índices: array[x], array[x] + y e array[x] + y * 2],
 			 * onde y é o índice da array na matriz + 1.
-			 * 
 			 * Exemplo: array = m[1]
-			 * 			[array[0], array[0] + (1 + 1), array[0] + (1 + 1) * 2]
-			 *			[2, 	   2 + 2,			   2 + 4]
-			 *			[2,		   4,				   6] -> Índices do array do tabuleiro, formando a combinação vencedora.
+			 * [array[0], array[0] + (1 + 1), array[0] + (1 + 1) * 2]
+			 * [2, 2 + 2, 2 + 4]
+			 * [2, 4, 6] -> Índices do array do tabuleiro, formando a combinação vencedora.
 			 */
-			int[][] m = { {0, 3, 6}, {2}, {0, 1, 2}, {0} };
+			int[][] m = {
+				{
+					0, 3, 6
+				}, {
+					2
+				}, {
+					0, 1, 2
+				}, {
+					0
+				}
+			};
 			
 			for (int i = 1; i <= m.length; i++) {
 				int[] n = m[i - 1];
@@ -85,8 +94,8 @@ public class JdvUtils {
 		 * @param dirRecursos
 		 *            diretório onde do arquivo base.
 		 */
-		public static void converteArquivosDeDadosEntreRedes(JdvRedeAbstrata redeBase,
-				JdvRedeAbstrata redeObjetivo, String dirRecursos) {
+		public static void converteArquivosDeDadosEntreRedes(JdvRedeAbstrata redeBase, JdvRedeAbstrata redeObjetivo,
+				String dirRecursos) {
 			Arquivo.recursos(dirRecursos);
 			converteArquivosDeDadosEntreRedes(redeBase, redeObjetivo);
 		}
@@ -97,11 +106,11 @@ public class JdvUtils {
 		 * @param redeBase
 		 * @param redeObjetivo
 		 */
-		public static void converteArquivosDeDadosEntreRedes(JdvRedeAbstrata redeBase,
-				JdvRedeAbstrata redeObjetivo) {
+		public static void converteArquivosDeDadosEntreRedes(JdvRedeAbstrata redeBase, JdvRedeAbstrata redeObjetivo) {
 			Arquivo.versionamento(false);
 			
-			MLDataSet dadosRedeBase = Arquivo.carregarDados(redeBase);
+			MLDataSet dadosRedeBase = Arquivo.carregarDados("bak_" + redeBase.getNome(), redeBase.getNumeroEntradas(),
+					redeBase.getNumeroSaidas());
 			MLDataSet dadosRedeObjetivo = new BasicMLDataSet();
 			
 			for (MLDataPair par : dadosRedeBase) {
@@ -114,7 +123,7 @@ public class JdvUtils {
 				dadosRedeObjetivo.add(entradasObjetivo, saidaObjetivo);
 			}
 			
-			Arquivo.salvarDados(redeObjetivo, dadosRedeObjetivo);
+			Arquivo.salvarDados("bak_" + redeObjetivo.getNome(), dadosRedeObjetivo);
 		}
 		
 		/**
@@ -201,8 +210,7 @@ public class JdvUtils {
 		}
 		
 		public static void salvarRede(JdvRede rede) {
-			EncogDirectoryPersistence.saveObject(new File(getNomeArquivoRede(rede.getNome())),
-					rede.getRede());
+			EncogDirectoryPersistence.saveObject(new File(getNomeArquivoRede(rede.getNome())), rede.getRede());
 		}
 		
 		public static BasicNetwork carregarRede(JdvRede rede) {
@@ -240,6 +248,7 @@ public class JdvUtils {
 //		set = EncogUtility.loadCSV2Memory(caminho, 9, 9, false, Arquivo.FORMATO, false);
 //		
 //		new TelaExibicao(set);
+//		RNA.converteArquivosDeDadosEntreRedes(new MultilayerPerceptron2(), new MultilayerPerceptron3());
 	}
 	
 	public static void delete_me() {

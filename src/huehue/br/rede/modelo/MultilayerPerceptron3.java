@@ -11,7 +11,7 @@ public class MultilayerPerceptron3 extends MultilayerPerceptron2 {
 	public MultilayerPerceptron3() {
 		super(18, 9);
 		momentum = 0.4;
-		margemDeErro = 0.07D;
+		margemDeErro = 0.01D;
 		constanteDeAprendizagem = 0.05;
 	}
 	
@@ -45,7 +45,7 @@ public class MultilayerPerceptron3 extends MultilayerPerceptron2 {
 	}
 	
 	public static void main(String[] args) {
-		JdvUtils.Arquivo.versionamento(455);
+		JdvUtils.Arquivo.versionamento(2);
 		JdvRedeAbstrata rede = new MultilayerPerceptron3();
 		ConjuntosDados dados = new ConjuntosDados(JdvUtils.Arquivo.carregarDados(rede));
 		
