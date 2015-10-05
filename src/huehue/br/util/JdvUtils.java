@@ -3,6 +3,7 @@ package huehue.br.util;
 import huehue.br.modelo.Caractere;
 import huehue.br.rede.modelo.JdvRede;
 import huehue.br.rede.modelo.JdvRedeAbstrata;
+import huehue.br.rede.modelo.MapaSaida;
 import huehue.br.rede.modelo.MultilayerPerceptron;
 import huehue.br.rede.modelo.MultilayerPerceptron2;
 import huehue.br.rede.modelo.MultilayerPerceptron3;
@@ -11,6 +12,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.encog.ml.data.MLData;
 import org.encog.ml.data.MLDataPair;
@@ -139,6 +143,23 @@ public class JdvUtils {
 			return b.doubleValue();
 		}
 		
+		/**
+		 * Cria um mapeamento de saídas da rede, ordenando a lista de saídas do maior ao menor
+		 * valor, mantendo os índices dos valores no vetor de saída original.
+		 * 
+		 * @param saídas
+		 *            da rede.
+		 * @return lista das saídas ordenadas e mapeadas.
+		 */
+		public static List<MapaSaida> toSaidasMapeadas(double[] saidas) {
+			List<MapaSaida> listaSaida = new ArrayList<>();
+			
+			int len = saidas.length;
+			for (int i = 0; i < len; i++)
+				listaSaida.add(new MapaSaida(i, saidas[i]));
+			
+			return listaSaida.stream().sorted((ms1, ms2) -> ms2.compareTo(ms1)).collect(Collectors.toList());
+		}
 	}
 	
 	/**
@@ -234,6 +255,96 @@ public class JdvUtils {
 			}
 		}
 		
+	}
+	
+	public static class Log {
+		
+		private static String converteValorCaractere(int valor) {
+			switch (valor) {
+				case 1:
+					return Caractere.X.getChave();
+				case -1:
+					return Caractere.O.getChave();
+				case 0:
+					return Caractere.VAZIO.getChave();
+				default:
+					return "#";
+			}
+		}
+		
+		public static <T> String preencheValor(T valor, int casas) {
+			return String.format("%1$" + casas + "s", valor);
+		}
+		
+		@SafeVarargs
+		private static StringBuilder imprimeLinhaTabuleiro(StringBuilder sb, double... valores) {
+			for (int i = 0; i < valores.length; i++) {
+				sb.append(" ");
+				sb.append(converteValorCaractere(( int ) valores[i]));
+				sb.append(" ");
+				
+				if (i != valores.length - 1)
+					sb.append("|");
+			}
+			
+			return sb;
+		}
+		
+		private static StringBuilder imprimeDivisaoTabuleiro(StringBuilder sb) {
+			return sb.append("---+---+---");
+		}
+		
+		private static StringBuilder imprimeSaidaRede(StringBuilder sb, double[] saidas) {
+			List<MapaSaida> listaSaida = JdvUtils.RNA.toSaidasMapeadas(saidas);
+			
+			for (int i = 0; i < saidas.length; i++) {
+				sb.append(listaSaida.get(i));
+				
+				if (i != saidas.length - 1)
+					sb.append(", ");
+			}
+			
+			return sb;
+		}
+		
+		public static void resultado(MLDataPair par, MLData saida, JdvRedeAbstrata rede) {
+			double[] entrada = rede.converteEntradaEmTabuleiro(par.getInput());
+			int ideal = rede.traduzirSaida(par.getIdeal());
+			entrada[ideal] = 2;
+			
+			StringBuilder sb = new StringBuilder().append("\n");
+			
+			imprimeLinhaTabuleiro(sb, entrada[0], entrada[1], entrada[2]).append("\t");
+			sb.append("Saídas: ").append("\n");
+			
+			imprimeDivisaoTabuleiro(sb).append("\t");
+			imprimeSaidaRede(sb, saida.getData()).append("\n");
+			
+			imprimeLinhaTabuleiro(sb, entrada[3], entrada[4], entrada[5]).append("\t");
+			sb.append("Posição: ").append(rede.traduzirSaida(saida)).append("\n");
+			
+			imprimeDivisaoTabuleiro(sb).append("\t");
+			sb.append("Esperado: ").append(ideal).append("\n");
+			
+			imprimeLinhaTabuleiro(sb, entrada[6], entrada[7], entrada[8]).append("\n\n");
+			
+			System.out.print(sb.toString());
+		}
+		
+		public static void resultado(int tamanho, int sucesso, int falha) {
+			StringBuilder sb = new StringBuilder();
+			sb.append("\n--\n");
+			sb.append("Teste finalizado.").append("\n");
+			sb.append("Total de conjuntos: ").append(tamanho).append("\n");
+			
+			sb.append("Sucesso:").append(Log.preencheValor(sucesso, 3)).append(" -> ");
+			sb.append(RNA.valorAproximado(( double ) sucesso * 100 / tamanho)).append(" %\n");
+			
+			sb.append("Falhas: ").append(Log.preencheValor(falha, 3)).append(" -> ");
+			sb.append(RNA.valorAproximado(( double ) falha * 100 / tamanho)).append(" %\n");
+			
+			System.out.println(sb.toString());
+		}
 	}
 	
 	public static void main(String[] args) {

@@ -1,5 +1,6 @@
 package huehue.br.rede.modelo;
 
+import huehue.br.exception.JdvException;
 import huehue.br.rede.dados.ConjuntosDados;
 import huehue.br.util.JdvUtils;
 
@@ -32,6 +33,10 @@ public abstract class JdvRedeAbstrata implements JdvRede {
 	
 	protected Double margemDeErro = 0.1D; // 10.0%
 	
+	protected Double constanteDeAprendizagem = 0.1;
+	
+	protected Double momentum = 0.4;
+	
 	protected Integer numeroEntradas;
 	
 	protected Integer numeroSaidas;
@@ -40,17 +45,20 @@ public abstract class JdvRedeAbstrata implements JdvRede {
 	
 	protected String tipoRede = MLMethodFactory.TYPE_FEEDFORWARD;
 	
-	protected Double constanteDeAprendizagem = 0.1;
-	
-	protected Double momentum = 0.4;
-	
 	@Setter
 	protected BasicNetwork rede;
+	
+	protected double[] entradasTmp;
 	
 	public JdvRedeAbstrata(Integer numeroEntradas, Integer numeroSaidas) {
 		this.numeroEntradas = numeroEntradas;
 		this.numeroSaidas = numeroSaidas;
+		resetaEntradasTemporarias();
+	}
+	
+	public final JdvRedeAbstrata inicializar() {
 		this.rede = JdvUtils.Arquivo.carregarRede(this);
+		return this;
 	}
 	
 	@Override
@@ -106,22 +114,41 @@ public abstract class JdvRedeAbstrata implements JdvRede {
 	 * @return posições do tabuleiro representando o conjuntos de entrada da rede.
 	 */
 	public double[] converteEntradaEmTabuleiro(MLData entrada) {
-		return entrada.getData();
+		return entrada.getData().clone();
 	}
 	
 	/**
+	 * Computa a saída da rede às entradas especificadas, normalizando as entradas àquelas
+	 * reconhecidas pela rede e a saída à posição do tabuleiro.<br>
+	 * A normalização de conjuntos de entradas e saídas pode variar dependendo da implementação da
+	 * rede.
+	 * 
 	 * @param entradas
 	 *            array de entradas representando o estado do tabuleiro.
 	 * @return posicão escolhida pela rede.
+	 * @see JdvRedeAbstrata#traduzirEntrada(double[])
+	 * @see JdvRedeAbstrata#traduzirSaida(MLData)
 	 */
 	public int processar(double[] entradas) {
 		MLData dadosEntrada = traduzirEntrada(entradas);
-		MLData dadosSaida = rede.compute(dadosEntrada);
+		MLData dadosSaida = processar(dadosEntrada);
 		
 		return traduzirSaida(dadosSaida);
 	}
 	
-	public void treinar(ConjuntosDados dados) {
+	/**
+	 * Computa a saída da rede à entrada especificada.
+	 * 
+	 * @param conjunto
+	 *            de entradas da rede.
+	 * @return conjunto de saídas da rede.
+	 */
+	private MLData processar(MLData entrada) {
+		entradasTmp = entrada.getData();
+		return rede.compute(entrada);
+	}
+	
+	public final void treinar(final ConjuntosDados dados) {
 		// TODO verificar forma de melhorar a chamada do método 'embaralhar'.
 		MLDataSet setDados = new BasicMLDataSet(dados.embaralhar());
 		
@@ -134,19 +161,40 @@ public abstract class JdvRedeAbstrata implements JdvRede {
 		System.out.println("Treinamento finalizado. Tempo total: " + Duration.between(inicio, LocalDateTime.now()));
 	}
 	
-	// TODO
-	public void processarNoConsole(final MLDataSet training) {
-		for (final MLDataPair pair : training) {
-			processarNoConsole(pair);
+	public void testar(final MLDataSet conjuntoDados) {
+		int tamanho = conjuntoDados.size();
+		int sucesso = 0;
+		int falha = 0;
+		
+		for (final MLDataPair par : conjuntoDados) {
+			final MLData saida = processar(par.getInput());
+			int posicao = this.traduzirSaida(saida);
+			int esperado = this.traduzirSaida(par.getIdeal());
+			
+			if (posicao == esperado)
+				sucesso++;
+			else
+				falha++;
 		}
+		
+		JdvUtils.Log.resultado(tamanho, sucesso, falha);
 	}
 	
-	// TODO
-	public void processarNoConsole(final MLDataPair pair) {
-		final MLData output = getRede().compute(pair.getInput());
-		System.out.println("Input=" + EncogUtility.formatNeuralData(pair.getInput()) + ", Actual="
-			+ EncogUtility.formatNeuralData(output) + ", Ideal=" + EncogUtility.formatNeuralData(pair.getIdeal())
-			+ ", IdealJDV=" + traduzirSaida(output));
+	public void testar(final MLDataPair par) {
+		final MLData saida = processar(par.getInput());
+		JdvUtils.Log.resultado(par, saida, this);
+	}
+	
+	private void resetaEntradasTemporarias() {
+		this.entradasTmp = new double[9];
+	}
+	
+	@Override
+	public BasicNetwork getRede() {
+		if (this.rede == null)
+			throw new JdvException("A rede neuronal ainda não foi inicializada! Experimente o método " + this.getNome() + ".inicializar().");
+		
+		return this.rede;
 	}
 	
 }

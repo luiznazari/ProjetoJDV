@@ -4,40 +4,32 @@ import huehue.br.modelo.Caractere;
 import huehue.br.rede.dados.ConjuntosDados;
 import huehue.br.util.JdvUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import lombok.Getter;
 
+import org.encog.Encog;
 import org.encog.ml.data.MLData;
+import org.encog.ml.data.MLDataSet;
 import org.encog.ml.data.basic.BasicMLData;
 
 @Getter
 public class MultilayerPerceptron2 extends JdvRedeAbstrata {
 	
-	private double[] entradasTmp;
-	
 	public MultilayerPerceptron2(Integer numeroEntradas, Integer numeroSaidas) {
 		super(numeroEntradas, numeroSaidas);
-		resetaEntradasTemporarias();
 	}
 	
 	public MultilayerPerceptron2() {
 		this(9, 9);
 		momentum = 0.4;
-		margemDeErro = 0.07D;
-		constanteDeAprendizagem = 0.05;
+		margemDeErro = 0.05D;
+		constanteDeAprendizagem = 0.1;
 	}
 	
 	@Override
 	public String getEstruturaRede() {
 		return "?:B->SIGMOID->5:B->SIGMOID->?";
-	}
-	
-	@Override
-	public MLData traduzirEntrada(double[] entradas) {
-		entradasTmp = entradas;
-		return super.traduzirEntrada(entradas);
 	}
 	
 	/**
@@ -48,17 +40,9 @@ public class MultilayerPerceptron2 extends JdvRedeAbstrata {
 	 */
 	@Override
 	public int traduzirSaida(MLData saida) {
-		List<MapaSaida> listaSaida = new ArrayList<>();
+		List<MapaSaida> listaSaida = JdvUtils.RNA.toSaidasMapeadas(saida.getData());
 		
-		for (int i = 0; i < getNumeroSaidas(); i++)
-			listaSaida.add(new MapaSaida(i, saida.getData(i)));
-		
-		int index = listaSaida.stream().sorted((ms1, ms2) -> ms2.compareTo(ms1))
-				.filter(ms -> entradasTmp[ms.index] == Caractere.VAZIO.getValor())
-				.findFirst().orElse(MapaSaida.padrao()).index;
-		
-		resetaEntradasTemporarias();
-		return index;
+		return buscaPrimeiroIndiceValido(listaSaida);
 	}
 	
 	@Override
@@ -70,40 +54,38 @@ public class MultilayerPerceptron2 extends JdvRedeAbstrata {
 		return new BasicMLData(dd);
 	}
 	
-	private void resetaEntradasTemporarias() {
-		entradasTmp = new double[9];
-	}
-	
-	private static class MapaSaida implements Comparable<MapaSaida> {
-		public int index;
+	private int buscaPrimeiroIndiceValido(List<MapaSaida> listaSaida) {
+		MapaSaida ms = listaSaida.get(0);
 		
-		public double valor;
+		if (entradasTmp[ms.index] == Caractere.VAZIO.getValor())
+			return ms.index;
 		
-		public MapaSaida(int index, double valor) {
-			this.index = index;
-			this.valor = valor;
-		}
-		
-		public static MapaSaida padrao() {
-			return new MapaSaida(0, 0);
-		}
-		
-		@Override
-		public int compareTo(MapaSaida o) {
-			return this.valor > o.valor ? 1 : -1;
-		}
+		System.err.println("Computou um resultado inválido! " + ms);
+		listaSaida.remove(0);
+		return buscaPrimeiroIndiceValido(listaSaida);
 	}
 	
 	public static void main(String[] args) {
-		JdvUtils.Arquivo.versionamento(455);
-		JdvRedeAbstrata rede = new MultilayerPerceptron2();
+		JdvUtils.Arquivo.versionamento(0);
+		JdvRedeAbstrata rede = new MultilayerPerceptron2().inicializar();
 		ConjuntosDados dados = new ConjuntosDados(JdvUtils.Arquivo.carregarDados(rede));
+		MLDataSet setDados = dados.getMLDataSet();
 		
 		rede.treinar(dados);
 		
-		JdvUtils.Arquivo.incrementaVersao();
+//		JdvUtils.Arquivo.incrementaVersao();
+//		JdvUtils.Arquivo.salvarRede(rede);
+//		JdvUtils.Arquivo.salvarDados(rede, setDados);
 		
-		JdvUtils.Arquivo.salvarRede(rede);
-		JdvUtils.Arquivo.salvarDados(rede, dados.getMLDataSet());
+//		rede.testar(setDados.get(( int ) (Math.random() * setDados.size())));
+		rede.testar(setDados);
+		
+//		rede.testar(new BasicMLDataPair(new BasicMLData(new double[] {
+//			-1, 0, -1, -1, 1, 1, 1, -1, 1
+//		}), new BasicMLData(new double[] {
+//			0, 1, 0, 0, 0, 0, 0, 0, 0
+//		})));
+		
+		Encog.getInstance().shutdown();
 	}
 }

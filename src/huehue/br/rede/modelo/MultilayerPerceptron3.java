@@ -4,7 +4,9 @@ import huehue.br.modelo.Caractere;
 import huehue.br.rede.dados.ConjuntosDados;
 import huehue.br.util.JdvUtils;
 
+import org.encog.Encog;
 import org.encog.ml.data.MLData;
+import org.encog.ml.data.MLDataSet;
 
 public class MultilayerPerceptron3 extends MultilayerPerceptron2 {
 	
@@ -46,15 +48,23 @@ public class MultilayerPerceptron3 extends MultilayerPerceptron2 {
 	
 	public static void main(String[] args) {
 		JdvUtils.Arquivo.versionamento(2);
+<<<<<<< HEAD
 		JdvRedeAbstrata rede = new MultilayerPerceptron3();
+=======
+		JdvRedeAbstrata rede = new MultilayerPerceptron3().inicializar();
+>>>>>>> b4224d35f95a58dc6e071f4c20c666c7668d40f6
 		ConjuntosDados dados = new ConjuntosDados(JdvUtils.Arquivo.carregarDados(rede));
+		MLDataSet setDados = dados.getMLDataSet();
 		
-		rede.treinar(dados);
+//		rede.treinar(dados);
+//		
+//		JdvUtils.Arquivo.incrementaVersao();
+//		JdvUtils.Arquivo.salvarRede(rede);
+//		JdvUtils.Arquivo.salvarDados(rede, setDados);
 		
-		JdvUtils.Arquivo.incrementaVersao();
+//		rede.testar(setDados.get(( int ) (Math.random() * setDados.size())));
+		rede.testar(setDados);
 		
-		JdvUtils.Arquivo.salvarRede(rede);
-		JdvUtils.Arquivo.salvarDados(rede, dados.getMLDataSet());
+		Encog.getInstance().shutdown();
 	}
-	
 }

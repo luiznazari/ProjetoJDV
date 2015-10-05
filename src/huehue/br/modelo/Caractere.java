@@ -15,7 +15,7 @@ public enum Caractere {
 	
 	X("X", 1),
 	O("O", -1),
-	VAZIO("", 0);
+	VAZIO(" ", 0);
 	
 	private int valor;
 	
