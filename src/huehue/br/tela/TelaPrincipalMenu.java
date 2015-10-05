@@ -29,6 +29,8 @@ public class TelaPrincipalMenu {
 	
 	private JMenu jmnTabuleiro;
 	
+	private JMenuItem jmiPlacar;
+	
 	private JMenuItem jmiResetar;
 	
 	private JMenu jmnAjuda;
@@ -84,8 +86,19 @@ public class TelaPrincipalMenu {
 	private JMenu constroiMenuTabuleiro() {
 		jmnTabuleiro = new JMenu("Tabuleiro");
 		
+		jmiPlacar = new JMenuItem("Placar");
+		jmnTabuleiro.add(jmiPlacar);
+		
 		jmiResetar = new JMenuItem("Resetar");
 		jmnTabuleiro.add(jmiResetar);
+		
+		jmiPlacar.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String placar = principal.getTelaTabuleiro().getTabuleiro().getPlacar();
+				JOptionPane.showMessageDialog(null, placar, "Placar", JOptionPane.INFORMATION_MESSAGE);
+			}
+		});
 		
 		jmiResetar.addActionListener(new ActionListener() {
 			@Override
@@ -107,9 +120,8 @@ public class TelaPrincipalMenu {
 		jmiComandos.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				JOptionPane.showMessageDialog(null,
-				    "Nenhuma ajuda disponível no momento.", "Comandos",
-				    JOptionPane.INFORMATION_MESSAGE);
+				JOptionPane.showMessageDialog(null, "Nenhuma ajuda disponível no momento.", "Comandos",
+						JOptionPane.INFORMATION_MESSAGE);
 			}
 		});
 		

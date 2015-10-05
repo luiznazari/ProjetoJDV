@@ -3,7 +3,7 @@ package huehue.br.modelo;
 import huehue.br.logica.Partida;
 import huehue.br.rede.dados.ConjuntosDados;
 import huehue.br.rede.modelo.JdvRedeAbstrata;
-import huehue.br.rede.modelo.MultilayerPerceptron2;
+import huehue.br.rede.modelo.MultilayerPerceptron3;
 import huehue.br.util.JdvUtils;
 
 /**
@@ -22,9 +22,9 @@ public class JogadorRNA extends JogadorAutomato {
 	public JogadorRNA(Caractere caractere) {
 		super(caractere);
 		
-		JdvUtils.Arquivo.versionamento(68);
+		JdvUtils.Arquivo.versionamento(876);
 		
-		rede = new MultilayerPerceptron2().inicializar();
+		rede = new MultilayerPerceptron3().inicializar();
 		dados = new ConjuntosDados(JdvUtils.Arquivo.carregarDados(rede));
 		
 		JdvUtils.Arquivo.incrementaVersao();
@@ -50,7 +50,7 @@ public class JogadorRNA extends JogadorAutomato {
 				p -> dados.adicionarDadoES(rede.traduzirEntrada(validaEntradasParaRede(p.getConfiguracao())),
 						rede.convertePosicaoTabuleiroEmSaida(p.getPosicaoEscolhida())));
 		
-		aprenderJogadas();
+//		aprenderJogadas();
 	}
 	
 	private void aprenderJogadas() {

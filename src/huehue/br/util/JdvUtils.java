@@ -1,6 +1,7 @@
 package huehue.br.util;
 
 import huehue.br.modelo.Caractere;
+import huehue.br.modelo.Jogador;
 import huehue.br.rede.modelo.JdvRede;
 import huehue.br.rede.modelo.JdvRedeAbstrata;
 import huehue.br.rede.modelo.MapaSaida;
@@ -135,9 +136,11 @@ public class JdvUtils {
 		 * 
 		 * @param d
 		 *            o valor.
-		 * @return valor arredondado, onde: 0 <= valor <= 1.
+		 * @return valor arredondado.
 		 */
 		public static double valorAproximado(double d) {
+			if (Double.isNaN(d))
+				d = 0.0;
 			BigDecimal b = new BigDecimal(d);
 			b = b.setScale(1, RoundingMode.HALF_UP);
 			return b.doubleValue();
@@ -337,13 +340,56 @@ public class JdvUtils {
 			sb.append("Teste finalizado.").append("\n");
 			sb.append("Total de conjuntos: ").append(tamanho).append("\n");
 			
-			sb.append("Sucesso:").append(Log.preencheValor(sucesso, 3)).append(" -> ");
+			sb.append("Sucesso: ").append(Log.preencheValor(sucesso, 3)).append(" -> ");
 			sb.append(RNA.valorAproximado(( double ) sucesso * 100 / tamanho)).append(" %\n");
 			
-			sb.append("Falhas: ").append(Log.preencheValor(falha, 3)).append(" -> ");
+			sb.append("Falhas:  ").append(Log.preencheValor(falha, 3)).append(" -> ");
 			sb.append(RNA.valorAproximado(( double ) falha * 100 / tamanho)).append(" %\n");
 			
 			System.out.println(sb.toString());
+		}
+		
+		public static void partida(Caractere caractere, double[] entradas, int posicaoEscolhida) {
+			double[] tabuleiro = entradas.clone();
+			tabuleiro[posicaoEscolhida] = 2;
+			
+			StringBuilder sb = new StringBuilder();
+			
+			sb.append("Jogador ").append(caractere.getChave());
+			
+			sb.append(" [Configuração=[");
+			
+			int len = tabuleiro.length;
+			for (int i = 0; i < len; i++) {
+				sb.append(preencheValor(( int ) tabuleiro[i], 2));
+				if (i != len - 1)
+					sb.append(", ");
+			}
+			
+			sb.append("], Jogou=").append(posicaoEscolhida).append("]");
+			
+			System.out.println(sb.toString());
+		}
+		
+		public static String placar(final int partidas, final Jogador um, final Jogador dois) {
+			StringBuilder sb = new StringBuilder();
+			int pontuacaoUm = um.getPontuacao();
+			int pontuacaoDois = dois.getPontuacao();
+			
+			sb.append("\n--\n");
+			sb.append("Resultado das partidas.").append("\n");
+			
+			sb.append("Total de partidas: ").append(partidas).append("\n");
+			
+			sb.append("Jogador ").append(um.getCaractere().getChave()).append(" | Pontuação:\t").append(pontuacaoUm);
+			sb.append(" -> ").append(RNA.valorAproximado(( double ) pontuacaoUm * 100 / partidas)).append(" %\n");
+			
+			sb.append("Jogador ").append(dois.getCaractere().getChave()).append(" | Pontuação:\t").append(pontuacaoDois);
+			sb.append(" -> ").append(RNA.valorAproximado(( double ) pontuacaoDois * 100 / partidas)).append(" %\n");
+			
+			String placar = sb.toString();
+			System.out.println(placar);
+			return placar;
 		}
 	}
 	

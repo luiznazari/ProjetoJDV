@@ -31,12 +31,10 @@ public class TelaTabuleiro implements TabuleiroListener {
 	}
 	
 	public void novaPartida() {
-		tabuleiro.novaPartida();
-		
 		for (int i = 0; i < 9; i++)
 			setPosicao(i, Caractere.VAZIO);
 		
-		tabuleiro.encadeiaJogada(tabuleiro.getJogadorDaVez());
+		tabuleiro.novaPartida();
 	}
 	
 	public void fimPartida(String mensagem) {

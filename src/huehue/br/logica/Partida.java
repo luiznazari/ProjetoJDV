@@ -7,7 +7,6 @@ import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.ToString;
 
 /**
  * Classe responsável pelo controle das partidas, ordem dos jogadores e armazenar todas as jogadas
@@ -18,9 +17,10 @@ import lombok.ToString;
 public class Partida {
 	
 	@Getter
-	private Integer numeroJogadas;
+	private Integer numeroPartidas = -1;
 	
-	private Integer primeiroAJogar;
+	@Getter
+	private Integer numeroJogadas;
 	
 	@Getter
 	private Jogada[] jogadas;
@@ -32,15 +32,11 @@ public class Partida {
 	private Integer ordemJogadaVencedor;
 	
 	public Partida() {
-		primeiroAJogar = 1;
-		
-		resetaJogadas();
+		novaPartida();
 	}
 	
 	public void novaJogada(double[] entradas, int posicaoEscolhida) {
 		jogadas[numeroJogadas] = new Jogada(entradas, posicaoEscolhida);
-		System.out.println(jogadas[numeroJogadas]);
-		
 		numeroJogadas++;
 	}
 	
@@ -62,21 +58,19 @@ public class Partida {
 		return jogadasVencedor;
 	}
 	
-	public void resetaJogadas() {
+	public void novaPartida() {
+		numeroPartidas++;
+		
 		jogadas = new Jogada[9];
 		numeroJogadas = 0;
-		primeiroAJogar++;
 	}
 	
 	public boolean isPartidaPar() {
-		return (primeiroAJogar + numeroJogadas) % 2 == 0;
+		return (numeroPartidas + numeroJogadas) % 2 == 0;
 	}
 	
 	@Getter
 	@AllArgsConstructor
-	@ToString(of = {
-		"configuracao", "posicaoEscolhida"
-	}, callSuper = false)
 	public class Jogada {
 		
 		double[] configuracao;
