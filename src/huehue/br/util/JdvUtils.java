@@ -8,6 +8,7 @@ import huehue.br.rede.modelo.MapaSaida;
 import huehue.br.rede.modelo.MultilayerPerceptron;
 import huehue.br.rede.modelo.MultilayerPerceptron2;
 import huehue.br.rede.modelo.MultilayerPerceptron3;
+import huehue.br.tela.TelaExibicao;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -40,8 +41,8 @@ public class JdvUtils {
 	public static class Tabuleiro {
 		
 		/**
-		 * Avalia se houve um vencedor em dado momento no jogo. Caso retornar zero, referente ao {@link Caractere#VAZIO}
-		 * , não houve vencedor.
+		 * Avalia se houve um vencedor em dado momento no jogo. Caso retornar zero, referente ao
+		 * {@link Caractere#VAZIO}, não houve vencedor.
 		 * 
 		 * @param t
 		 *            a array de valores correspondentes ao tabuleiro.
@@ -56,22 +57,13 @@ public class JdvUtils {
 			 * Esta matriz possui 4 arrays, para cada array corresponde, há array.length conbinações vencedoras.
 			 * Cada array vencedora do tabuleiro é dada pelos índices: array[x], array[x] + y e array[x] + y * 2],
 			 * onde y é o índice da array na matriz + 1.
+			 * 
 			 * Exemplo: array = m[1]
-			 * [array[0], array[0] + (1 + 1), array[0] + (1 + 1) * 2]
-			 * [2, 2 + 2, 2 + 4]
-			 * [2, 4, 6] -> Índices do array do tabuleiro, formando a combinação vencedora.
+			 * 			[array[0], array[0] + (1 + 1), array[0] + (1 + 1) * 2]
+			 *			[2, 	   2 + 2,			   2 + 4]
+			 *			[2,		   4,				   6] -> Índices do array do tabuleiro, formando a combinação vencedora.
 			 */
-			int[][] m = {
-				{
-					0, 3, 6
-				}, {
-					2
-				}, {
-					0, 1, 2
-				}, {
-					0
-				}
-			};
+			int[][] m = { {0, 3, 6}, {2}, {0, 1, 2}, {0} };
 			
 			for (int i = 1; i <= m.length; i++) {
 				int[] n = m[i - 1];
@@ -83,6 +75,14 @@ public class JdvUtils {
 			return vazio;
 		}
 		// @formatter:on
+		
+		public static boolean isCompleto(double[] t) {
+			for (int i = 0; i < t.length; i++)
+				if (t[i] == Caractere.VAZIO.getValor())
+					return false;
+			
+			return true;
+		}
 		
 	}
 	
@@ -99,8 +99,8 @@ public class JdvUtils {
 		 * @param dirRecursos
 		 *            diretório onde do arquivo base.
 		 */
-		public static void converteArquivosDeDadosEntreRedes(JdvRedeAbstrata redeBase, JdvRedeAbstrata redeObjetivo,
-				String dirRecursos) {
+		public static void converteArquivosDeDadosEntreRedes(JdvRedeAbstrata redeBase,
+				JdvRedeAbstrata redeObjetivo, String dirRecursos) {
 			Arquivo.recursos(dirRecursos);
 			converteArquivosDeDadosEntreRedes(redeBase, redeObjetivo);
 		}
@@ -111,11 +111,12 @@ public class JdvUtils {
 		 * @param redeBase
 		 * @param redeObjetivo
 		 */
-		public static void converteArquivosDeDadosEntreRedes(JdvRedeAbstrata redeBase, JdvRedeAbstrata redeObjetivo) {
+		public static void converteArquivosDeDadosEntreRedes(JdvRedeAbstrata redeBase,
+				JdvRedeAbstrata redeObjetivo) {
 			Arquivo.versionamento(false);
 			
-			MLDataSet dadosRedeBase = Arquivo.carregarDados("bak_" + redeBase.getNome(), redeBase.getNumeroEntradas(),
-					redeBase.getNumeroSaidas());
+			MLDataSet dadosRedeBase = Arquivo.carregarDados("bak_" + redeBase.getNome(),
+					redeBase.getNumeroEntradas(), redeBase.getNumeroSaidas());
 			MLDataSet dadosRedeObjetivo = new BasicMLDataSet();
 			
 			for (MLDataPair par : dadosRedeBase) {
@@ -161,7 +162,8 @@ public class JdvUtils {
 			for (int i = 0; i < len; i++)
 				listaSaida.add(new MapaSaida(i, saidas[i]));
 			
-			return listaSaida.stream().sorted((ms1, ms2) -> ms2.compareTo(ms1)).collect(Collectors.toList());
+			return listaSaida.stream().sorted((ms1, ms2) -> ms2.compareTo(ms1))
+					.collect(Collectors.toList());
 		}
 	}
 	
@@ -183,8 +185,8 @@ public class JdvUtils {
 			Arquivo.DIR_RECURSOS = caminho;
 		}
 		
-		public static void incrementaVersao() {
-			Arquivo.versao += 1;
+		public static int incrementaVersao() {
+			return ++Arquivo.versao;
 		}
 		
 		public static void versionamento(int versao) {
@@ -224,17 +226,20 @@ public class JdvUtils {
 			String caminho = getNomeArquivoDados(nomeArquivo);
 			
 			try {
-				return ( BasicMLDataSet ) EncogUtility.loadCSV2Memory(caminho, entradas, saidas, false, FORMATO, false);
+				return ( BasicMLDataSet ) EncogUtility.loadCSV2Memory(caminho, entradas, saidas,
+						false, FORMATO, false);
 				
 			} catch (Exception e) {
 				
-				System.out.println("Arquivo de entrada e saída \"" + caminho + "\" não encontrado! Criado conjunto vazio.");
+				System.out.println("Arquivo de entrada e saída \"" + caminho
+						+ "\" não encontrado! Criado conjunto vazio.");
 				return new BasicMLDataSet();
 			}
 		}
 		
 		public static void salvarRede(JdvRede rede) {
-			EncogDirectoryPersistence.saveObject(new File(getNomeArquivoRede(rede.getNome())), rede.getRede());
+			EncogDirectoryPersistence.saveObject(new File(getNomeArquivoRede(rede.getNome())),
+					rede.getRede());
 		}
 		
 		public static BasicNetwork carregarRede(JdvRede rede) {
@@ -253,7 +258,8 @@ public class JdvUtils {
 				FileInputStream stream = new FileInputStream(new File(caminho));
 				return ( BasicNetwork ) EncogDirectoryPersistence.loadObject(stream);
 			} catch (Exception e) {
-				System.out.println("Arquivo de rede \"" + caminho + "\" não encontrado! Criada uma nova rede.");
+				System.out.println("Arquivo de rede \"" + caminho
+						+ "\" não encontrado! Criada uma nova rede.");
 				return null;
 			}
 		}
@@ -262,7 +268,7 @@ public class JdvUtils {
 	
 	public static class Log {
 		
-		private static String converteValorCaractere(int valor) {
+		public static String converteValorCaractere(int valor) {
 			switch (valor) {
 				case 1:
 					return Caractere.X.getChave();
@@ -381,11 +387,16 @@ public class JdvUtils {
 			
 			sb.append("Total de partidas: ").append(partidas).append("\n");
 			
-			sb.append("Jogador ").append(um.getCaractere().getChave()).append(" | Pontuação:\t").append(pontuacaoUm);
-			sb.append(" -> ").append(RNA.valorAproximado(( double ) pontuacaoUm * 100 / partidas)).append(" %\n");
+			sb.append("Jogador ").append(um.getCaractere().getChave()).append(" | Pontuação:\t")
+					.append(pontuacaoUm);
+			sb.append(" -> ").append(RNA.valorAproximado(( double ) pontuacaoUm * 100 / partidas))
+					.append(" %\n");
 			
-			sb.append("Jogador ").append(dois.getCaractere().getChave()).append(" | Pontuação:\t").append(pontuacaoDois);
-			sb.append(" -> ").append(RNA.valorAproximado(( double ) pontuacaoDois * 100 / partidas)).append(" %\n");
+			sb.append("Jogador ").append(dois.getCaractere().getChave()).append(" | Pontuação:\t")
+					.append(pontuacaoDois);
+			sb.append(" -> ")
+					.append(RNA.valorAproximado(( double ) pontuacaoDois * 100 / partidas))
+					.append(" %\n");
 			
 			String placar = sb.toString();
 			System.out.println(placar);
@@ -394,12 +405,12 @@ public class JdvUtils {
 	}
 	
 	public static void main(String[] args) {
-//		String c = "A";
-//		
-//		String caminho = Arquivo.DIR_RECURSOS + c + "1";
-//		MLDataSet set = EncogUtility.loadCSV2Memory(caminho, 9, 9, false, Arquivo.FORMATO, false);
-//		
-//		new TelaExibicao(set);
+		String c = "A";
+		
+		String caminho = Arquivo.DIR_RECURSOS + c + "1";
+		MLDataSet set = EncogUtility.loadCSV2Memory(caminho, 9, 9, false, Arquivo.FORMATO, false);
+		
+		new TelaExibicao(set);
 //		
 //		caminho = Arquivo.DIR_RECURSOS + c + "2";
 //		set = EncogUtility.loadCSV2Memory(caminho, 9, 9, false, Arquivo.FORMATO, false);

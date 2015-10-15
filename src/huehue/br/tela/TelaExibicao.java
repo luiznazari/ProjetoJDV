@@ -1,6 +1,8 @@
 package huehue.br.tela;
 
-import huehue.br.modelo.Caractere;
+import huehue.br.rede.modelo.JdvRedeAbstrata;
+import huehue.br.rede.modelo.MultilayerPerceptron2;
+import huehue.br.util.JdvUtils;
 
 import java.awt.Color;
 import java.awt.Container;
@@ -24,10 +26,17 @@ public class TelaExibicao extends JFrame {
 	
 	MLDataSet dados;
 	
+	JdvRedeAbstrata rede;
+	
 	public TelaExibicao(MLDataSet dados) {
+		this(dados, new MultilayerPerceptron2());
+	}
+	
+	public TelaExibicao(MLDataSet dados, JdvRedeAbstrata rede) {
+		this.rede = rede;
 		this.dados = dados;
 		
-		setTitle("Jogo da Velha");
+		setTitle("Conjuntos de treinamentos");
 		setContentPane(constroiPainel());
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		setSize(400, 400);
@@ -37,7 +46,6 @@ public class TelaExibicao extends JFrame {
 	
 	private Container constroiPainel() {
 		JPanel principal = new JPanel();
-//		principal.setLayout(new GridLayout(dados.size(), 1));
 		principal.setLayout(new FlowLayout(FlowLayout.LEADING));
 		
 		for (MLDataPair par : dados) {
@@ -53,45 +61,29 @@ public class TelaExibicao extends JFrame {
 		
 		JLabel[] jlbs = new JLabel[9];
 		
-		int i = 0;
-		for (double d : par.getInput().getData()) {
-			jlbs[i] = constroiCelulaTabuleiro(( int ) d);
-			i++;
-		}
+		double[] entrada = rede.converteEntradaEmTabuleiro(par.getInput()).clone();
+		int posicao = rede.traduzirSaida(par.getIdeal());
+		entrada[posicao] = 2;
 		
-		i = 0;
-		for (double d : par.getIdeal().getData()) {
-			if ((( int ) d) == 1) {
-				jlbs[i].setForeground(Color.RED);
-				jlbs[i].setText("#");
-			}
-			tab.add(jlbs[i]);
-			i++;
+		for (int i = 0; i < 9; i++) {
+			jlbs[i] = constroiCelulaTabuleiro(i);
 		}
 		
 		return tab;
 	}
 	
 	private JLabel constroiCelulaTabuleiro(int index) {
-		JLabel celula = new JLabel(getCaractere(index));
+		JLabel celula = new JLabel(JdvUtils.Log.converteValorCaractere(index));
 		
 		celula.setName("" + index);
 		celula.setHorizontalAlignment(JLabel.CENTER);
 		celula.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 14));
 		celula.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
 		
+		if (index > 1)
+			celula.setForeground(Color.RED);
+		
 		return celula;
-	}
-	
-	private String getCaractere(int d) {
-		switch (d) {
-			case 1:
-				return Caractere.X.getChave();
-			case -1:
-				return Caractere.O.getChave();
-			default:
-				return " ";
-		}
 	}
 	
 }

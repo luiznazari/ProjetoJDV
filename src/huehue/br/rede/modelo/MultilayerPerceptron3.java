@@ -13,8 +13,8 @@ public class MultilayerPerceptron3 extends MultilayerPerceptron2 {
 	public MultilayerPerceptron3() {
 		super(18, 9);
 		momentum = 0.4;
-		margemDeErro = 0.035D;
-		constanteDeAprendizagem = 0.05;
+		margemDeErro = 0.1D;
+		constanteDeAprendizagem = 0.1;
 	}
 	
 	@Override
@@ -47,19 +47,19 @@ public class MultilayerPerceptron3 extends MultilayerPerceptron2 {
 	}
 	
 	public static void main(String[] args) {
-		JdvUtils.Arquivo.versionamento(875);
+		JdvUtils.Arquivo.versionamento(10);
 		JdvRedeAbstrata rede = new MultilayerPerceptron3().inicializar();
 		ConjuntosDados dados = new ConjuntosDados(JdvUtils.Arquivo.carregarDados(rede));
 		MLDataSet setDados = dados.getMLDataSet();
 		
-		rede.treinar(dados);
+//		rede.treinar(dados);
+//		
+//		JdvUtils.Arquivo.incrementaVersao();
+//		JdvUtils.Arquivo.salvarRede(rede);
+//		JdvUtils.Arquivo.salvarDados(rede, setDados);
 		
-		JdvUtils.Arquivo.incrementaVersao();
-		JdvUtils.Arquivo.salvarRede(rede);
-		JdvUtils.Arquivo.salvarDados(rede, setDados);
-		
-//		rede.testar(setDados.get(( int ) (Math.random() * setDados.size())));
-		rede.testar(setDados);
+		rede.testar(setDados.get(( int ) (Math.random() * setDados.size())));
+//		rede.testar(setDados);
 		
 		Encog.getInstance().shutdown();
 	}

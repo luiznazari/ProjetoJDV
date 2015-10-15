@@ -1,5 +1,7 @@
 package huehue.br.tela;
 
+import huehue.br.tela.evento.TelaPrincipalEventos;
+
 import java.awt.BorderLayout;
 
 import javax.swing.JFrame;
@@ -28,6 +30,7 @@ public class TelaPrincipal extends JFrame {
 		setLocationRelativeTo(null);
 		setVisible(true);
 		setResizable(false);
+		addWindowListener(new TelaPrincipalEventos());
 		
 		telaTabuleiro.novaPartida();
 	}
