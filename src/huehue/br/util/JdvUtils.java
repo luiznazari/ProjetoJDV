@@ -41,8 +41,8 @@ public class JdvUtils {
 	public static class Tabuleiro {
 		
 		/**
-		 * Avalia se houve um vencedor em dado momento no jogo. Caso retornar zero, referente ao
-		 * {@link Caractere#VAZIO}, não houve vencedor.
+		 * Avalia se houve um vencedor em dado momento no jogo. Caso retornar zero, referente ao {@link Caractere#VAZIO}
+		 * , não houve vencedor.
 		 * 
 		 * @param t
 		 *            a array de valores correspondentes ao tabuleiro.
@@ -357,7 +357,7 @@ public class JdvUtils {
 		
 		public static void partida(Caractere caractere, double[] entradas, int posicaoEscolhida) {
 			double[] tabuleiro = entradas.clone();
-			tabuleiro[posicaoEscolhida] = 2;
+			tabuleiro[posicaoEscolhida] = caractere.getValor();
 			
 			StringBuilder sb = new StringBuilder();
 			

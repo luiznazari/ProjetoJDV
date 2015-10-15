@@ -5,7 +5,7 @@ import huehue.br.modelo.Caractere;
 import huehue.br.modelo.Jogador;
 import huehue.br.modelo.JogadorAutomato;
 import huehue.br.modelo.JogadorHumano;
-import huehue.br.modelo.JogadorRNA;
+import huehue.br.modelo.JogadorMinMax;
 import huehue.br.tela.TelaTabuleiro;
 import huehue.br.util.JdvUtils;
 import lombok.Getter;
@@ -36,15 +36,18 @@ public class Tabuleiro {
 		this.tela = tela;
 		partida = new Partida();
 		
-		setJogadorUm(new JogadorRNA(Caractere.X));
-//		setJogadorUm(new JogadorHxumano(Caractere.X));
+//		setJogadorUm(new JogadorRNA(Caractere.X));
+//		setJogadorUm(new JogadorHumano(Caractere.X));
 //		setJogadorUm(new JogadorAleatorio(Caractere.X));
+		setJogadorUm(new JogadorMinMax(Caractere.X));
 		
 //		setJogadorDois(new JogadorRNA(Caractere.O));
 		setJogadorDois(new JogadorHumano(Caractere.O));
 //		setJogadorDois(new JogadorAleatorio(Caractere.O));
+//		setJogadorDois(new JogadorMinMax(Caractere.O));
 		
-		temJogadorHumano = jogadorUm instanceof JogadorHumano || jogadorDois instanceof JogadorHumano;
+		temJogadorHumano = jogadorUm instanceof JogadorHumano
+				|| jogadorDois instanceof JogadorHumano;
 	}
 	
 	public void novaJogada(Integer posicaoEscolhida) {
@@ -81,7 +84,8 @@ public class Tabuleiro {
 		
 		if (vencedor != null) {
 			vencedor.pontuar();
-			mensagemFinal = "O jogador " + vencedor.getCaractere().getChave() + " venceu!" + "\nPontuação atual: "
+			mensagemFinal = "O jogador " + vencedor.getCaractere().getChave() + " venceu!"
+					+ "\nPontuação atual: "
 					+ vencedor.getPontuacao();
 		} else {
 			mensagemFinal = "Empate !";
@@ -121,14 +125,16 @@ public class Tabuleiro {
 	
 	public void setJogadorUm(Jogador jogadorUm) {
 		if (jogadorDois != null && jogadorDois.getCaractere().equals(jogadorUm.getCaractere()))
-			throw new JdvException("Caractere " + jogadorDois.getCaractere() + " já está sendo utilizado po routro jogador!");
+			throw new JdvException("Caractere " + jogadorDois.getCaractere()
+					+ " já está sendo utilizado po routro jogador!");
 		
 		this.jogadorUm = jogadorUm;
 	}
 	
 	public void setJogadorDois(Jogador jogadorDois) {
 		if (jogadorUm != null && jogadorUm.getCaractere().equals(jogadorDois.getCaractere()))
-			throw new JdvException("Caractere " + jogadorDois.getCaractere() + "já está sendo utilizado po routro jogador!");
+			throw new JdvException("Caractere " + jogadorDois.getCaractere()
+					+ "já está sendo utilizado po routro jogador!");
 		
 		this.jogadorDois = jogadorDois;
 	}
@@ -139,7 +145,8 @@ public class Tabuleiro {
 	}
 	
 	public String getPlacar() {
-		return JdvUtils.Log.placar(getPartida().getNumeroPartidas(), getJogadorUm(), getJogadorDois());
+		return JdvUtils.Log.placar(getPartida().getNumeroPartidas(), getJogadorUm(),
+				getJogadorDois());
 	}
 	
 }
