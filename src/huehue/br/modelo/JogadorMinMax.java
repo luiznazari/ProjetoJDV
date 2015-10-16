@@ -20,12 +20,26 @@ public class JogadorMinMax extends JogadorAutomato {
 	@Override
 	public int novaJogada(double[] entradas) {
 		TabuleiroMinMax tabuleiro = new TabuleiroMinMax(entradas, getCaractere() == Caractere.X);
-		tabuleiro = MiniMaxShortVersion(8, Integer.MIN_VALUE + 1, Integer.MAX_VALUE - 1, tabuleiro);
+//		tabuleiro = MiniMaxShortVersion(8, Integer.MIN_VALUE + 1, Integer.MAX_VALUE - 1, tabuleiro);
+		List<Integer> movimentos = new ArrayList<>();
+		int v = -2;
 		
-		_tabuleiro = new TabuleiroMinMax(entradas, getCaractere() == Caractere.X);
-		MiniMax(8, true, Integer.MIN_VALUE + 1, Integer.MAX_VALUE - 1, _tabuleiro);
+//		_tabuleiro = new TabuleiroMinMax(entradas, getCaractere() == Caractere.X);
+		for (TabuleiroMinMax t : tabuleiro.filhos()) {
+			int val = MiniMax2(8, Integer.MIN_VALUE + 1, Integer.MAX_VALUE - 1, t);
+			
+			if (val > v) {
+				v = val;
+				movimentos.clear();
+				movimentos.add(t.posicao);
+			} else if (val == v) {
+				movimentos.add(t.posicao);
+			}
+			
+		}
 		
-		return tabuleiro.posicao;
+		int escolhido = ( int ) (Math.random() * movimentos.size());
+		return movimentos.get(escolhido);
 	}
 	
 	private static TabuleiroMinMax MiniMaxShortVersion(int depth, int alpha, int beta,
@@ -101,68 +115,56 @@ public class JogadorMinMax extends JogadorAutomato {
 	static TabuleiroMinMax _tabuleiro;
 	
 	@Deprecated
-	public static int MiniMax(int depth, boolean needMax, int alpha, int beta,
-			TabuleiroMinMax tabuleiro) {
-		
-		boolean primeiro = tabuleiro == _tabuleiro;
-		
-//	    System.Diagnostics.Debug.Assert(m_TurnForPlayerX == needMax);
+	public static int MiniMax2(int depth, int alpha, int beta, TabuleiroMinMax tabuleiro) {
 		
 		if (depth == 0 || tabuleiro.isFimDeJogo()) {
-			TabuleiroMinMax.pontosRecursivos = tabuleiro.pontos;
 			return tabuleiro.pontos;
 		}
 		
 		for (TabuleiroMinMax t : tabuleiro.filhos()) {
-			int score = MiniMax(depth - 1, !needMax, alpha, beta, t);
+			int score = MiniMax2(depth - 1, alpha, beta, t);
 			
-			if (!needMax) {
-				if (beta > score) {
-					beta = score;
-					
-					tabuleiro = t;
-					
-					if (alpha >= beta) {
-						break;
-					}
-				}
-			} else {
-				if (alpha < score) {
+			if (tabuleiro.x) {
+				if (score > alpha) {
 					alpha = score;
 					
-					tabuleiro = t;
+					if (alpha >= beta)
+						return beta;
+				}
+			} else {
+				if (score < beta) {
+					beta = score;
 					
-					if (alpha >= beta) {
-						break;
-					}
+					if (beta <= alpha)
+						return alpha;
 				}
 			}
 		}
 		
-		if (primeiro)
-			_tabuleiro = tabuleiro;
-		
-		TabuleiroMinMax.pontosRecursivos = needMax ? alpha : beta;
-		return TabuleiroMinMax.pontosRecursivos;
+		return tabuleiro.x ? alpha : beta;
 	}
 	
 	public static void main(String[] args) {
 		JdvRedeAbstrata rede = new MultilayerPerceptron();
 		MLDataPair par = new BasicMLDataPair(new BasicMLData(new double[] {
-			0, 0, 0,
-			0, 0, 0,
+			-1, 0, 0,
+			0, 1, 0,
 			0, 0, 0
 		}), new BasicMLData(new double[] {
-			0.2
+			0.4
 		}));
 		
-		TabuleiroMinMax tabuleiro = new TabuleiroMinMax(par.getInputArray());
-		tabuleiro = MiniMaxShortVersion(8, Integer.MIN_VALUE + 1, Integer.MAX_VALUE - 1, tabuleiro);
-		JdvUtils.Log.resultado(par, rede.convertePosicaoTabuleiroEmSaida(tabuleiro.posicao), rede);
+//		TabuleiroMinMax tabuleiro = new TabuleiroMinMax(par.getInputArray());
+//		tabuleiro = MiniMaxShortVersion(8, Integer.MIN_VALUE + 1, Integer.MAX_VALUE - 1, tabuleiro);
+//		JdvUtils.Log.resultado(par, rede.convertePosicaoTabuleiroEmSaida(tabuleiro.posicao), rede);
+//		
+//		tabuleiro = new TabuleiroMinMax(par.getInputArray());
+//		tabuleiro = MiniMax(8, Integer.MIN_VALUE + 1, Integer.MAX_VALUE - 1, tabuleiro);
+//		JdvUtils.Log.resultado(par, rede.convertePosicaoTabuleiroEmSaida(tabuleiro.posicao), rede);
 		
-		tabuleiro = new TabuleiroMinMax(par.getInputArray());
-		tabuleiro = MiniMax(8, Integer.MIN_VALUE + 1, Integer.MAX_VALUE - 1, tabuleiro);
-		JdvUtils.Log.resultado(par, rede.convertePosicaoTabuleiroEmSaida(tabuleiro.posicao), rede);
+		Jogador j = new JogadorMinMax(Caractere.X);
+		int posicao = j.novaJogada(par.getInputArray());
+		System.out.println(posicao);
 	}
 	
 	private static class TabuleiroMinMax {
@@ -231,7 +233,7 @@ public class JogadorMinMax extends JogadorAutomato {
 			sb.append("[");
 			for (double d : this.tabuleiro)
 				sb.append(d).append(", ");
-			sb.append("] Computado: ").append(this.posicao);
+			sb.append("] Posição: ").append(this.posicao);
 			
 			return sb.toString().replaceAll(",\\s]", "]");
 		}
