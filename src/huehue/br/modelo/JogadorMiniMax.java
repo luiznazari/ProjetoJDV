@@ -72,7 +72,7 @@ public class JogadorMiniMax extends JogadorAutomato {
 			this.x = x;
 			this.posicao = posicao;
 			this.tabuleiro = tabuleiro;
-			this.pontos = ( int ) JdvUtils.Tabuleiro.computaVencedor(this.tabuleiro);
+			this.pontos = JdvUtils.Tabuleiro.computaVencedor(this.tabuleiro);
 			this.nivel = JdvUtils.Tabuleiro.computaEspacosVazios(this.tabuleiro);
 		}
 		

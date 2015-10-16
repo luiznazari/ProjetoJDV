@@ -1,6 +1,8 @@
 package huehue.br.logica;
 
+import huehue.br.modelo.Caractere;
 import huehue.br.modelo.Jogador;
+import huehue.br.util.JdvUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,14 +37,19 @@ public class Partida {
 		novaPartida();
 	}
 	
-	public void novaJogada(double[] entradas, int posicaoEscolhida) {
+	public void novaJogada(Caractere caractere, double[] entradas, int posicaoEscolhida) {
 		jogadas[numeroJogadas] = new Jogada(entradas, posicaoEscolhida);
+		entradas[posicaoEscolhida] = caractere.getValor();
 		numeroJogadas++;
+		
+		JdvUtils.Log.partida(caractere, entradas, posicaoEscolhida);
 	}
 	
 	public void encerrar(Jogador vencedor) {
 		this.vencedor = vencedor;
 		ordemJogadaVencedor = (numeroJogadas - 1) % 2;
+		
+		JdvUtils.Log.fimPartida(vencedor);
 	}
 	
 	public List<Jogada> getJogadasVencedor() {

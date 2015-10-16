@@ -1,14 +1,17 @@
 package huehue.br.util;
 
+import huehue.br.logica.Partida;
 import huehue.br.modelo.Caractere;
 import huehue.br.modelo.Jogador;
+import huehue.br.modelo.JogadorAutomato;
+import huehue.br.modelo.JogadorMiniMax;
+import huehue.br.modelo.JogadorRNA;
 import huehue.br.rede.modelo.JdvRede;
 import huehue.br.rede.modelo.JdvRedeAbstrata;
 import huehue.br.rede.modelo.MapaSaida;
 import huehue.br.rede.modelo.MultilayerPerceptron;
 import huehue.br.rede.modelo.MultilayerPerceptron2;
 import huehue.br.rede.modelo.MultilayerPerceptron3;
-import huehue.br.tela.TelaExibicao;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -41,15 +44,15 @@ public class JdvUtils {
 	public static class Tabuleiro {
 		
 		/**
-		 * Avalia se houve um vencedor em dado momento no jogo. Caso retornar zero, referente ao
-		 * {@link Caractere#VAZIO} , não houve vencedor.
+		 * Avalia se houve um vencedor em dado momento no jogo. Caso retornar zero, referente ao {@link Caractere#VAZIO}
+		 * , não houve vencedor.
 		 * 
 		 * @param t
 		 *            a array de valores correspondentes ao tabuleiro.
 		 * @return o valor correspondente ao {@link Caractere} vencedor.
 		 */
 		// @formatter:off
-		public static double computaVencedor(double[] t) {
+		public static int computaVencedor(double[] t) {
 			int vazio = Caractere.VAZIO.getValor();
 			
 			/*
@@ -69,7 +72,7 @@ public class JdvUtils {
 				int[] n = m[i - 1];
 				for (int j = 0; j < n.length; j++)
 					if (t[n[j]] != vazio && t[n[j]] == t[n[j] + i] && t[n[j]] == t[n[j] + i * 2])
-						return t[n[j]];
+						return (int) t[n[j]];
 			}
 			
 			return vazio;
@@ -99,7 +102,44 @@ public class JdvUtils {
 		 * @return <code>true</code> caso esteja completo, <code>false</code> caso contrário.
 		 */
 		public static boolean isCompleto(double[] t) {
-			return t.length == computaEspacosVazios(t);
+			return computaEspacosVazios(t) == 0;
+		}
+		
+		public static void comparaJogadores(JogadorAutomato um, JogadorAutomato dois,
+				int numeroPartidas) {
+			Log.ativo = false;
+			int empates = 0;
+			
+			for (int i = 0; i < numeroPartidas; i++) {
+				Partida partida = new Partida();
+				double[] t = new double[9];
+				int vencedor = 0;
+				
+				while ((vencedor = computaVencedor(t)) == 0 && computaEspacosVazios(t) != 0) {
+					Jogador vez;
+					
+					if (partida.isPartidaPar())
+						vez = dois;
+					else
+						vez = um;
+					
+					partida.novaJogada(vez.getCaractere(), t, vez.novaJogada(t));
+				}
+				
+				if (vencedor == 0) {
+					empates++;
+					partida.encerrar(null);
+				} else if (vencedor == um.getCaractere().getValor()) {
+					um.pontuar();
+					partida.encerrar(um);
+				} else {
+					dois.pontuar();
+					partida.encerrar(dois);
+				}
+			}
+			
+			Log.ativo = true;
+			Log.placar(numeroPartidas, um, dois, empates);
 		}
 		
 	}
@@ -250,7 +290,7 @@ public class JdvUtils {
 			} catch (Exception e) {
 				
 				System.out.println("Arquivo de entrada e saída \"" + caminho
-					+ "\" não encontrado! Criado conjunto vazio.");
+						+ "\" não encontrado! Criado conjunto vazio.");
 				return new BasicMLDataSet();
 			}
 		}
@@ -277,7 +317,7 @@ public class JdvUtils {
 				return ( BasicNetwork ) EncogDirectoryPersistence.loadObject(stream);
 			} catch (Exception e) {
 				System.out.println("Arquivo de rede \"" + caminho
-					+ "\" não encontrado! Criada uma nova rede.");
+						+ "\" não encontrado! Criada uma nova rede.");
 				return null;
 			}
 		}
@@ -285,6 +325,9 @@ public class JdvUtils {
 	}
 	
 	public static class Log {
+		
+		// Indica se os logs devem aparecer no console.
+		public static boolean ativo = true;
 		
 		public static String converteValorCaractere(int valor) {
 			switch (valor) {
@@ -334,7 +377,16 @@ public class JdvUtils {
 			return sb;
 		}
 		
-		public static void resultado(MLDataPair par, MLData saida, JdvRedeAbstrata rede) {
+		private static String logConsole(StringBuilder sb) {
+			String log = sb.toString();
+			System.out.println(log);
+			return log;
+		}
+		
+		public static String resultado(MLDataPair par, MLData saida, JdvRedeAbstrata rede) {
+			if (!ativo)
+				return "";
+			
 			double[] entrada = rede.converteEntradaEmTabuleiro(par.getInput());
 			int ideal = rede.traduzirSaida(par.getIdeal());
 			entrada[ideal] = 2;
@@ -355,10 +407,13 @@ public class JdvUtils {
 			
 			imprimeLinhaTabuleiro(sb, entrada[6], entrada[7], entrada[8]).append("\n\n");
 			
-			System.out.print(sb.toString());
+			return logConsole(sb);
 		}
 		
-		public static void resultado(int tamanho, int sucesso, int falha) {
+		public static String resultado(int tamanho, int sucesso, int falha) {
+			if (!ativo)
+				return "";
+			
 			StringBuilder sb = new StringBuilder();
 			sb.append("\n--\n");
 			sb.append("Teste finalizado.").append("\n");
@@ -370,17 +425,17 @@ public class JdvUtils {
 			sb.append("Falhas:  ").append(Log.preencheValor(falha, 3)).append(" -> ");
 			sb.append(RNA.valorAproximado(( double ) falha * 100 / tamanho)).append(" %\n");
 			
-			System.out.println(sb.toString());
+			return logConsole(sb);
 		}
 		
-		public static void partida(Caractere caractere, double[] entradas, int posicaoEscolhida) {
+		public static String partida(Caractere caractere, double[] entradas, int posicaoEscolhida) {
+			if (!ativo)
+				return "";
+			
 			double[] tabuleiro = entradas.clone();
-			tabuleiro[posicaoEscolhida] = caractere.getValor();
 			
 			StringBuilder sb = new StringBuilder();
-			
 			sb.append("Jogador ").append(caractere.getChave());
-			
 			sb.append(" [Configuração=[");
 			
 			int len = tabuleiro.length;
@@ -390,51 +445,79 @@ public class JdvUtils {
 					sb.append(", ");
 			}
 			
-			sb.append("], Jogou=").append(posicaoEscolhida).append("]");
+			sb.append("], Posição=").append(posicaoEscolhida).append("]");
 			
-			System.out.println(sb.toString());
+			return logConsole(sb);
 		}
 		
-		public static String placar(final int partidas, final Jogador um, final Jogador dois) {
+		public static String placar(final int partidas, final Jogador um, final Jogador dois,
+				int empates) {
+			if (!ativo)
+				return "";
+			
 			StringBuilder sb = new StringBuilder();
 			int pontuacaoUm = um.getPontuacao();
 			int pontuacaoDois = dois.getPontuacao();
+			
+			String nomeUm = um.getClass().getSimpleName();
+			String nomeDois = dois.getClass().getSimpleName();
+			int padding = nomeUm.length() > nomeDois.length() ? nomeUm.length() : nomeDois.length();
 			
 			sb.append("\n--\n");
 			sb.append("Resultado das partidas.").append("\n");
 			
 			sb.append("Total de partidas: ").append(partidas).append("\n");
 			
-			sb.append("Jogador ").append(um.getCaractere().getChave()).append(" | Pontuação:\t")
-					.append(pontuacaoUm);
-			sb.append(" -> ").append(RNA.valorAproximado(( double ) pontuacaoUm * 100 / partidas))
+			sb.append(preencheValor(nomeUm, padding)).append(" ").append(um.getCaractere().getChave())
+					.append(" Pontuação:\t").append(pontuacaoUm).append(" -> ")
+					.append(RNA.valorAproximado(( double ) pontuacaoUm * 100 / partidas))
 					.append(" %\n");
 			
-			sb.append("Jogador ").append(dois.getCaractere().getChave()).append(" | Pontuação:\t")
-					.append(pontuacaoDois);
-			sb.append(" -> ")
+			sb.append(preencheValor(nomeDois, padding)).append(" ").append(dois.getCaractere().getChave())
+					.append(" Pontuação:\t").append(pontuacaoDois).append(" -> ")
 					.append(RNA.valorAproximado(( double ) pontuacaoDois * 100 / partidas))
 					.append(" %\n");
 			
-			String placar = sb.toString();
-			System.out.println(placar);
-			return placar;
+			sb.append("\t").append(preencheValor("Empates:\t", padding + 4)).append(empates).append(" -> ")
+					.append(RNA.valorAproximado(( double ) empates * 100 / partidas))
+					.append(" %\n");
+			
+			return logConsole(sb);
+		}
+		
+		public static String fimPartida(Jogador vencedor) {
+			if (!ativo)
+				return "";
+			
+			StringBuilder sb = new StringBuilder();
+			
+			sb.append("Fim de partida. ");
+			
+			if (vencedor != null)
+				sb.append("Vencedor: ").append(vencedor.getCaractere().getChave()).append("!");
+			else
+				sb.append("Empate!");
+			
+			return logConsole(sb);
 		}
 	}
 	
 	public static void main(String[] args) {
-		String c = "A";
-		
-		String caminho = Arquivo.DIR_RECURSOS + c + "1";
-		MLDataSet set = EncogUtility.loadCSV2Memory(caminho, 9, 9, false, Arquivo.FORMATO, false);
-		
-		new TelaExibicao(set);
+//		String c = "A";
+//		
+//		String caminho = Arquivo.DIR_RECURSOS + c + "1";
+//		MLDataSet set = EncogUtility.loadCSV2Memory(caminho, 9, 9, false, Arquivo.FORMATO, false);
+//		
+//		new TelaExibicao(set);
 //		
 //		caminho = Arquivo.DIR_RECURSOS + c + "2";
 //		set = EncogUtility.loadCSV2Memory(caminho, 9, 9, false, Arquivo.FORMATO, false);
 //		
 //		new TelaExibicao(set);
 //		RNA.converteArquivosDeDadosEntreRedes(new MultilayerPerceptron2(), new MultilayerPerceptron3());
+		JogadorAutomato um = new JogadorRNA(Caractere.O, false);
+		JogadorAutomato dois = new JogadorMiniMax(Caractere.X);
+		Tabuleiro.comparaJogadores(um, dois, 100);
 	}
 	
 	public static void delete_me() {

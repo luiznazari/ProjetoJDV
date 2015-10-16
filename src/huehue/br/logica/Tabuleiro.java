@@ -56,8 +56,7 @@ public class Tabuleiro {
 		tela.setPosicao(posicaoEscolhida, caractere);
 		
 		// Jogada é incrementada e o jogador da vez é alterado.
-		partida.novaJogada(cfgTabuleiroAntiga, posicaoEscolhida);
-		JdvUtils.Log.partida(caractere, cfgTabuleiroAntiga, posicaoEscolhida);
+		partida.novaJogada(caractere, cfgTabuleiroAntiga, posicaoEscolhida);
 		
 		Jogador vencedor = computaJogada();
 		if (vencedor != null || partida.getNumeroJogadas() >= 9) {
@@ -112,7 +111,7 @@ public class Tabuleiro {
 	
 	private Jogador computaJogada() {
 		if (partida.getNumeroJogadas() > 4) {
-			double valorVencedor = JdvUtils.Tabuleiro.computaVencedor(tela.getPosicoesTabuleiro());
+			int valorVencedor = JdvUtils.Tabuleiro.computaVencedor(tela.getPosicoesTabuleiro());
 			
 			if (valorVencedor == jogadorUm.getCaractere().getValor())
 				return jogadorUm;
@@ -145,8 +144,7 @@ public class Tabuleiro {
 	}
 	
 	public String getPlacar() {
-		return JdvUtils.Log.placar(getPartida().getNumeroPartidas(), getJogadorUm(),
-				getJogadorDois());
+		return JdvUtils.Log.placar(getPartida().getNumeroPartidas() - 1, getJogadorUm(), getJogadorDois(), 0);
 	}
 	
 }

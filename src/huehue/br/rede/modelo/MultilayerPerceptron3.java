@@ -58,8 +58,8 @@ public class MultilayerPerceptron3 extends MultilayerPerceptron2 {
 //		JdvUtils.Arquivo.salvarRede(rede);
 //		JdvUtils.Arquivo.salvarDados(rede, setDados);
 		
-		rede.testar(setDados.get(( int ) (Math.random() * setDados.size())));
-//		rede.testar(setDados);
+//		rede.testar(setDados.get(( int ) (Math.random() * setDados.size())));
+		rede.testar(setDados);
 		
 		Encog.getInstance().shutdown();
 	}

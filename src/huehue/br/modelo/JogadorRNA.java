@@ -5,6 +5,8 @@ import huehue.br.rede.dados.ConjuntosDados;
 import huehue.br.rede.modelo.JdvRedeAbstrata;
 import huehue.br.rede.modelo.MultilayerPerceptron3;
 import huehue.br.util.JdvUtils;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Classe representando um jogador com Inteligência Artificial utilizando uma
@@ -14,13 +16,22 @@ import huehue.br.util.JdvUtils;
  */
 public class JogadorRNA extends JogadorAutomato {
 	
+	@Getter
+	@Setter
+	private boolean deveTreinar = false;
+	
 	private JdvRedeAbstrata rede;
 	
 	// Conjuntos de dados conhecidos pela rede e utilizados no treinamento.
 	private ConjuntosDados dados;
 	
 	public JogadorRNA(Caractere caractere) {
+		this(caractere, false);
+	}
+	
+	public JogadorRNA(Caractere caractere, boolean deveTreinar) {
 		super(caractere);
+		this.deveTreinar = deveTreinar;
 		
 		JdvUtils.Arquivo.versionamento(10);
 		
@@ -49,7 +60,8 @@ public class JogadorRNA extends JogadorAutomato {
 						rede.traduzirEntrada(validaEntradasParaRede(p.getConfiguracao())),
 						rede.convertePosicaoTabuleiroEmSaida(p.getPosicaoEscolhida())));
 		
-		aprenderJogadas();
+		if (deveTreinar)
+			aprenderJogadas();
 	}
 	
 	private void aprenderJogadas() {
