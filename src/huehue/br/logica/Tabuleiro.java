@@ -5,7 +5,7 @@ import huehue.br.modelo.Caractere;
 import huehue.br.modelo.Jogador;
 import huehue.br.modelo.JogadorAutomato;
 import huehue.br.modelo.JogadorHumano;
-import huehue.br.modelo.JogadorMinMax;
+import huehue.br.modelo.JogadorMiniMax;
 import huehue.br.tela.TelaTabuleiro;
 import huehue.br.util.JdvUtils;
 import lombok.Getter;
@@ -39,7 +39,7 @@ public class Tabuleiro {
 //		setJogadorUm(new JogadorRNA(Caractere.X));
 //		setJogadorUm(new JogadorHumano(Caractere.X));
 //		setJogadorUm(new JogadorAleatorio(Caractere.X));
-		setJogadorUm(new JogadorMinMax(Caractere.X));
+		setJogadorUm(new JogadorMiniMax(Caractere.X));
 		
 //		setJogadorDois(new JogadorRNA(Caractere.O));
 		setJogadorDois(new JogadorHumano(Caractere.O));

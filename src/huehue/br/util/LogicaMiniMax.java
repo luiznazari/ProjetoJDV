@@ -1,14 +1,10 @@
 package huehue.br.util;
 
-import huehue.br.modelo.JogadorMinMax;
-import huehue.br.modelo.JogadorMinMax.TabuleiroMinMax;
-
 /**
  * Classe utilitária contendo implementações do algoritmo MiniMax.<br>
- * TODO Criar uma interface para utilização da classe auxiliar {@link JogadorMinMax.TabuleiroMinMax}
- * .
  * 
  * @author Luiz Felipe Nazari
+ * @see ElementoMiniMax
  */
 public class LogicaMiniMax {
 	
@@ -18,14 +14,14 @@ public class LogicaMiniMax {
 	
 	/**
 	 * Implementação reduzida do algoritmo MiniMax.<br>
-	 * Produz a mesma saída que {@link LogicaMiniMax#MiniMax(TabuleiroMinMax)}.
+	 * Produz a mesma saída que {@link LogicaMiniMax#MiniMax(ElementoMiniMax)}.
 	 * 
 	 * @param tabuleiro
 	 *            o tabuleiro a ser analisado.
 	 * @return o valor de heurística do tabuleiro.
 	 */
-	public static int MiniMaxReduzido(TabuleiroMinMax tabuleiro) {
-		return -MiniMaxReduzido(8, MINIMAX_ALPHA, MINIMAX_BETA, tabuleiro);
+	public static int MiniMaxReduzido(ElementoMiniMax elemento) {
+		return -MiniMaxReduzido(elemento.getNivel(), MINIMAX_ALPHA, MINIMAX_BETA, elemento);
 	}
 	
 	/**
@@ -39,23 +35,23 @@ public class LogicaMiniMax {
 	 * "http://www.codeproject.com/Articles/43622/Solve-Tic-Tac-Toe-with-the-MiniMax-algorithm">Dong
 	 * Xiang</a>.
 	 * 
-	 * @param level
+	 * @param nivel
 	 *            o nível de profundidade da análise do MiniMax.
 	 * @param alpha
 	 * @param beta
-	 * @param tabuleiro
-	 *            o tabuleiro a ser analisado.
-	 * @return o valor de heurística do tabuleiro.
+	 * @param elemento
+	 *            o elemento a ser analisado.
+	 * @return o valor de heurística do elemento.
 	 */
-	private static int MiniMaxReduzido(int level, int alpha, int beta, TabuleiroMinMax tabuleiro) {
-		if (level == 0 || tabuleiro.isFimDeJogo())
-			return tabuleiro.x ? tabuleiro.pontos : -tabuleiro.pontos;
+	private static int MiniMaxReduzido(int nivel, int alpha, int beta, ElementoMiniMax elemento) {
+		if (nivel <= 0 || elemento.isFimRecursao())
+			return elemento.isMax() ? elemento.getValorHeuristica() : -elemento.getValorHeuristica();
 		
-		for (TabuleiroMinMax t : tabuleiro.filhos()) {
-			int score = -MiniMaxReduzido(level - 1, -beta, -alpha, t);
+		for (ElementoMiniMax el : elemento.getElementosFilhos()) {
+			int valorHeuristica = -MiniMaxReduzido(nivel - 1, -beta, -alpha, el);
 			
-			if (alpha < score) {
-				alpha = score;
+			if (alpha < valorHeuristica) {
+				alpha = valorHeuristica;
 				
 				if (alpha >= beta)
 					break;
@@ -67,14 +63,14 @@ public class LogicaMiniMax {
 	
 	/**
 	 * Implementação do algoritmo MiniMax.<br>
-	 * Produz a mesma saída que {@link LogicaMiniMax#MiniMaxReduzido(TabuleiroMinMax)}.
+	 * Produz a mesma saída que {@link LogicaMiniMax#MiniMaxReduzido(ElementoMiniMax)}.
 	 * 
-	 * @param tabuleiro
-	 *            o tabuleiro a ser analisado.
-	 * @return o valor de heurística do tabuleiro.
+	 * @param elemento
+	 *            o elemento a ser analisado.
+	 * @return o valor de heurística do elemento.
 	 */
-	public static int MiniMax(TabuleiroMinMax tabuleiro) {
-		return MiniMax(8, MINIMAX_ALPHA, MINIMAX_BETA, tabuleiro);
+	public static int MiniMax(ElementoMiniMax elemento) {
+		return MiniMax(elemento.getNivel(), MINIMAX_ALPHA, MINIMAX_BETA, elemento);
 	}
 	
 	/**
@@ -88,32 +84,32 @@ public class LogicaMiniMax {
 	 * "http://www.codeproject.com/Articles/43622/Solve-Tic-Tac-Toe-with-the-MiniMax-algorithm">Dong
 	 * Xiang</a>.
 	 * 
-	 * @param level
+	 * @param nivel
 	 *            o nível de profundidade da análise do MiniMax.
 	 * @param alpha
 	 * @param beta
-	 * @param tabuleiro
-	 *            o tabuleiro a ser analisado.
-	 * @return o valor de heurística do tabuleiro.
+	 * @param elemento
+	 *            o elemento a ser analisado.
+	 * @return o valor de heurística do elemento.
 	 */
-	private static int MiniMax(int level, int alpha, int beta, TabuleiroMinMax tabuleiro) {
+	private static int MiniMax(int nivel, int alpha, int beta, ElementoMiniMax elemento) {
 		
-		if (level == 0 || tabuleiro.isFimDeJogo())
-			return tabuleiro.pontos;
+		if (nivel <= 0 || elemento.isFimRecursao())
+			return elemento.getValorHeuristica();
 		
-		for (TabuleiroMinMax t : tabuleiro.filhos()) {
-			int score = MiniMax(level - 1, alpha, beta, t);
+		for (ElementoMiniMax el : elemento.getElementosFilhos()) {
+			int valorHeuristica = MiniMax(nivel - 1, alpha, beta, el);
 			
-			if (!tabuleiro.x) {
-				if (beta > score) {
-					beta = score;
+			if (elemento.isMax()) {
+				if (alpha < valorHeuristica) {
+					alpha = valorHeuristica;
 					
 					if (alpha >= beta)
 						break;
 				}
 			} else {
-				if (alpha < score) {
-					alpha = score;
+				if (beta > valorHeuristica) {
+					beta = valorHeuristica;
 					
 					if (alpha >= beta)
 						break;
@@ -121,7 +117,7 @@ public class LogicaMiniMax {
 			}
 		}
 		
-		return tabuleiro.x ? alpha : beta;
+		return elemento.isMax() ? alpha : beta;
 	}
 	
 }

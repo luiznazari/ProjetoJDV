@@ -41,8 +41,8 @@ public class JdvUtils {
 	public static class Tabuleiro {
 		
 		/**
-		 * Avalia se houve um vencedor em dado momento no jogo. Caso retornar zero, referente ao {@link Caractere#VAZIO}
-		 * , não houve vencedor.
+		 * Avalia se houve um vencedor em dado momento no jogo. Caso retornar zero, referente ao
+		 * {@link Caractere#VAZIO} , não houve vencedor.
 		 * 
 		 * @param t
 		 *            a array de valores correspondentes ao tabuleiro.
@@ -52,7 +52,7 @@ public class JdvUtils {
 		public static double computaVencedor(double[] t) {
 			int vazio = Caractere.VAZIO.getValor();
 			
-			/**
+			/*
 			 * Índices do tabuleiro para comparar posições vencedoras do jogo da velha.
 			 * Esta matriz possui 4 arrays, para cada array corresponde, há array.length conbinações vencedoras.
 			 * Cada array vencedora do tabuleiro é dada pelos índices: array[x], array[x] + y e array[x] + y * 2],
@@ -76,12 +76,30 @@ public class JdvUtils {
 		}
 		// @formatter:on
 		
-		public static boolean isCompleto(double[] t) {
+		/**
+		 * @param t
+		 *            o tabuleiro.
+		 * @return quantidade de posições vazias do tabuleiro.
+		 */
+		public static int computaEspacosVazios(double[] t) {
+			int numeroVazios = 0;
+			
 			for (int i = 0; i < t.length; i++)
 				if (t[i] == Caractere.VAZIO.getValor())
-					return false;
+					numeroVazios++;
 			
-			return true;
+			return numeroVazios;
+		}
+		
+		/**
+		 * Avalia se o tabuleiro está completo, isto é, com todas as posições ocupadas.
+		 * 
+		 * @param t
+		 *            o tabuleiro
+		 * @return <code>true</code> caso esteja completo, <code>false</code> caso contrário.
+		 */
+		public static boolean isCompleto(double[] t) {
+			return t.length == computaEspacosVazios(t);
 		}
 		
 	}
@@ -232,7 +250,7 @@ public class JdvUtils {
 			} catch (Exception e) {
 				
 				System.out.println("Arquivo de entrada e saída \"" + caminho
-						+ "\" não encontrado! Criado conjunto vazio.");
+					+ "\" não encontrado! Criado conjunto vazio.");
 				return new BasicMLDataSet();
 			}
 		}
@@ -259,7 +277,7 @@ public class JdvUtils {
 				return ( BasicNetwork ) EncogDirectoryPersistence.loadObject(stream);
 			} catch (Exception e) {
 				System.out.println("Arquivo de rede \"" + caminho
-						+ "\" não encontrado! Criada uma nova rede.");
+					+ "\" não encontrado! Criada uma nova rede.");
 				return null;
 			}
 		}
