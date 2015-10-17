@@ -17,16 +17,24 @@ public abstract class JogadorAutomato extends Jogador {
 	@Override
 	public abstract int novaJogada(double[] entradas);
 	
+	/**
+	 * Notifica o resultado da partida ao jogador. <br>
+	 * A implementação do método depende da necessidade da I.A. utilizada em cada jogador.<br>
+	 * Por padrão, nada é realizado.
+	 * 
+	 * @param partida
+	 *        a partida contendo o histórico de jogadas realizadas e o jogador vencedor.
+	 */
 	public void notificarResultado(Partida partida) {
 		// Nada a fazer.
 	}
 	
 	/**
-	 * Escolhe uma posição na configuração do tabuleiro atual, apenas posições não ocupadas serão
-	 * escolhidas.
+	 * Escolhe uma posição aleatória na configuração do tabuleiro atual, apenas posições não
+	 * ocupadas serão escolhidas.
 	 * 
 	 * @param cfgTabuleiro
-	 *            configuração do tabuleiro atual.
+	 *        configuração do tabuleiro atual.
 	 * @return o índice da posição escolhida.
 	 */
 	protected int escolhePosicao(double[] cfgTabuleiro) {

@@ -16,31 +16,34 @@ import java.util.stream.Collectors;
  */
 public class JogadorMiniMax extends JogadorAutomato {
 	
+	private boolean jogadorX;
+	
 	public JogadorMiniMax(Caractere caractere) {
 		super(caractere);
+		jogadorX = getCaractere() == Caractere.X;
 	}
 	
 	@Override
 	public int novaJogada(double[] entradas) {
-		TabuleiroMiniMax tabuleiro = new TabuleiroMiniMax(entradas, getCaractere() == Caractere.X);
-		List<Integer> movimentos = new ArrayList<>();
-		int v = -2;
+		TabuleiroMiniMax tabuleiro = new TabuleiroMiniMax(entradas, jogadorX);
+		
+		int[] movimentos = new int[tabuleiro.nivel];
+		int movimentosIndex = 0;
+		int maiorValor = -2;
 		
 		for (TabuleiroMiniMax t : tabuleiro.getFilhos()) {
 			int val = LogicaMiniMax.MiniMaxReduzido(t);
 			
-			if (val > v) {
-				v = val;
-				movimentos.clear();
-				movimentos.add(t.posicao);
-			} else if (val == v) {
-				movimentos.add(t.posicao);
+			if (val > maiorValor) {
+				maiorValor = val;
+				movimentosIndex = 0;
+				movimentos[movimentosIndex++] = val;
+			} else if (val == maiorValor) {
+				movimentos[movimentosIndex++] = val;
 			}
-			
 		}
 		
-		int escolhido = ( int ) (Math.random() * movimentos.size());
-		return movimentos.get(escolhido);
+		return movimentos[( int ) (Math.random() * --movimentosIndex)];
 	}
 	
 	/**
@@ -48,7 +51,7 @@ public class JogadorMiniMax extends JogadorAutomato {
 	 * 
 	 * @author Luiz Felipe Nazari
 	 */
-	private static class TabuleiroMiniMax implements ElementoMiniMax {
+	private class TabuleiroMiniMax implements ElementoMiniMax {
 		
 		private int nivel;
 		

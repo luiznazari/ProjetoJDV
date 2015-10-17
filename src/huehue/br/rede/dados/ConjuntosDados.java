@@ -1,17 +1,20 @@
 package huehue.br.rede.dados;
 
+import huehue.br.encog.modelo.JdvMLDataPair;
 import huehue.br.modelo.JogadorRNA;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import lombok.Getter;
+import lombok.Setter;
 
 import org.encog.ml.data.MLData;
 import org.encog.ml.data.MLDataPair;
 import org.encog.ml.data.MLDataSet;
-import org.encog.ml.data.basic.BasicMLData;
 import org.encog.ml.data.basic.BasicMLDataPair;
 import org.encog.ml.data.basic.BasicMLDataSet;
 
@@ -23,54 +26,53 @@ import org.encog.ml.data.basic.BasicMLDataSet;
  */
 public class ConjuntosDados {
 	
-	@Getter
-	private List<MLDataPair> conjuntosES = new ArrayList<MLDataPair>();
+	@Setter
+	private boolean substituirRepetidos = false;
 	
-	private List<MLDataPair> conjuntosESTemporarios = new ArrayList<MLDataPair>();
+	@Getter
+	private List<JdvMLDataPair> conjuntosES = new ArrayList<JdvMLDataPair>();
+	
+	private List<JdvMLDataPair> conjuntosESTemporarios = new ArrayList<JdvMLDataPair>();
 	
 	public ConjuntosDados() {}
 	
-	public ConjuntosDados(List<MLDataPair> conjuntos) {
+	public ConjuntosDados(List<JdvMLDataPair> conjuntos) {
 		this.conjuntosES = conjuntos;
 	}
 	
 	public ConjuntosDados(BasicMLDataSet set) {
-		this(set.getData());
+		this(set.getData().stream().map(par -> new JdvMLDataPair(par)).collect(Collectors.toList()));
 	}
 	
-	public void adicionarDadoESTemporario(double[] entradas, double saida) {
-		conjuntosESTemporarios.add(new BasicMLDataPair(new BasicMLData(entradas), new BasicMLData(
-				new double[] {
-					saida
-				})));
+	public void adicionarDadoESTemporario(double[] entradas, double[] saidas) {
+		JdvMLDataPair par = new JdvMLDataPair(entradas, saidas);
+		
+		if (substituirRepetidos)
+			substituiDadoRepetido(conjuntosES, par);
+		else
+			conjuntosES.add(par);
 	}
 	
 	public void adicionarDadoES(MLData entrada, MLData saida) {
-		adicionarDadoNaoRepetido(new BasicMLDataPair(entrada, saida));
+		JdvMLDataPair par = new JdvMLDataPair(entrada, saida);
+		
+		if (substituirRepetidos)
+			substituiDadoRepetido(conjuntosESTemporarios, par);
+		else
+			conjuntosESTemporarios.add(par);
 	}
 	
-	private void adicionarDadoNaoRepetido(MLDataPair dado) {
-		int len = conjuntosES.size();
+	private void substituiDadoRepetido(List<JdvMLDataPair> lista, JdvMLDataPair dado) {
+		Iterator<JdvMLDataPair> iterator = lista.iterator();
 		
-		for (int i = 0; i < len; i++) {
-			if (isMLDataPairEquals(conjuntosES.get(i), dado)) {
-//				conjuntosES.set(i, dado);
-				return;
-			}
+		int i = 0;
+		while (iterator.hasNext()) {
+			if (iterator.next().isEntradasIguais(dado))
+				lista.set(i, dado);
+			i++;
 		}
 		
-		conjuntosES.add(dado);
-	}
-	
-	private boolean isMLDataPairEquals(MLDataPair p1, MLDataPair p2) {
-		double[] in1 = p1.getInputArray();
-		double[] in2 = p2.getInputArray();
-		
-		for (int i = 0; i < in1.length; i++)
-			if (in1[i] != in2[i])
-				return false;
-		
-		return true;
+		lista.add(dado);
 	}
 	
 	public void descartarTemporarios() {
@@ -78,15 +80,16 @@ public class ConjuntosDados {
 	}
 	
 	public void armazenarTemporarios() {
-		conjuntosESTemporarios.forEach(d -> adicionarDadoNaoRepetido(d));
-		descartarTemporarios();
+		conjuntosES.addAll(conjuntosESTemporarios);
 	}
 	
 	public MLDataSet getMLDataSet() {
-		return new BasicMLDataSet(conjuntosES);
+		return new BasicMLDataSet(conjuntosES.stream()
+				.map(par -> new BasicMLDataPair(par.getInput(), par.getIdeal()))
+				.collect(Collectors.toList()));
 	}
 	
-	public List<MLDataPair> embaralhar() {
+	public List<MLDataPair> getDadosEmbaralhados() {
 		List<MLDataPair> conjuntosEmbaralhados = new ArrayList<>(conjuntosES);
 		Collections.shuffle(conjuntosEmbaralhados);
 		return conjuntosEmbaralhados;

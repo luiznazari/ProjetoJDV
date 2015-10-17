@@ -7,7 +7,6 @@ import huehue.br.util.JdvUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
@@ -77,12 +76,16 @@ public class Partida {
 	}
 	
 	@Getter
-	@AllArgsConstructor
 	public class Jogada {
 		
 		double[] configuracao;
 		
 		int posicaoEscolhida;
+		
+		public Jogada(double[] configuracao, int posicaoEscolhida) {
+			this.configuracao = configuracao.clone();
+			this.posicaoEscolhida = posicaoEscolhida;
+		}
 		
 	}
 	

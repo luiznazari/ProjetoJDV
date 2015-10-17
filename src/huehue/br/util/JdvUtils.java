@@ -3,8 +3,8 @@ package huehue.br.util;
 import huehue.br.logica.Partida;
 import huehue.br.modelo.Caractere;
 import huehue.br.modelo.Jogador;
+import huehue.br.modelo.JogadorAleatorio;
 import huehue.br.modelo.JogadorAutomato;
-import huehue.br.modelo.JogadorMiniMax;
 import huehue.br.modelo.JogadorRNA;
 import huehue.br.rede.modelo.JdvRede;
 import huehue.br.rede.modelo.JdvRedeAbstrata;
@@ -27,6 +27,7 @@ import org.encog.ml.data.MLDataSet;
 import org.encog.ml.data.basic.BasicMLDataSet;
 import org.encog.neural.networks.BasicNetwork;
 import org.encog.persist.EncogDirectoryPersistence;
+import org.encog.persist.PersistError;
 import org.encog.util.csv.CSVFormat;
 import org.encog.util.simple.EncogUtility;
 
@@ -44,11 +45,11 @@ public class JdvUtils {
 	public static class Tabuleiro {
 		
 		/**
-		 * Avalia se houve um vencedor em dado momento no jogo. Caso retornar zero, referente ao {@link Caractere#VAZIO}
-		 * , não houve vencedor.
+		 * Avalia se há um vencedor em dado momento no jogo. Caso retornar zero, referente ao
+		 * {@link Caractere#VAZIO}, não há vencedor.
 		 * 
 		 * @param t
-		 *            a array de valores correspondentes ao tabuleiro.
+		 *        a array de valores correspondentes ao tabuleiro.
 		 * @return o valor correspondente ao {@link Caractere} vencedor.
 		 */
 		// @formatter:off
@@ -80,8 +81,27 @@ public class JdvUtils {
 		// @formatter:on
 		
 		/**
+		 * Avalia se houve um vencedor em dado momento no jogo.
+		 * 
 		 * @param t
-		 *            o tabuleiro.
+		 *        a array de valores correspondentes ao tabuleiro.
+		 * @param jogadores
+		 *        os jogadores a serem analisados.
+		 * @return o jogador vencedor ou null caso não haja um vencedor.
+		 */
+		public static Jogador computaVencedor(double[] t, Jogador... jogadores) {
+			int vencedor = computaVencedor(t);
+			
+			for (Jogador j : jogadores)
+				if (vencedor == j.getCaractere().getValor())
+					return j;
+			
+			return null;
+		}
+		
+		/**
+		 * @param t
+		 *        o tabuleiro.
 		 * @return quantidade de posições vazias do tabuleiro.
 		 */
 		public static int computaEspacosVazios(double[] t) {
@@ -98,7 +118,7 @@ public class JdvUtils {
 		 * Avalia se o tabuleiro está completo, isto é, com todas as posições ocupadas.
 		 * 
 		 * @param t
-		 *            o tabuleiro
+		 *        o tabuleiro
 		 * @return <code>true</code> caso esteja completo, <code>false</code> caso contrário.
 		 */
 		public static boolean isCompleto(double[] t) {
@@ -108,14 +128,13 @@ public class JdvUtils {
 		public static void comparaJogadores(JogadorAutomato um, JogadorAutomato dois,
 				int numeroPartidas) {
 			Log.ativo = false;
-			int empates = 0;
 			
 			for (int i = 0; i < numeroPartidas; i++) {
 				Partida partida = new Partida();
 				double[] t = new double[9];
-				int vencedor = 0;
+				Jogador vencedor;
 				
-				while ((vencedor = computaVencedor(t)) == 0 && computaEspacosVazios(t) != 0) {
+				while ((vencedor = computaVencedor(t, um, dois)) == null && !isCompleto(t)) {
 					Jogador vez;
 					
 					if (partida.isPartidaPar())
@@ -126,20 +145,16 @@ public class JdvUtils {
 					partida.novaJogada(vez.getCaractere(), t, vez.novaJogada(t));
 				}
 				
-				if (vencedor == 0) {
-					empates++;
-					partida.encerrar(null);
-				} else if (vencedor == um.getCaractere().getValor()) {
-					um.pontuar();
-					partida.encerrar(um);
-				} else {
-					dois.pontuar();
-					partida.encerrar(dois);
-				}
+				if (vencedor != null)
+					vencedor.pontuar();
+				partida.encerrar(vencedor);
+				
+				um.notificarResultado(partida);
+				dois.notificarResultado(partida);
 			}
 			
 			Log.ativo = true;
-			Log.placar(numeroPartidas, um, dois, empates);
+			Log.placar(numeroPartidas, um, dois);
 		}
 		
 	}
@@ -155,7 +170,7 @@ public class JdvUtils {
 		 * @param redeBase
 		 * @param redeObjetivo
 		 * @param dirRecursos
-		 *            diretório onde do arquivo base.
+		 *        diretório onde do arquivo base.
 		 */
 		public static void converteArquivosDeDadosEntreRedes(JdvRedeAbstrata redeBase,
 				JdvRedeAbstrata redeObjetivo, String dirRecursos) {
@@ -194,7 +209,7 @@ public class JdvUtils {
 		 * Arredonda o valor especificado. O arredondamento sempre é realizado para cima.
 		 * 
 		 * @param d
-		 *            o valor.
+		 *        o valor.
 		 * @return valor arredondado.
 		 */
 		public static double valorAproximado(double d) {
@@ -210,7 +225,7 @@ public class JdvUtils {
 		 * valor, mantendo os índices dos valores no vetor de saída original.
 		 * 
 		 * @param saídas
-		 *            da rede.
+		 *        da rede.
 		 * @return lista das saídas ordenadas e mapeadas.
 		 */
 		public static List<MapaSaida> toSaidasMapeadas(double[] saidas) {
@@ -258,13 +273,13 @@ public class JdvUtils {
 		
 		public static String getNomeArquivoRede(String nomeArquivo) {
 			if (versionamento)
-				return DIR_RECURSOS + versao + "_" + nomeArquivo + ".eg";
+				return DIR_RECURSOS + nomeArquivo + "/" + versao + ".eg";
 			return DIR_RECURSOS + nomeArquivo + ".eg";
 		}
 		
 		public static String getNomeArquivoDados(String nomeArquivo) {
 			if (versionamento)
-				return DIR_RECURSOS + versao + "_" + nomeArquivo + "_ES.eg";
+				return DIR_RECURSOS + nomeArquivo + "/" + versao + "_ES.eg";
 			return DIR_RECURSOS + nomeArquivo + "_ES.eg";
 		}
 		
@@ -273,7 +288,19 @@ public class JdvUtils {
 		}
 		
 		public static void salvarDados(String nomeArquivo, MLDataSet set) {
-			EncogUtility.saveCSV(new File(getNomeArquivoDados(nomeArquivo)), FORMATO, set);
+			File arquivoDados = null;
+			
+			try {
+				arquivoDados = new File(getNomeArquivoDados(nomeArquivo));
+				EncogUtility.saveCSV(arquivoDados, FORMATO, set);
+				
+			} catch (PersistError e) {
+				if (arquivoDados.getParentFile().mkdir())
+					salvarDados(nomeArquivo, set);
+				else
+					System.err.println("Falha ao criar diretório do arquivo! Tente criá-lo manualmente: "
+						+ arquivoDados.getParent());
+			}
 		}
 		
 		public static BasicMLDataSet carregarDados(JdvRede rede) {
@@ -290,14 +317,25 @@ public class JdvUtils {
 			} catch (Exception e) {
 				
 				System.out.println("Arquivo de entrada e saída \"" + caminho
-						+ "\" não encontrado! Criado conjunto vazio.");
+					+ "\" não encontrado! Criado conjunto vazio.");
 				return new BasicMLDataSet();
 			}
 		}
 		
 		public static void salvarRede(JdvRede rede) {
-			EncogDirectoryPersistence.saveObject(new File(getNomeArquivoRede(rede.getNome())),
-					rede.getRede());
+			File arquivoRede = null;
+			
+			try {
+				arquivoRede = new File(getNomeArquivoRede(rede.getNome()));
+				EncogDirectoryPersistence.saveObject(arquivoRede, rede.getRede());
+				
+			} catch (PersistError e) {
+				if (arquivoRede.getParentFile().mkdir())
+					salvarRede(rede);
+				else
+					System.err.println("Falha ao criar diretório do arquivo! Tente criá-lo manualmente: "
+						+ arquivoRede.getParent());
+			}
 		}
 		
 		public static BasicNetwork carregarRede(JdvRede rede) {
@@ -317,7 +355,7 @@ public class JdvUtils {
 				return ( BasicNetwork ) EncogDirectoryPersistence.loadObject(stream);
 			} catch (Exception e) {
 				System.out.println("Arquivo de rede \"" + caminho
-						+ "\" não encontrado! Criada uma nova rede.");
+					+ "\" não encontrado! Criada uma nova rede.");
 				return null;
 			}
 		}
@@ -450,10 +488,11 @@ public class JdvUtils {
 			return logConsole(sb);
 		}
 		
-		public static String placar(final int partidas, final Jogador um, final Jogador dois,
-				int empates) {
+		public static String placar(final int partidas, final Jogador um, final Jogador dois) {
 			if (!ativo)
 				return "";
+			
+			int empates = partidas - um.getPontuacao() - dois.getPontuacao();
 			
 			StringBuilder sb = new StringBuilder();
 			int pontuacaoUm = um.getPontuacao();
@@ -503,20 +542,24 @@ public class JdvUtils {
 	}
 	
 	public static void main(String[] args) {
-//		String c = "A";
-//		
-//		String caminho = Arquivo.DIR_RECURSOS + c + "1";
-//		MLDataSet set = EncogUtility.loadCSV2Memory(caminho, 9, 9, false, Arquivo.FORMATO, false);
-//		
-//		new TelaExibicao(set);
-//		
-//		caminho = Arquivo.DIR_RECURSOS + c + "2";
-//		set = EncogUtility.loadCSV2Memory(caminho, 9, 9, false, Arquivo.FORMATO, false);
-//		
-//		new TelaExibicao(set);
-//		RNA.converteArquivosDeDadosEntreRedes(new MultilayerPerceptron2(), new MultilayerPerceptron3());
+		// String c = "A";
+		//
+		// String caminho = Arquivo.DIR_RECURSOS + c + "1";
+		// MLDataSet set = EncogUtility.loadCSV2Memory(caminho, 9, 9, false, Arquivo.FORMATO,
+		// false);
+		//
+		// new TelaExibicao(set);
+		//
+		// caminho = Arquivo.DIR_RECURSOS + c + "2";
+		// set = EncogUtility.loadCSV2Memory(caminho, 9, 9, false, Arquivo.FORMATO, false);
+		//
+		// new TelaExibicao(set);
+		// RNA.converteArquivosDeDadosEntreRedes(new MultilayerPerceptron2(), new
+		// MultilayerPerceptron3());
+		JdvUtils.Arquivo.versionamento(202);
+		
 		JogadorAutomato um = new JogadorRNA(Caractere.O, false);
-		JogadorAutomato dois = new JogadorMiniMax(Caractere.X);
+		JogadorAutomato dois = new JogadorAleatorio(Caractere.X);
 		Tabuleiro.comparaJogadores(um, dois, 100);
 	}
 	

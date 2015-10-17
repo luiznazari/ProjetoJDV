@@ -143,14 +143,14 @@ public abstract class JdvRedeAbstrata implements JdvRede {
 	 *            de entradas da rede.
 	 * @return conjunto de saídas da rede.
 	 */
-	private MLData processar(MLData entrada) {
-		entradasTmp = entrada.getData();
+	private final MLData processar(MLData entrada) {
+		entradasTmp = converteEntradaEmTabuleiro(entrada);
 		return rede.compute(entrada);
 	}
 	
 	public final void treinar(final ConjuntosDados dados) {
 		// TODO verificar forma de melhorar a chamada do método 'embaralhar'.
-		MLDataSet setDados = new BasicMLDataSet(dados.embaralhar());
+		MLDataSet setDados = new BasicMLDataSet(dados.getDadosEmbaralhados());
 		
 		MLTrain train = new Backpropagation(getRede(), setDados, constanteDeAprendizagem, momentum);
 		

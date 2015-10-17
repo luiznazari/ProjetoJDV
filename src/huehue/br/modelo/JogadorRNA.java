@@ -33,8 +33,6 @@ public class JogadorRNA extends JogadorAutomato {
 		super(caractere);
 		this.deveTreinar = deveTreinar;
 		
-		JdvUtils.Arquivo.versionamento(10);
-		
 		rede = new MultilayerPerceptron3().inicializar();
 		dados = new ConjuntosDados(JdvUtils.Arquivo.carregarDados(rede));
 	}
@@ -46,7 +44,8 @@ public class JogadorRNA extends JogadorAutomato {
 		
 		// Escolheu uma posição já ocupada.
 		if (entradas[posicaoEscolhida] != Caractere.VAZIO.getValor()) {
-			System.err.println("A Rede computou uma posição inválida. Escolhendo novo movimento...");
+			System.err.println("A Rede computou uma posição inválida [" + posicaoEscolhida + "]."
+				+ " Escolhendo novo movimento...");
 			posicaoEscolhida = super.escolhePosicao(entradas);
 		}
 		
@@ -88,6 +87,8 @@ public class JogadorRNA extends JogadorAutomato {
 	 * @return
 	 */
 	private double[] validaEntradasParaRede(double[] entradas) {
+		entradas = entradas.clone();
+		
 		if (getCaractere().equals(Caractere.O))
 			for (int i = 0; i < entradas.length; i++)
 				entradas[i] *= -1;

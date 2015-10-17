@@ -39,7 +39,7 @@ public abstract class Jogador {
 	 * Realiza uma nova jogada.
 	 * 
 	 * @param entradas
-	 *            configuração atual do tabuleiro.
+	 *        configuração atual do tabuleiro.
 	 * @return posição escolhida pelo jogador.
 	 */
 	abstract public int novaJogada(double[] entradas);
