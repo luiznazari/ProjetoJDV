@@ -16,16 +16,13 @@ import java.util.stream.Collectors;
  */
 public class JogadorMiniMax extends JogadorAutomato {
 	
-	private boolean jogadorX;
-	
 	public JogadorMiniMax(Caractere caractere) {
 		super(caractere);
-		jogadorX = getCaractere() == Caractere.X;
 	}
 	
 	@Override
 	public int novaJogada(double[] entradas) {
-		TabuleiroMiniMax tabuleiro = new TabuleiroMiniMax(entradas, jogadorX);
+		TabuleiroMiniMax tabuleiro = new TabuleiroMiniMax(super.validaEntradas(entradas));
 		
 		int[] movimentos = new int[tabuleiro.nivel];
 		int movimentosIndex = 0;
@@ -37,9 +34,9 @@ public class JogadorMiniMax extends JogadorAutomato {
 			if (val > maiorValor) {
 				maiorValor = val;
 				movimentosIndex = 0;
-				movimentos[movimentosIndex++] = val;
+				movimentos[movimentosIndex++] = t.posicao;
 			} else if (val == maiorValor) {
-				movimentos[movimentosIndex++] = val;
+				movimentos[movimentosIndex++] = t.posicao;
 			}
 		}
 		
@@ -67,11 +64,11 @@ public class JogadorMiniMax extends JogadorAutomato {
 		
 		private double[] tabuleiro;
 		
-		public TabuleiroMiniMax(double[] tabuleiro, boolean x) {
-			this(tabuleiro, x, 0);
+		public TabuleiroMiniMax(double[] tabuleiro) {
+			this(tabuleiro, true, 0);
 		}
 		
-		public TabuleiroMiniMax(double[] tabuleiro, boolean x, int posicao) {
+		private TabuleiroMiniMax(double[] tabuleiro, boolean x, int posicao) {
 			this.x = x;
 			this.posicao = posicao;
 			this.tabuleiro = tabuleiro;

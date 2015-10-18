@@ -44,26 +44,6 @@ public class Partida {
 		JdvUtils.Log.partida(caractere, entradas, posicaoEscolhida);
 	}
 	
-	public void encerrar(Jogador vencedor) {
-		this.vencedor = vencedor;
-		ordemJogadaVencedor = (numeroJogadas - 1) % 2;
-		
-		JdvUtils.Log.fimPartida(vencedor);
-	}
-	
-	public List<Jogada> getJogadasVencedor() {
-		List<Jogada> jogadasVencedor = new ArrayList<>();
-		
-		if (vencedor == null)
-			return jogadasVencedor;
-		
-		for (int i = ordemJogadaVencedor; i < 9; i += 2)
-			if (jogadas[i] != null)
-				jogadasVencedor.add(jogadas[i]);
-		
-		return jogadasVencedor;
-	}
-	
 	public void novaPartida() {
 		numeroPartidas++;
 		
@@ -71,8 +51,45 @@ public class Partida {
 		numeroJogadas = 0;
 	}
 	
-	public boolean isPartidaPar() {
+	public Jogador temVencedor(final double[] tabuleiro, Jogador um, Jogador dois) {
+		if (getNumeroJogadas() <= 4)
+			return null;
+		
+		return JdvUtils.Tabuleiro.computaVencedor(tabuleiro, um, dois);
+	}
+	
+	public void encerrar(Jogador vencedor) {
+		this.vencedor = vencedor;
+		ordemJogadaVencedor = (numeroJogadas - 1) % 2;
+		
+		JdvUtils.Log.fimPartida(vencedor);
+	}
+	
+	public boolean isJogadaPar() {
 		return (numeroPartidas + numeroJogadas) % 2 == 0;
+	}
+	
+	/**
+	 * Recupera o histórico de jogadas realizadas pelo jogador vencedor ou todo o histórico da
+	 * partida caso não haja um vencedor.
+	 * 
+	 * @return lista de jogadas.
+	 */
+	public List<Jogada> getJogadasVencedor() {
+		List<Jogada> jogadasVencedor = new ArrayList<>();
+		
+		if (vencedor == null) {
+			for (int i = 0; i < numeroJogadas; i++)
+				jogadasVencedor.add(jogadas[i]);
+			
+			return jogadasVencedor;
+		}
+		
+		for (int i = ordemJogadaVencedor; i < 9; i += 2)
+			if (jogadas[i] != null)
+				jogadasVencedor.add(jogadas[i]);
+		
+		return jogadasVencedor;
 	}
 	
 	@Getter

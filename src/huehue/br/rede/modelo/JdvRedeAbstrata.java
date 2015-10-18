@@ -14,7 +14,6 @@ import org.encog.ml.data.MLData;
 import org.encog.ml.data.MLDataPair;
 import org.encog.ml.data.MLDataSet;
 import org.encog.ml.data.basic.BasicMLData;
-import org.encog.ml.data.basic.BasicMLDataSet;
 import org.encog.ml.factory.MLMethodFactory;
 import org.encog.ml.factory.MLTrainFactory;
 import org.encog.ml.train.MLTrain;
@@ -74,7 +73,7 @@ public abstract class JdvRedeAbstrata implements JdvRede {
 	 * Por padrão, retorna um conjunto de dados representando as entradas recebidas sem tratamentos.
 	 * 
 	 * @param entradas
-	 *            recebidas pela rede.
+	 *        recebidas pela rede.
 	 * @return conjunto de dados representando a entrada da rede.
 	 */
 	public MLData traduzirEntrada(double[] entradas) {
@@ -86,7 +85,7 @@ public abstract class JdvRedeAbstrata implements JdvRede {
 	 * É o processo inverso do método {@link JdvRedeAbstrata#convertePosicaoTabuleiroEmSaida(int)}.
 	 * 
 	 * @param d
-	 *            a saída resultante do processamento da RNA.
+	 *        a saída resultante do processamento da RNA.
 	 * @return valor da saída traduzido, onde: 0 <= valor <= 8.
 	 */
 	abstract public int traduzirSaida(MLData saida);
@@ -98,7 +97,7 @@ public abstract class JdvRedeAbstrata implements JdvRede {
 	 * É o processo inverso do método {@link JdvRedeAbstrata#traduzirSaida(MLData)}.
 	 * 
 	 * @param posicao
-	 *            a posição do tabuleiro.
+	 *        a posição do tabuleiro.
 	 * @return conjunto de dados representando a posicão.
 	 */
 	abstract public MLData convertePosicaoTabuleiroEmSaida(int posicao);
@@ -110,7 +109,7 @@ public abstract class JdvRedeAbstrata implements JdvRede {
 	 * É o processo inverso do método {@link JdvRedeAbstrata#traduzirEntrada(double[])}.
 	 * 
 	 * @param entrada
-	 *            o conjunto de entrada da rede.
+	 *        o conjunto de entrada da rede.
 	 * @return posições do tabuleiro representando o conjuntos de entrada da rede.
 	 */
 	public double[] converteEntradaEmTabuleiro(MLData entrada) {
@@ -124,7 +123,7 @@ public abstract class JdvRedeAbstrata implements JdvRede {
 	 * rede.
 	 * 
 	 * @param entradas
-	 *            array de entradas representando o estado do tabuleiro.
+	 *        array de entradas representando o estado do tabuleiro.
 	 * @return posicão escolhida pela rede.
 	 * @see JdvRedeAbstrata#traduzirEntrada(double[])
 	 * @see JdvRedeAbstrata#traduzirSaida(MLData)
@@ -140,7 +139,7 @@ public abstract class JdvRedeAbstrata implements JdvRede {
 	 * Computa a saída da rede à entrada especificada.
 	 * 
 	 * @param conjunto
-	 *            de entradas da rede.
+	 *        de entradas da rede.
 	 * @return conjunto de saídas da rede.
 	 */
 	private final MLData processar(MLData entrada) {
@@ -149,10 +148,9 @@ public abstract class JdvRedeAbstrata implements JdvRede {
 	}
 	
 	public final void treinar(final ConjuntosDados dados) {
-		// TODO verificar forma de melhorar a chamada do método 'embaralhar'.
-		MLDataSet setDados = new BasicMLDataSet(dados.getDadosEmbaralhados());
+		dados.embaralhar();
 		
-		MLTrain train = new Backpropagation(getRede(), setDados, constanteDeAprendizagem, momentum);
+		MLTrain train = new Backpropagation(getRede(), dados.getConjuntos(), constanteDeAprendizagem, momentum);
 		
 		LocalDateTime inicio = LocalDateTime.now();
 		

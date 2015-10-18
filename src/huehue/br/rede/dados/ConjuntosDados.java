@@ -1,20 +1,17 @@
 package huehue.br.rede.dados;
 
-import huehue.br.encog.modelo.JdvMLDataPair;
 import huehue.br.modelo.JogadorRNA;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import lombok.Getter;
 import lombok.Setter;
 
 import org.encog.ml.data.MLData;
 import org.encog.ml.data.MLDataPair;
-import org.encog.ml.data.MLDataSet;
 import org.encog.ml.data.basic.BasicMLDataPair;
 import org.encog.ml.data.basic.BasicMLDataSet;
 
@@ -30,68 +27,74 @@ public class ConjuntosDados {
 	private boolean substituirRepetidos = false;
 	
 	@Getter
-	private List<JdvMLDataPair> conjuntosES = new ArrayList<JdvMLDataPair>();
+	private BasicMLDataSet conjuntos;
 	
-	private List<JdvMLDataPair> conjuntosESTemporarios = new ArrayList<JdvMLDataPair>();
+	@Getter
+	private List<MLDataPair> conjuntosTemporarios = new ArrayList<MLDataPair>();
 	
-	public ConjuntosDados() {}
-	
-	public ConjuntosDados(List<JdvMLDataPair> conjuntos) {
-		this.conjuntosES = conjuntos;
-	}
-	
-	public ConjuntosDados(BasicMLDataSet set) {
-		this(set.getData().stream().map(par -> new JdvMLDataPair(par)).collect(Collectors.toList()));
-	}
-	
-	public void adicionarDadoESTemporario(double[] entradas, double[] saidas) {
-		JdvMLDataPair par = new JdvMLDataPair(entradas, saidas);
-		
-		if (substituirRepetidos)
-			substituiDadoRepetido(conjuntosES, par);
-		else
-			conjuntosES.add(par);
-	}
-	
-	public void adicionarDadoES(MLData entrada, MLData saida) {
-		JdvMLDataPair par = new JdvMLDataPair(entrada, saida);
-		
-		if (substituirRepetidos)
-			substituiDadoRepetido(conjuntosESTemporarios, par);
-		else
-			conjuntosESTemporarios.add(par);
-	}
-	
-	private void substituiDadoRepetido(List<JdvMLDataPair> lista, JdvMLDataPair dado) {
-		Iterator<JdvMLDataPair> iterator = lista.iterator();
-		
-		int i = 0;
-		while (iterator.hasNext()) {
-			if (iterator.next().isEntradasIguais(dado))
-				lista.set(i, dado);
-			i++;
-		}
-		
-		lista.add(dado);
-	}
-	
-	public void descartarTemporarios() {
-		conjuntosESTemporarios.clear();
+	public ConjuntosDados(BasicMLDataSet conjuntos) {
+		this.conjuntos = conjuntos;
 	}
 	
 	public void armazenarTemporarios() {
-		conjuntosES.addAll(conjuntosESTemporarios);
+		conjuntosTemporarios.forEach(par -> adicionarDadoES(conjuntos.getData(), par));
+		descartarTemporarios();
 	}
 	
-	public MLDataSet getMLDataSet() {
-		return new BasicMLDataSet(conjuntosES.stream()
-				.map(par -> new BasicMLDataPair(par.getInput(), par.getIdeal()))
-				.collect(Collectors.toList()));
+	public void descartarTemporarios() {
+		conjuntosTemporarios.clear();
 	}
 	
-	public List<MLDataPair> getDadosEmbaralhados() {
-		List<MLDataPair> conjuntosEmbaralhados = new ArrayList<>(conjuntosES);
-		Collections.shuffle(conjuntosEmbaralhados);
-		return conjuntosEmbaralhados;
+	public void embaralhar() {
+		Collections.shuffle(conjuntos.getData());
 	}
+	
+	/* Adição de conjuntos */
+	
+	public void adicionarDadoESTemporario(MLData entrada, MLData saida) {
+		adicionarDadoES(conjuntosTemporarios, new BasicMLDataPair(entrada, saida));
+	}
+	
+	public void adicionarDadoES(MLData entrada, MLData saida) {
+		adicionarDadoES(conjuntos.getData(), new BasicMLDataPair(entrada, saida));
+	}
+	
+	private void adicionarDadoES(List<MLDataPair> lista, MLDataPair par) {
+		int indiceES = getIndiceDadoES(lista.iterator(), par);
+		
+		if (indiceES == -1)
+			lista.add(par);
+		else if (substituirRepetidos)
+			lista.set(indiceES, par);
+	}
+	
+	private int getIndiceDadoES(Iterator<MLDataPair> iterator, MLDataPair dado) {
+		int i = 0;
+		while (iterator.hasNext()) {
+			if (isParComEntradasIguais(iterator.next(), dado))
+				return i;
+			i++;
+		}
+		
+		return -1;
+	}
+	
+	private boolean isParComEntradasIguais(MLDataPair par1, MLDataPair par2) {
+		return isDadosIguais(par1.getInput(), par2.getInput());
+	}
+	
+	private boolean isDadosIguais(MLData dado1, MLData dado2) {
+		int size = dado1.size();
+		if (size != dado2.size())
+			return false;
+		
+		for (int i = 0; i < size; i++)
+			if (dado1.getData(i) != dado2.getData(i))
+				return false;
+		
+		return true;
+	}
+	
+	/* ------------------------ */
+	
 }

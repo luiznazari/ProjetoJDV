@@ -10,8 +10,12 @@ import huehue.br.logica.Partida;
  */
 public abstract class JogadorAutomato extends Jogador {
 	
+	// Por padrão, a I.A. interpreta o X como sua posição (+1) e o O como adversário (-1).
+	protected boolean jogadorX;
+	
 	public JogadorAutomato(Caractere caractere) {
 		super(caractere);
+		jogadorX = getCaractere() == Caractere.X;
 	}
 	
 	@Override
@@ -46,6 +50,26 @@ public abstract class JogadorAutomato extends Jogador {
 				posicoesValidas[posicoesValidasLength++] = i;
 		
 		return posicoesValidas[( int ) (Math.random() * --posicoesValidasLength)];
+	}
+	
+	/**
+	 * Valida os valores das entradas a serem computadas pela I.A.. Caso o {@link JogadorAutomato}
+	 * em questão possuir o {@link Caractere#O}, os valores das entradas precisarão ser ajustados,
+	 * pois a rede é treinada para reconhecer o valor do {@link Caractere#X} como posição da Rede e
+	 * o {@link Caractere#O} como o adversário.
+	 * 
+	 * @param entradas
+	 * @return
+	 */
+	protected double[] validaEntradas(double[] entradas) {
+		entradas = entradas.clone();
+		
+		if (!jogadorX)
+			for (int i = 0; i < entradas.length; i++)
+				if (entradas[i] != Caractere.VAZIO.getValor())
+					entradas[i] *= -1;
+		
+		return entradas;
 	}
 	
 }

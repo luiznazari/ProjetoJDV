@@ -23,8 +23,8 @@ public class MultilayerPerceptron2 extends JdvRedeAbstrata {
 	public MultilayerPerceptron2() {
 		this(9, 9);
 		momentum = 0.4;
-		margemDeErro = 0.029D;
-		constanteDeAprendizagem = 0.05;
+		margemDeErro = 0.05D;
+		constanteDeAprendizagem = 0.1;
 	}
 	
 	@Override
@@ -60,16 +60,17 @@ public class MultilayerPerceptron2 extends JdvRedeAbstrata {
 		if (entradasTmp[ms.index] == Caractere.VAZIO.getValor())
 			return ms.index;
 		
-		System.err.println("Computou um resultado inválido! " + ms);
+		System.err.println("Computou um resultado inválido! " + ms
+			+ "\tEntradas: " + JdvUtils.Log.tabuleiro(entradasTmp));
 		listaSaida.remove(0);
 		return buscaPrimeiroIndiceValido(listaSaida);
 	}
 	
 	public static void main(String[] args) {
-		JdvUtils.Arquivo.versionamento(950);
+		JdvUtils.Arquivo.versionamento(11);
 		JdvRedeAbstrata rede = new MultilayerPerceptron2().inicializar();
 		ConjuntosDados dados = new ConjuntosDados(JdvUtils.Arquivo.carregarDados(rede));
-		MLDataSet setDados = dados.getMLDataSet();
+		MLDataSet setDados = dados.getConjuntos();
 		
 //		rede.treinar(dados);
 //		

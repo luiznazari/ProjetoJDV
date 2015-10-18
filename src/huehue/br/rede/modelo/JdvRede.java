@@ -10,8 +10,22 @@ import org.encog.neural.networks.layers.BasicLayer;
 import org.encog.neural.networks.layers.Layer;
 
 /**
- * Função de ativação Sigmoid resulta em valores entre 0 e 1.
- * Função de ativação Tanh resulta em valores entre -1 e 1.
+ * Interface que padroniza as redes neuronais utilizadas para resolver o Jogo da Velha.<br>
+ * 
+ * <pre>
+ * <b>Padronização dos dados conhecidos pelas redes:</b>
+ * <b>Mapeamento dos valores:</b>
+ *  1 = Jogador X
+ * -1 = Jogador O
+ *  0 = posição vazia
+ * 
+ * <b>Mapeamento do tabuleiro:</b>
+ *  0 | 1 | 2
+ * ---+---+---
+ *  3 | 4 | 5
+ * ---+---+---
+ *  6 | 7 | 8
+ * </pre>
  * 
  * @author Luiz Felipe Nazari
  */

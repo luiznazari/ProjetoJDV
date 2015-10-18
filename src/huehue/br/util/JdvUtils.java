@@ -1,11 +1,12 @@
 package huehue.br.util;
 
+import huehue.br.exception.JdvException;
 import huehue.br.logica.Partida;
 import huehue.br.modelo.Caractere;
 import huehue.br.modelo.Jogador;
 import huehue.br.modelo.JogadorAleatorio;
 import huehue.br.modelo.JogadorAutomato;
-import huehue.br.modelo.JogadorRNA;
+import huehue.br.modelo.JogadorMiniMax;
 import huehue.br.rede.modelo.JdvRede;
 import huehue.br.rede.modelo.JdvRedeAbstrata;
 import huehue.br.rede.modelo.MapaSaida;
@@ -21,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.encog.Encog;
 import org.encog.ml.data.MLData;
 import org.encog.ml.data.MLDataPair;
 import org.encog.ml.data.MLDataSet;
@@ -127,6 +129,9 @@ public class JdvUtils {
 		
 		public static void comparaJogadores(JogadorAutomato um, JogadorAutomato dois,
 				int numeroPartidas) {
+			if (um.getCaractere() == dois.getCaractere())
+				throw new JdvException("Os jogadores precisam ter caracteres diferentes!");
+			
 			Log.ativo = false;
 			
 			for (int i = 0; i < numeroPartidas; i++) {
@@ -137,7 +142,7 @@ public class JdvUtils {
 				while ((vencedor = computaVencedor(t, um, dois)) == null && !isCompleto(t)) {
 					Jogador vez;
 					
-					if (partida.isPartidaPar())
+					if (partida.isJogadaPar())
 						vez = dois;
 					else
 						vez = um;
@@ -474,18 +479,21 @@ public class JdvUtils {
 			
 			StringBuilder sb = new StringBuilder();
 			sb.append("Jogador ").append(caractere.getChave());
-			sb.append(" [Configuração=[");
-			
-			int len = tabuleiro.length;
-			for (int i = 0; i < len; i++) {
-				sb.append(preencheValor(( int ) tabuleiro[i], 2));
-				if (i != len - 1)
-					sb.append(", ");
-			}
-			
-			sb.append("], Posição=").append(posicaoEscolhida).append("]");
+			sb.append(" [Configuração=").append(tabuleiro(tabuleiro));
+			sb.append(" Posição=").append(posicaoEscolhida).append("]");
 			
 			return logConsole(sb);
+		}
+		
+		public static String tabuleiro(double[] t) {
+			String tString = "[";
+			
+			int len = t.length;
+			for (int i = 0; i < len; i++)
+				tString += preencheValor(( int ) t[i], 2)
+					+ (i != len - 1 ? ", " : "]");
+			
+			return tString;
 		}
 		
 		public static String placar(final int partidas, final Jogador um, final Jogador dois) {
@@ -542,25 +550,27 @@ public class JdvUtils {
 	}
 	
 	public static void main(String[] args) {
-		// String c = "A";
-		//
-		// String caminho = Arquivo.DIR_RECURSOS + c + "1";
-		// MLDataSet set = EncogUtility.loadCSV2Memory(caminho, 9, 9, false, Arquivo.FORMATO,
-		// false);
-		//
-		// new TelaExibicao(set);
-		//
-		// caminho = Arquivo.DIR_RECURSOS + c + "2";
-		// set = EncogUtility.loadCSV2Memory(caminho, 9, 9, false, Arquivo.FORMATO, false);
-		//
-		// new TelaExibicao(set);
-		// RNA.converteArquivosDeDadosEntreRedes(new MultilayerPerceptron2(), new
-		// MultilayerPerceptron3());
-		JdvUtils.Arquivo.versionamento(202);
+//		String c = "A";
+//		
+//		String caminho = Arquivo.DIR_RECURSOS + c + "1";
+//		MLDataSet set = EncogUtility.loadCSV2Memory(caminho, 9, 9, false, Arquivo.FORMATO,
+//				false);
+//		
+//		new TelaExibicao(set);
+//		
+//		caminho = Arquivo.DIR_RECURSOS + c + "2";
+//		set = EncogUtility.loadCSV2Memory(caminho, 9, 9, false, Arquivo.FORMATO, false);
+//		
+//		new TelaExibicao(set);
+//		RNA.converteArquivosDeDadosEntreRedes(new MultilayerPerceptron2(), new MultilayerPerceptron3());
 		
-		JogadorAutomato um = new JogadorRNA(Caractere.O, false);
-		JogadorAutomato dois = new JogadorAleatorio(Caractere.X);
-		Tabuleiro.comparaJogadores(um, dois, 100);
+		JdvUtils.Arquivo.versionamento(323);
+		
+		JogadorAutomato um = new JogadorAleatorio(Caractere.X);
+		JogadorAutomato dois = new JogadorMiniMax(Caractere.O);
+		Tabuleiro.comparaJogadores(um, dois, 1000);
+		
+		Encog.getInstance().shutdown();
 	}
 	
 	public static void delete_me() {

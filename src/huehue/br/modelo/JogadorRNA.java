@@ -3,7 +3,7 @@ package huehue.br.modelo;
 import huehue.br.logica.Partida;
 import huehue.br.rede.dados.ConjuntosDados;
 import huehue.br.rede.modelo.JdvRedeAbstrata;
-import huehue.br.rede.modelo.MultilayerPerceptron3;
+import huehue.br.rede.modelo.MultilayerPerceptron2;
 import huehue.br.util.JdvUtils;
 import lombok.Getter;
 import lombok.Setter;
@@ -33,13 +33,13 @@ public class JogadorRNA extends JogadorAutomato {
 		super(caractere);
 		this.deveTreinar = deveTreinar;
 		
-		rede = new MultilayerPerceptron3().inicializar();
+		rede = new MultilayerPerceptron2().inicializar();
 		dados = new ConjuntosDados(JdvUtils.Arquivo.carregarDados(rede));
 	}
 	
 	@Override
 	public int novaJogada(double[] entradas) {
-		entradas = validaEntradasParaRede(entradas);
+		entradas = super.validaEntradas(entradas);
 		int posicaoEscolhida = rede.processar(entradas);
 		
 		// Escolheu uma posição já ocupada.
@@ -56,7 +56,7 @@ public class JogadorRNA extends JogadorAutomato {
 	public void notificarResultado(Partida partida) {
 		partida.getJogadasVencedor().forEach(
 				p -> dados.adicionarDadoES(
-						rede.traduzirEntrada(validaEntradasParaRede(p.getConfiguracao())),
+						rede.traduzirEntrada(super.validaEntradas(p.getConfiguracao())),
 						rede.convertePosicaoTabuleiroEmSaida(p.getPosicaoEscolhida())));
 		
 		if (deveTreinar)
@@ -70,29 +70,11 @@ public class JogadorRNA extends JogadorAutomato {
 		// FIXME Temporário
 		int v = JdvUtils.Arquivo.incrementaVersao();
 		
-		if (v % 10 == 0) {
-			JdvUtils.Arquivo.salvarRede(rede);
-			JdvUtils.Arquivo.salvarDados(rede, dados.getMLDataSet());
-		}
+//		if (v % 10 == 0) {
+		JdvUtils.Arquivo.salvarRede(rede);
+		JdvUtils.Arquivo.salvarDados(rede, dados.getConjuntos());
+//		}
 		// ----------------
 	}
 	
-	/**
-	 * Valida os valores das entradas a serem computadas pela Rede. Caso o {@link JogadorRNA} em
-	 * questão possuir o {@link Caractere#O}, os valores das entradas precisarão ser ajustados,
-	 * pois a rede é treinada para reconhecer o valor do {@link Caractere#X} como posição da Rede e
-	 * o {@link Caractere#O} como o adversário.
-	 * 
-	 * @param entradas
-	 * @return
-	 */
-	private double[] validaEntradasParaRede(double[] entradas) {
-		entradas = entradas.clone();
-		
-		if (getCaractere().equals(Caractere.O))
-			for (int i = 0; i < entradas.length; i++)
-				entradas[i] *= -1;
-		
-		return entradas;
-	}
 }

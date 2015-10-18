@@ -36,14 +36,14 @@ public class Tabuleiro {
 		this.tela = tela;
 		partida = new Partida();
 		
-		JdvUtils.Arquivo.versionamento(202);
+		JdvUtils.Arquivo.versionamento(0);
 		
-		setJogadorUm(new JogadorRNA(Caractere.X, false));
+		setJogadorUm(new JogadorRNA(Caractere.X, true));
 //		setJogadorUm(new JogadorHumano(Caractere.X));
 //		setJogadorUm(new JogadorAleatorio(Caractere.X));
 //		setJogadorUm(new JogadorMiniMax(Caractere.X));
 		
-//		setJogadorDois(new JogadorRNA(Caractere.O));
+//		setJogadorDois(new JogadorRNA(Caractere.O, false));
 		setJogadorDois(new JogadorHumano(Caractere.O));
 //		setJogadorDois(new JogadorAleatorio(Caractere.O));
 //		setJogadorDois(new JogadorMiniMax(Caractere.O));
@@ -52,14 +52,14 @@ public class Tabuleiro {
 	}
 	
 	public void novaJogada(Integer posicaoEscolhida) {
-		double[] cfgTabuleiroAntiga = tela.getPosicoesTabuleiro();
+		double[] cfgTabuleiro = tela.getPosicoesTabuleiro();
 		Caractere caractere = getJogadorDaVez().getCaractere();
 		tela.setPosicao(posicaoEscolhida, caractere);
 		
 		// Jogada é incrementada e o jogador da vez é alterado.
-		partida.novaJogada(caractere, cfgTabuleiroAntiga, posicaoEscolhida);
+		partida.novaJogada(caractere, cfgTabuleiro, posicaoEscolhida);
 		
-		Jogador vencedor = computaJogada();
+		Jogador vencedor = partida.temVencedor(cfgTabuleiro, jogadorUm, jogadorDois);
 		if (vencedor != null || partida.getNumeroJogadas() >= 9) {
 			fimPartida(vencedor);
 			return;
@@ -104,22 +104,9 @@ public class Tabuleiro {
 	}
 	
 	public Jogador getJogadorDaVez() {
-		if (partida.isPartidaPar())
+		if (partida.isJogadaPar())
 			return jogadorDois;
 		return jogadorUm;
-	}
-	
-	private Jogador computaJogada() {
-		if (partida.getNumeroJogadas() > 4) {
-			int valorVencedor = JdvUtils.Tabuleiro.computaVencedor(tela.getPosicoesTabuleiro());
-			
-			if (valorVencedor == jogadorUm.getCaractere().getValor())
-				return jogadorUm;
-			if (valorVencedor == jogadorDois.getCaractere().getValor())
-				return jogadorDois;
-		}
-		
-		return null;
 	}
 	
 	public void setJogadorUm(Jogador jogadorUm) {
@@ -133,7 +120,7 @@ public class Tabuleiro {
 	public void setJogadorDois(Jogador jogadorDois) {
 		if (jogadorUm != null && jogadorUm.getCaractere().equals(jogadorDois.getCaractere()))
 			throw new JdvException("Caractere " + jogadorDois.getCaractere()
-				+ "já está sendo utilizado por outro jogador!");
+				+ " já está sendo utilizado por outro jogador!");
 		
 		this.jogadorDois = jogadorDois;
 	}
