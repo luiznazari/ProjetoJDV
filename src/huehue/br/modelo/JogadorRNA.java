@@ -35,6 +35,7 @@ public class JogadorRNA extends JogadorAutomato {
 		
 		rede = new MultilayerPerceptron2().inicializar();
 		dados = new ConjuntosDados(JdvUtils.Arquivo.carregarDados(rede));
+		dados.setSubstituirRepetidos(true);
 	}
 	
 	@Override
@@ -70,10 +71,10 @@ public class JogadorRNA extends JogadorAutomato {
 		// FIXME Temporário
 		int v = JdvUtils.Arquivo.incrementaVersao();
 		
-//		if (v % 10 == 0) {
-		JdvUtils.Arquivo.salvarRede(rede);
-		JdvUtils.Arquivo.salvarDados(rede, dados.getConjuntos());
-//		}
+		if (v % 10 == 0) {
+			JdvUtils.Arquivo.salvarRede(rede);
+			JdvUtils.Arquivo.salvarDados(rede, dados.getConjuntos());
+		}
 		// ----------------
 	}
 	

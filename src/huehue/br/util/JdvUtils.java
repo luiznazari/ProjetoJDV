@@ -4,9 +4,9 @@ import huehue.br.exception.JdvException;
 import huehue.br.logica.Partida;
 import huehue.br.modelo.Caractere;
 import huehue.br.modelo.Jogador;
-import huehue.br.modelo.JogadorAleatorio;
 import huehue.br.modelo.JogadorAutomato;
 import huehue.br.modelo.JogadorMiniMax;
+import huehue.br.modelo.JogadorRNA;
 import huehue.br.rede.modelo.JdvRede;
 import huehue.br.rede.modelo.JdvRedeAbstrata;
 import huehue.br.rede.modelo.MapaSaida;
@@ -564,11 +564,16 @@ public class JdvUtils {
 //		new TelaExibicao(set);
 //		RNA.converteArquivosDeDadosEntreRedes(new MultilayerPerceptron2(), new MultilayerPerceptron3());
 		
-		JdvUtils.Arquivo.versionamento(323);
+		JdvUtils.Arquivo.versionamento(961);
 		
-		JogadorAutomato um = new JogadorAleatorio(Caractere.X);
+//		JogadorAutomato um = new JogadorAleatorio(Caractere.X);
+		
+		JogadorAutomato um = new JogadorRNA(Caractere.X, false);
 		JogadorAutomato dois = new JogadorMiniMax(Caractere.O);
-		Tabuleiro.comparaJogadores(um, dois, 1000);
+		
+//		JogadorAutomato um = new JogadorRNA(Caractere.O, false);
+//		JogadorAutomato dois = new JogadorMiniMax(Caractere.X);
+		Tabuleiro.comparaJogadores(um, dois, 100);
 		
 		Encog.getInstance().shutdown();
 	}

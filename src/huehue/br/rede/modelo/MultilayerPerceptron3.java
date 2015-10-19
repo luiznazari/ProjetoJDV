@@ -12,9 +12,14 @@ public class MultilayerPerceptron3 extends MultilayerPerceptron2 {
 	
 	public MultilayerPerceptron3() {
 		super(18, 9);
-		momentum = 0.4;
-		margemDeErro = 0.043;
-		constanteDeAprendizagem = 0.05;
+		momentum = 0.6;
+		margemDeErro = 0.09;
+		constanteDeAprendizagem = 0.1;
+	}
+	
+	@Override
+	public String getEstruturaRede() {
+		return "?:B->SIGMOID->27:B->SIGMOID->36:B->SIGMOID->?";
 	}
 	
 	@Override
@@ -47,18 +52,17 @@ public class MultilayerPerceptron3 extends MultilayerPerceptron2 {
 	}
 	
 	public static void main(String[] args) {
-		JdvUtils.Arquivo.versionamento(323);
+		JdvUtils.Arquivo.versionamento(100);
 		JdvRedeAbstrata rede = new MultilayerPerceptron3().inicializar();
 		ConjuntosDados dados = new ConjuntosDados(JdvUtils.Arquivo.carregarDados(rede));
 		MLDataSet setDados = dados.getConjuntos();
 		
-		System.out.println(dados.getConjuntos().getRecordCount());
-//		rede.treinar(dados);
-//		
-//		JdvUtils.Arquivo.incrementaVersao();
-//		JdvUtils.Arquivo.salvarRede(rede);
-//		JdvUtils.Arquivo.salvarDados(rede, setDados);
-//		
+		rede.treinar(dados);
+		
+		JdvUtils.Arquivo.incrementaVersao();
+		JdvUtils.Arquivo.salvarRede(rede);
+		JdvUtils.Arquivo.salvarDados(rede, setDados);
+		
 //		rede.testar(setDados.get(( int ) (Math.random() * setDados.size())));
 		rede.testar(setDados);
 		

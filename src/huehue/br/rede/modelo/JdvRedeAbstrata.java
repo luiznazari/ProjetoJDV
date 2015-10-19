@@ -6,6 +6,7 @@ import huehue.br.util.JdvUtils;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -14,6 +15,7 @@ import org.encog.ml.data.MLData;
 import org.encog.ml.data.MLDataPair;
 import org.encog.ml.data.MLDataSet;
 import org.encog.ml.data.basic.BasicMLData;
+import org.encog.ml.data.basic.BasicMLDataSet;
 import org.encog.ml.factory.MLMethodFactory;
 import org.encog.ml.factory.MLTrainFactory;
 import org.encog.ml.train.MLTrain;
@@ -150,11 +152,22 @@ public abstract class JdvRedeAbstrata implements JdvRede {
 	public final void treinar(final ConjuntosDados dados) {
 		dados.embaralhar();
 		
-		MLTrain train = new Backpropagation(getRede(), dados.getConjuntos(), constanteDeAprendizagem, momentum);
+		List<MLDataPair> pares = dados.getConjuntos().getData();
+		int tamBlocos = 100;
+		int len = pares.size();
+		int iteracoes = len / tamBlocos;
+		if (len % tamBlocos != 0)
+			iteracoes += 1;
 		
 		LocalDateTime inicio = LocalDateTime.now();
-		
-		EncogUtility.trainToError(train, getMargemDeErro());
+		for (int i = 0; i < iteracoes; i++) {
+			int lenIteracao = i < iteracoes - 1 ? tamBlocos : len % tamBlocos;
+			MLDataSet set = new BasicMLDataSet(pares.subList(i * tamBlocos, i * tamBlocos + lenIteracao));
+			
+			MLTrain train = new Backpropagation(getRede(), set, constanteDeAprendizagem, momentum);
+			
+			EncogUtility.trainToError(train, getMargemDeErro());
+		}
 		
 		System.out.println("Treinamento finalizado. Tempo total: " + Duration.between(inicio, LocalDateTime.now()));
 	}
