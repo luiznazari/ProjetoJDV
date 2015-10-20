@@ -36,9 +36,9 @@ public class Tabuleiro {
 		this.tela = tela;
 		partida = new Partida();
 		
-		JdvUtils.Arquivo.versionamento(961);
+		JdvUtils.Arquivo.versionamento(0);
 		
-		setJogadorUm(new JogadorRNA(Caractere.X, false));
+		setJogadorUm(new JogadorRNA(Caractere.X, true));
 //		setJogadorUm(new JogadorHumano(Caractere.X));
 //		setJogadorUm(new JogadorAleatorio(Caractere.X));
 //		setJogadorUm(new JogadorMiniMax(Caractere.X));

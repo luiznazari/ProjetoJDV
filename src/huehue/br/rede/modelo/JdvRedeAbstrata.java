@@ -153,8 +153,8 @@ public abstract class JdvRedeAbstrata implements JdvRede {
 		dados.embaralhar();
 		
 		List<MLDataPair> pares = dados.getConjuntos().getData();
-		int tamBlocos = 100;
 		int len = pares.size();
+		int tamBlocos = len / 2;
 		int iteracoes = len / tamBlocos;
 		if (len % tamBlocos != 0)
 			iteracoes += 1;

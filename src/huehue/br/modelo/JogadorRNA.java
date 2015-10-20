@@ -3,7 +3,7 @@ package huehue.br.modelo;
 import huehue.br.logica.Partida;
 import huehue.br.rede.dados.ConjuntosDados;
 import huehue.br.rede.modelo.JdvRedeAbstrata;
-import huehue.br.rede.modelo.MultilayerPerceptron2;
+import huehue.br.rede.modelo.MultilayerPerceptron3;
 import huehue.br.util.JdvUtils;
 import lombok.Getter;
 import lombok.Setter;
@@ -33,7 +33,7 @@ public class JogadorRNA extends JogadorAutomato {
 		super(caractere);
 		this.deveTreinar = deveTreinar;
 		
-		rede = new MultilayerPerceptron2().inicializar();
+		rede = new MultilayerPerceptron3().inicializar();
 		dados = new ConjuntosDados(JdvUtils.Arquivo.carregarDados(rede));
 		dados.setSubstituirRepetidos(true);
 	}

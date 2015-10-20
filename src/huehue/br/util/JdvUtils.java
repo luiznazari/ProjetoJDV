@@ -564,7 +564,7 @@ public class JdvUtils {
 //		new TelaExibicao(set);
 //		RNA.converteArquivosDeDadosEntreRedes(new MultilayerPerceptron2(), new MultilayerPerceptron3());
 		
-		JdvUtils.Arquivo.versionamento(961);
+		JdvUtils.Arquivo.versionamento(1967);
 		
 //		JogadorAutomato um = new JogadorAleatorio(Caractere.X);
 		
