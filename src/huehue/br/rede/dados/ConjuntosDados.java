@@ -11,8 +11,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import org.encog.ml.data.MLData;
-import org.encog.ml.data.MLDataPair;
-import org.encog.ml.data.basic.BasicMLDataPair;
+import org.encog.ml.data.MLDataSet;
 import org.encog.ml.data.basic.BasicMLDataSet;
 
 /**
@@ -27,17 +26,17 @@ public class ConjuntosDados {
 	private boolean substituirRepetidos = false;
 	
 	@Getter
-	private BasicMLDataSet conjuntos;
+	private List<JdvMLDataPair> conjuntos = new ArrayList<JdvMLDataPair>();
 	
 	@Getter
-	private List<MLDataPair> conjuntosTemporarios = new ArrayList<MLDataPair>();
+	private List<JdvMLDataPair> conjuntosTemporarios = new ArrayList<JdvMLDataPair>();
 	
-	public ConjuntosDados(BasicMLDataSet conjuntos) {
-		this.conjuntos = conjuntos;
-	}
+//	public ConjuntosDados(BasicMLDataSet conjuntos) {
+//		this.conjuntos = conjuntos;
+//	}
 	
 	public void armazenarTemporarios() {
-		conjuntosTemporarios.forEach(par -> adicionarDadoES(conjuntos.getData(), par));
+		conjuntosTemporarios.forEach(par -> adicionarDadoES(conjuntos, par));
 		descartarTemporarios();
 	}
 	
@@ -46,20 +45,24 @@ public class ConjuntosDados {
 	}
 	
 	public void embaralhar() {
-		Collections.shuffle(conjuntos.getData());
+		Collections.shuffle(conjuntos);
 	}
 	
 	/* Adição de conjuntos */
 	
+	public void adicionarDadoESTemporario(JdvMLDataPair par) {
+		adicionarDadoES(conjuntosTemporarios, par);
+	}
+	
 	public void adicionarDadoESTemporario(MLData entrada, MLData saida) {
-		adicionarDadoES(conjuntosTemporarios, new BasicMLDataPair(entrada, saida));
+		adicionarDadoESTemporario(new JdvMLDataPair(entrada, saida));
 	}
 	
 	public void adicionarDadoES(MLData entrada, MLData saida) {
-		adicionarDadoES(conjuntos.getData(), new BasicMLDataPair(entrada, saida));
+		adicionarDadoES(conjuntos, new JdvMLDataPair(entrada, saida));
 	}
 	
-	private void adicionarDadoES(List<MLDataPair> lista, MLDataPair par) {
+	private void adicionarDadoES(List<JdvMLDataPair> lista, JdvMLDataPair par) {
 		int indiceES = getIndiceDadoES(lista.iterator(), par);
 		
 		if (indiceES == -1)
@@ -68,10 +71,10 @@ public class ConjuntosDados {
 			lista.set(indiceES, par);
 	}
 	
-	private int getIndiceDadoES(Iterator<MLDataPair> iterator, MLDataPair dado) {
+	private int getIndiceDadoES(Iterator<JdvMLDataPair> iterator, JdvMLDataPair par) {
 		int i = 0;
 		while (iterator.hasNext()) {
-			if (isParComEntradasIguais(iterator.next(), dado))
+			if (par.isEntradasIguais(iterator.next()))
 				return i;
 			i++;
 		}
@@ -79,22 +82,20 @@ public class ConjuntosDados {
 		return -1;
 	}
 	
-	private boolean isParComEntradasIguais(MLDataPair par1, MLDataPair par2) {
-		return isDadosIguais(par1.getInput(), par2.getInput());
-	}
-	
-	private boolean isDadosIguais(MLData dado1, MLData dado2) {
-		int size = dado1.size();
-		if (size != dado2.size())
-			return false;
-		
-		for (int i = 0; i < size; i++)
-			if (dado1.getData(i) != dado2.getData(i))
-				return false;
-		
-		return true;
-	}
-	
 	/* ------------------------ */
+	
+	public static ConjuntosDados criaConjuntosAPartirDeArquivo(BasicMLDataSet set) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	public MLDataSet getConjuntosParaSalvar() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	public static int getEntradasAdicionaisCSV() {
+		return JdvMLDataPair.ENTRADAS_ADICIONAIS;
+	}
 	
 }

@@ -54,7 +54,7 @@ public class MultilayerPerceptron3 extends MultilayerPerceptron2 {
 	public static void main(String[] args) {
 		JdvUtils.Arquivo.versionamento(1967);
 		JdvRedeAbstrata rede = new MultilayerPerceptron3().inicializar();
-		ConjuntosDados dados = new ConjuntosDados(JdvUtils.Arquivo.carregarDados(rede));
+		ConjuntosDados dados = JdvUtils.Arquivo.carregarDados(rede);
 		MLDataSet setDados = dados.getConjuntos();
 		
 //		rede.treinar(dados);

@@ -1,10 +1,15 @@
 package huehue.br.modelo;
 
 import huehue.br.logica.Partida;
+import huehue.br.logica.Partida.Jogada;
 import huehue.br.rede.dados.ConjuntosDados;
+import huehue.br.rede.dados.JdvMLDataPair;
 import huehue.br.rede.modelo.JdvRedeAbstrata;
 import huehue.br.rede.modelo.MultilayerPerceptron3;
 import huehue.br.util.JdvUtils;
+
+import java.util.List;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -34,7 +39,7 @@ public class JogadorRNA extends JogadorAutomato {
 		this.deveTreinar = deveTreinar;
 		
 		rede = new MultilayerPerceptron3().inicializar();
-		dados = new ConjuntosDados(JdvUtils.Arquivo.carregarDados(rede));
+		dados = JdvUtils.Arquivo.carregarDados(rede);
 		dados.setSubstituirRepetidos(true);
 	}
 	
@@ -46,7 +51,7 @@ public class JogadorRNA extends JogadorAutomato {
 		// Escolheu uma posição já ocupada.
 		if (entradas[posicaoEscolhida] != Caractere.VAZIO.getValor()) {
 			System.err.println("A Rede computou uma posição inválida [" + posicaoEscolhida + "]."
-				+ " Escolhendo novo movimento...");
+					+ " Escolhendo novo movimento...");
 			posicaoEscolhida = super.escolhePosicao(entradas);
 		}
 		
@@ -55,13 +60,17 @@ public class JogadorRNA extends JogadorAutomato {
 	
 	@Override
 	public void notificarResultado(Partida partida) {
-		partida.getJogadasVencedor().forEach(
-				p -> dados.adicionarDadoES(
-						rede.traduzirEntrada(super.validaEntradas(p.getConfiguracao())),
-						rede.convertePosicaoTabuleiroEmSaida(p.getPosicaoEscolhida())));
+		if (partida.getVencedor() != null) {
+			List<Jogada> jogadas = partida.getJogadasVencedor();
+			jogadas.forEach(
+					j -> dados.adicionarDadoESTemporario(criaParJogada(j, jogadas.size())));
+			
+		} else {
+			// TODO empate
+		}
 		
-		if (deveTreinar)
-			aprenderJogadas();
+//		if (deveTreinar)
+//			aprenderJogadas();
 	}
 	
 	private void aprenderJogadas() {
@@ -73,9 +82,50 @@ public class JogadorRNA extends JogadorAutomato {
 		
 		if (v % 10 == 0) {
 			JdvUtils.Arquivo.salvarRede(rede);
-			JdvUtils.Arquivo.salvarDados(rede, dados.getConjuntos());
+			JdvUtils.Arquivo.salvarDados(rede, dados);
 		}
 		// ----------------
+	}
+	
+	private JdvMLDataPair criaParJogada(Jogada jogada, int passos) {
+		double[] tabuleiro = super.validaEntradas(jogada.getConfiguracao());
+		int[] indicesX = JdvUtils.Tabuleiro.computaIndicesVencedor(jogada.getConfiguracao());
+		int pontos = 1;
+		double delta = 1;
+		
+		switch (passos) {
+			case 3: { // Ótimas
+				pontos = 3;
+				delta = 0.9;
+				break;
+			}
+			case 4: { // Boas
+				pontos = 2;
+				delta = 0.6;
+				break;
+			}
+			case 5: { // Razoáveis
+				pontos = 1;
+				delta = 0.4;
+				break;
+			}
+		}
+		
+		for (int i = 0; i < tabuleiro.length; i++)
+			tabuleiro[i] *= delta;
+		
+		for (int i = 0; i < indicesX.length; i++)
+			if (indicesX[i] != jogada.getPosicaoEscolhida())
+				tabuleiro[indicesX[i]] = 0.9;
+		
+		JdvMLDataPair par = new JdvMLDataPair(rede.traduzirEntrada(tabuleiro),
+				rede.convertePosicaoTabuleiroEmSaida(jogada.getPosicaoEscolhida()));
+		par.setPontos(pontos);
+		return par;
+	}
+	
+	public static void main(String[] args) {
+		
 	}
 	
 }

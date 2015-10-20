@@ -6,8 +6,6 @@ import huehue.br.rede.modelo.JdvRedeAbstrata;
 import huehue.br.rede.modelo.MultilayerPerceptron3;
 import huehue.br.util.JdvUtils;
 
-import org.encog.ml.data.basic.BasicMLDataSet;
-
 /**
  * Representa um jogador que utiliza um algoritimo para determinar posições aleatórias.
  * 
@@ -28,7 +26,7 @@ public class JogadorAleatorio extends JogadorAutomato {
 		
 		if (armazenaCasos) {
 			rede = new MultilayerPerceptron3();
-			dados = new ConjuntosDados(new BasicMLDataSet());
+			dados = new ConjuntosDados();
 			dados.setSubstituirRepetidos(false);
 		}
 	}
@@ -46,7 +44,7 @@ public class JogadorAleatorio extends JogadorAutomato {
 							rede.traduzirEntrada(super.validaEntradas(p.getConfiguracao())),
 							rede.convertePosicaoTabuleiroEmSaida(p.getPosicaoEscolhida())));
 			
-			JdvUtils.Arquivo.salvarDados(rede, dados.getConjuntos());
+			JdvUtils.Arquivo.salvarDados(rede, dados);
 			JdvUtils.Arquivo.incrementaVersao();
 		}
 	}

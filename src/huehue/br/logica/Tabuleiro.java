@@ -36,9 +36,9 @@ public class Tabuleiro {
 		this.tela = tela;
 		partida = new Partida();
 		
-		JdvUtils.Arquivo.versionamento(0);
+		JdvUtils.Arquivo.versionamento(1968);
 		
-		setJogadorUm(new JogadorRNA(Caractere.X, true));
+		setJogadorUm(new JogadorRNA(Caractere.X, false));
 //		setJogadorUm(new JogadorHumano(Caractere.X));
 //		setJogadorUm(new JogadorAleatorio(Caractere.X));
 //		setJogadorUm(new JogadorMiniMax(Caractere.X));
@@ -85,7 +85,7 @@ public class Tabuleiro {
 		if (vencedor != null) {
 			vencedor.pontuar();
 			mensagemFinal = "O jogador " + vencedor.getCaractere().getChave() + " venceu!"
-				+ "\nPontuação atual: " + vencedor.getPontuacao();
+					+ "\nPontuação atual: " + vencedor.getPontuacao();
 		} else {
 			mensagemFinal = "Empate !";
 		}
@@ -112,7 +112,7 @@ public class Tabuleiro {
 	public void setJogadorUm(Jogador jogadorUm) {
 		if (jogadorDois != null && jogadorDois.getCaractere().equals(jogadorUm.getCaractere()))
 			throw new JdvException("Caractere " + jogadorDois.getCaractere()
-				+ " já está sendo utilizado por outro jogador!");
+					+ " já está sendo utilizado por outro jogador!");
 		
 		this.jogadorUm = jogadorUm;
 	}
@@ -120,7 +120,7 @@ public class Tabuleiro {
 	public void setJogadorDois(Jogador jogadorDois) {
 		if (jogadorUm != null && jogadorUm.getCaractere().equals(jogadorDois.getCaractere()))
 			throw new JdvException("Caractere " + jogadorDois.getCaractere()
-				+ " já está sendo utilizado por outro jogador!");
+					+ " já está sendo utilizado por outro jogador!");
 		
 		this.jogadorDois = jogadorDois;
 	}

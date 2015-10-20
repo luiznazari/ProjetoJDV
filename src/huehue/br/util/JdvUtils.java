@@ -7,6 +7,7 @@ import huehue.br.modelo.Jogador;
 import huehue.br.modelo.JogadorAutomato;
 import huehue.br.modelo.JogadorMiniMax;
 import huehue.br.modelo.JogadorRNA;
+import huehue.br.rede.dados.ConjuntosDados;
 import huehue.br.rede.modelo.JdvRede;
 import huehue.br.rede.modelo.JdvRedeAbstrata;
 import huehue.br.rede.modelo.MapaSaida;
@@ -47,15 +48,15 @@ public class JdvUtils {
 	public static class Tabuleiro {
 		
 		/**
-		 * Avalia se há um vencedor em dado momento no jogo. Caso retornar zero, referente ao
-		 * {@link Caractere#VAZIO}, não há vencedor.
+		 * Avalia se há um vencedor em dado momento no jogo e retorna os índices do tabuleiro que formaram a combinação
+		 * vencedora.
 		 * 
 		 * @param t
-		 *        a array de valores correspondentes ao tabuleiro.
-		 * @return o valor correspondente ao {@link Caractere} vencedor.
+		 *            a array de valores correspondentes ao tabuleiro.
+		 * @return o array contendo os índices que formam a combinação vencedora.
 		 */
 		// @formatter:off
-		public static int computaVencedor(double[] t) {
+		public static int[] computaIndicesVencedor(double[] t) {
 			int vazio = Caractere.VAZIO.getValor();
 			
 			/*
@@ -75,20 +76,33 @@ public class JdvUtils {
 				int[] n = m[i - 1];
 				for (int j = 0; j < n.length; j++)
 					if (t[n[j]] != vazio && t[n[j]] == t[n[j] + i] && t[n[j]] == t[n[j] + i * 2])
-						return (int) t[n[j]];
+						return new int[] { n[j], n[j] + i, n[j] + i * 2 };
 			}
 			
-			return vazio;
+			return new int[] { vazio };
 		}
 		// @formatter:on
+		
+		/**
+		 * Avalia se há um vencedor em dado momento no jogo. Caso retornar zero, referente ao {@link Caractere#VAZIO},
+		 * não há vencedor.
+		 * 
+		 * @param t
+		 *            a array de valores correspondentes ao tabuleiro.
+		 * @return o valor correspondente ao {@link Caractere} vencedor.
+		 */
+		public static int computaVencedor(double[] t) {
+			return ( int ) t[computaIndicesVencedor(t)[0]];
+			
+		}
 		
 		/**
 		 * Avalia se houve um vencedor em dado momento no jogo.
 		 * 
 		 * @param t
-		 *        a array de valores correspondentes ao tabuleiro.
+		 *            a array de valores correspondentes ao tabuleiro.
 		 * @param jogadores
-		 *        os jogadores a serem analisados.
+		 *            os jogadores a serem analisados.
 		 * @return o jogador vencedor ou null caso não haja um vencedor.
 		 */
 		public static Jogador computaVencedor(double[] t, Jogador... jogadores) {
@@ -103,7 +117,7 @@ public class JdvUtils {
 		
 		/**
 		 * @param t
-		 *        o tabuleiro.
+		 *            o tabuleiro.
 		 * @return quantidade de posições vazias do tabuleiro.
 		 */
 		public static int computaEspacosVazios(double[] t) {
@@ -120,7 +134,7 @@ public class JdvUtils {
 		 * Avalia se o tabuleiro está completo, isto é, com todas as posições ocupadas.
 		 * 
 		 * @param t
-		 *        o tabuleiro
+		 *            o tabuleiro
 		 * @return <code>true</code> caso esteja completo, <code>false</code> caso contrário.
 		 */
 		public static boolean isCompleto(double[] t) {
@@ -175,7 +189,7 @@ public class JdvUtils {
 		 * @param redeBase
 		 * @param redeObjetivo
 		 * @param dirRecursos
-		 *        diretório onde do arquivo base.
+		 *            diretório onde do arquivo base.
 		 */
 		public static void converteArquivosDeDadosEntreRedes(JdvRedeAbstrata redeBase,
 				JdvRedeAbstrata redeObjetivo, String dirRecursos) {
@@ -193,11 +207,11 @@ public class JdvUtils {
 				JdvRedeAbstrata redeObjetivo) {
 			Arquivo.versionamento(false);
 			
-			MLDataSet dadosRedeBase = Arquivo.carregarDados("bak_" + redeBase.getNome(),
+			ConjuntosDados dados = Arquivo.carregarDados("bak_" + redeBase.getNome(),
 					redeBase.getNumeroEntradas(), redeBase.getNumeroSaidas());
 			MLDataSet dadosRedeObjetivo = new BasicMLDataSet();
 			
-			for (MLDataPair par : dadosRedeBase) {
+			for (MLDataPair par : dados.getConjuntos()) {
 				double[] entradasBase = redeBase.converteEntradaEmTabuleiro(par.getInput());
 				MLData entradasObjetivo = redeObjetivo.traduzirEntrada(entradasBase);
 				
@@ -214,7 +228,7 @@ public class JdvUtils {
 		 * Arredonda o valor especificado. O arredondamento sempre é realizado para cima.
 		 * 
 		 * @param d
-		 *        o valor.
+		 *            o valor.
 		 * @return valor arredondado.
 		 */
 		public static double valorAproximado(double d) {
@@ -230,7 +244,7 @@ public class JdvUtils {
 		 * valor, mantendo os índices dos valores no vetor de saída original.
 		 * 
 		 * @param saídas
-		 *        da rede.
+		 *            da rede.
 		 * @return lista das saídas ordenadas e mapeadas.
 		 */
 		public static List<MapaSaida> toSaidasMapeadas(double[] saidas) {
@@ -288,11 +302,11 @@ public class JdvUtils {
 			return DIR_RECURSOS + nomeArquivo + "_ES.eg";
 		}
 		
-		public static void salvarDados(JdvRede rede, MLDataSet set) {
-			salvarDados(rede.getNome(), set);
+		public static void salvarDados(JdvRede rede, ConjuntosDados dados) {
+			salvarDados(rede.getNome(), dados.getConjuntosParaSalvar());
 		}
 		
-		public static void salvarDados(String nomeArquivo, MLDataSet set) {
+		private static void salvarDados(String nomeArquivo, MLDataSet set) {
 			File arquivoDados = null;
 			
 			try {
@@ -304,26 +318,28 @@ public class JdvUtils {
 					salvarDados(nomeArquivo, set);
 				else
 					System.err.println("Falha ao criar diretório do arquivo! Tente criá-lo manualmente: "
-						+ arquivoDados.getParent());
+							+ arquivoDados.getParent());
 			}
 		}
 		
-		public static BasicMLDataSet carregarDados(JdvRede rede) {
+		public static ConjuntosDados carregarDados(JdvRede rede) {
 			return carregarDados(rede.getNome(), rede.getNumeroEntradas(), rede.getNumeroSaidas());
 		}
 		
-		public static BasicMLDataSet carregarDados(String nomeArquivo, int entradas, int saidas) {
+		public static ConjuntosDados carregarDados(String nomeArquivo, int entradas, int saidas) {
 			String caminho = getNomeArquivoDados(nomeArquivo);
+			entradas += ConjuntosDados.getEntradasAdicionaisCSV();
 			
 			try {
-				return ( BasicMLDataSet ) EncogUtility.loadCSV2Memory(caminho, entradas, saidas,
+				BasicMLDataSet set = ( BasicMLDataSet ) EncogUtility.loadCSV2Memory(caminho, entradas, saidas,
 						false, FORMATO, false);
+				return ConjuntosDados.criaConjuntosAPartirDeArquivo(set);
 				
 			} catch (Exception e) {
 				
 				System.out.println("Arquivo de entrada e saída \"" + caminho
-					+ "\" não encontrado! Criado conjunto vazio.");
-				return new BasicMLDataSet();
+						+ "\" não encontrado! Criado conjunto vazio.");
+				return new ConjuntosDados();
 			}
 		}
 		
@@ -339,7 +355,7 @@ public class JdvUtils {
 					salvarRede(rede);
 				else
 					System.err.println("Falha ao criar diretório do arquivo! Tente criá-lo manualmente: "
-						+ arquivoRede.getParent());
+							+ arquivoRede.getParent());
 			}
 		}
 		
@@ -360,7 +376,7 @@ public class JdvUtils {
 				return ( BasicNetwork ) EncogDirectoryPersistence.loadObject(stream);
 			} catch (Exception e) {
 				System.out.println("Arquivo de rede \"" + caminho
-					+ "\" não encontrado! Criada uma nova rede.");
+						+ "\" não encontrado! Criada uma nova rede.");
 				return null;
 			}
 		}
@@ -491,7 +507,7 @@ public class JdvUtils {
 			int len = t.length;
 			for (int i = 0; i < len; i++)
 				tString += preencheValor(( int ) t[i], 2)
-					+ (i != len - 1 ? ", " : "]");
+						+ (i != len - 1 ? ", " : "]");
 			
 			return tString;
 		}
