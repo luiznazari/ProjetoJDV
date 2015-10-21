@@ -150,19 +150,29 @@ public abstract class JdvRedeAbstrata implements JdvRede {
 	}
 	
 	public final void treinar(final ConjuntosDados dados) {
+		this.treinar(dados, 0);
+	}
+	
+	public final void treinar(final ConjuntosDados dados, int tamanhoBlocos) {
 		dados.embaralhar();
 		
-		List<MLDataPair> pares = dados.getConjuntos().getData();
+		List<MLDataPair> pares = dados.getConjuntos();
 		int len = pares.size();
-		int tamBlocos = len / 2;
-		int iteracoes = len / tamBlocos;
-		if (len % tamBlocos != 0)
+		if (len <= 0)
+			throw new JdvException("Não é possível realizar o treinamento com um conjunto vazio!");
+		
+		if (tamanhoBlocos <= 0)
+			tamanhoBlocos = len;
+		
+		int iteracoes = len / tamanhoBlocos;
+		
+		if (len % tamanhoBlocos != 0)
 			iteracoes += 1;
 		
 		LocalDateTime inicio = LocalDateTime.now();
 		for (int i = 0; i < iteracoes; i++) {
-			int lenIteracao = i < iteracoes - 1 ? tamBlocos : len % tamBlocos;
-			MLDataSet set = new BasicMLDataSet(pares.subList(i * tamBlocos, i * tamBlocos + lenIteracao));
+			int lenIteracao = (i < iteracoes - 1 ? tamanhoBlocos : len % tamanhoBlocos) + 1;
+			MLDataSet set = new BasicMLDataSet(pares.subList(i * tamanhoBlocos, i * tamanhoBlocos + lenIteracao));
 			
 			MLTrain train = new Backpropagation(getRede(), set, constanteDeAprendizagem, momentum);
 			

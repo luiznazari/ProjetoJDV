@@ -53,15 +53,30 @@ public abstract class JogadorAutomato extends Jogador {
 	}
 	
 	/**
+	 * Valida os valores das entradas a serem computadas pela I.A..
+	 * 
+	 * @param entradas
+	 *        o tabuleiro.
+	 * @return o tabuleiro validado.
+	 * @see JogadorAutomato#validaEntradas(double[], boolean)
+	 */
+	protected double[] validaEntradas(double[] entradas) {
+		return validaEntradas(entradas, this.jogadorX);
+	}
+	
+	/**
 	 * Valida os valores das entradas a serem computadas pela I.A.. Caso o {@link JogadorAutomato}
 	 * em questão possuir o {@link Caractere#O}, os valores das entradas precisarão ser ajustados,
 	 * pois a rede é treinada para reconhecer o valor do {@link Caractere#X} como posição da Rede e
 	 * o {@link Caractere#O} como o adversário.
 	 * 
 	 * @param entradas
-	 * @return
+	 *        o tabuleiro.
+	 * @param jogadorX
+	 *        informa se são entradas do jogador X.
+	 * @return o tabuleiro validado.
 	 */
-	protected double[] validaEntradas(double[] entradas) {
+	protected double[] validaEntradas(double[] entradas, boolean jogadorX) {
 		entradas = entradas.clone();
 		
 		if (!jogadorX)

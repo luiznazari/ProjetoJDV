@@ -40,7 +40,6 @@ public class JogadorRNA extends JogadorAutomato {
 		
 		rede = new MultilayerPerceptron3().inicializar();
 		dados = JdvUtils.Arquivo.carregarDados(rede);
-		dados.setSubstituirRepetidos(true);
 	}
 	
 	@Override
@@ -51,7 +50,7 @@ public class JogadorRNA extends JogadorAutomato {
 		// Escolheu uma posição já ocupada.
 		if (entradas[posicaoEscolhida] != Caractere.VAZIO.getValor()) {
 			System.err.println("A Rede computou uma posição inválida [" + posicaoEscolhida + "]."
-					+ " Escolhendo novo movimento...");
+				+ " Escolhendo novo movimento...");
 			posicaoEscolhida = super.escolhePosicao(entradas);
 		}
 		
@@ -63,14 +62,16 @@ public class JogadorRNA extends JogadorAutomato {
 		if (partida.getVencedor() != null) {
 			List<Jogada> jogadas = partida.getJogadasVencedor();
 			jogadas.forEach(
-					j -> dados.adicionarDadoESTemporario(criaParJogada(j, jogadas.size())));
+					j -> dados.adicionarDadoESTemporario(
+							criaParJogada(j, jogadas.size(), partida.getVencedor().getCaractere() == Caractere.X)));
 			
 		} else {
 			// TODO empate
 		}
 		
-//		if (deveTreinar)
-//			aprenderJogadas();
+		dados.armazenarTemporarios();
+		if (deveTreinar)
+			aprenderJogadas();
 	}
 	
 	private void aprenderJogadas() {
@@ -87,26 +88,30 @@ public class JogadorRNA extends JogadorAutomato {
 		// ----------------
 	}
 	
-	private JdvMLDataPair criaParJogada(Jogada jogada, int passos) {
-		double[] tabuleiro = super.validaEntradas(jogada.getConfiguracao());
-		int[] indicesX = JdvUtils.Tabuleiro.computaIndicesVencedor(jogada.getConfiguracao());
+	private JdvMLDataPair criaParJogada(Jogada jogada, int passos, boolean jogadorX) {
+		double[] tabuleiro = super.validaEntradas(jogada.getConfiguracao(), jogadorX);
+		
+		tabuleiro[jogada.getPosicaoEscolhida()] = Caractere.X.getValor();
+		int[] indicesX = JdvUtils.Tabuleiro.computaIndicesVencedor(tabuleiro);
+		tabuleiro[jogada.getPosicaoEscolhida()] = Caractere.VAZIO.getValor();
+		
 		int pontos = 1;
 		double delta = 1;
 		
 		switch (passos) {
-			case 3: { // Ótimas
+			case 3: { // Ótimo
 				pontos = 3;
-				delta = 0.9;
+				delta = 0.9999;
 				break;
 			}
-			case 4: { // Boas
+			case 4: { // Bom
 				pontos = 2;
-				delta = 0.6;
+				delta = 0.8888;
 				break;
 			}
-			case 5: { // Razoáveis
+			case 5: { // Razoável
 				pontos = 1;
-				delta = 0.4;
+				delta = 0.7777;
 				break;
 			}
 		}
@@ -116,11 +121,10 @@ public class JogadorRNA extends JogadorAutomato {
 		
 		for (int i = 0; i < indicesX.length; i++)
 			if (indicesX[i] != jogada.getPosicaoEscolhida())
-				tabuleiro[indicesX[i]] = 0.9;
+				tabuleiro[indicesX[i]] = 0.9999;
 		
 		JdvMLDataPair par = new JdvMLDataPair(rede.traduzirEntrada(tabuleiro),
-				rede.convertePosicaoTabuleiroEmSaida(jogada.getPosicaoEscolhida()));
-		par.setPontos(pontos);
+				rede.convertePosicaoTabuleiroEmSaida(jogada.getPosicaoEscolhida()), 1, pontos);
 		return par;
 	}
 	

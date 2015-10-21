@@ -12,14 +12,14 @@ public class MultilayerPerceptron3 extends MultilayerPerceptron2 {
 	
 	public MultilayerPerceptron3() {
 		super(18, 9);
-		momentum = 0.1;
-		margemDeErro = 0.065;
-		constanteDeAprendizagem = 0.05;
+		momentum = 0.4;
+		margemDeErro = 0.01;
+		constanteDeAprendizagem = 0.1;
 	}
 	
 	@Override
 	public String getEstruturaRede() {
-		return "?:B->SIGMOID->27:B->SIGMOID->36:B->SIGMOID->?";
+		return "?:B->SIGMOID->27:B->SIGMOID->9:B->SIGMOID->?";
 	}
 	
 	@Override
@@ -27,10 +27,10 @@ public class MultilayerPerceptron3 extends MultilayerPerceptron2 {
 		double[] entradasXO = new double[18];
 		
 		for (int i = 0; i < 9; i++) {
-			if (entradas[i] == Caractere.X.getValor())
-				entradasXO[i] = 1;
-			else if (entradas[i] == Caractere.O.getValor())
-				entradasXO[i + 9] = 1;
+			if (entradas[i] > 0)
+				entradasXO[i] = entradas[i];
+			else if (entradas[i] < 0)
+				entradasXO[i + 9] = -entradas[i];
 		}
 		
 		return super.traduzirEntrada(entradasXO);
@@ -42,9 +42,9 @@ public class MultilayerPerceptron3 extends MultilayerPerceptron2 {
 		double[] tabuleiro = new double[9];
 		
 		for (int i = 0; i < 9; i++) {
-			if (entradas[i] == 1)
+			if (entradas[i] > 0)
 				tabuleiro[i] = Caractere.X.getValor();
-			else if (entradas[i + 9] == 1)
+			else if (entradas[i + 9] > 0)
 				tabuleiro[i] = Caractere.O.getValor();
 		}
 		
@@ -52,16 +52,16 @@ public class MultilayerPerceptron3 extends MultilayerPerceptron2 {
 	}
 	
 	public static void main(String[] args) {
-		JdvUtils.Arquivo.versionamento(1967);
+		JdvUtils.Arquivo.versionamento(322);
 		JdvRedeAbstrata rede = new MultilayerPerceptron3().inicializar();
 		ConjuntosDados dados = JdvUtils.Arquivo.carregarDados(rede);
-		MLDataSet setDados = dados.getConjuntos();
+		MLDataSet setDados = dados.getConjuntosSet();
 		
 //		rede.treinar(dados);
 //		
 //		JdvUtils.Arquivo.incrementaVersao();
 //		JdvUtils.Arquivo.salvarRede(rede);
-//		JdvUtils.Arquivo.salvarDados(rede, setDados);
+//		JdvUtils.Arquivo.salvarDados(rede, dados);
 		
 //		rede.testar(setDados.get(( int ) (Math.random() * setDados.size())));
 		rede.testar(setDados);

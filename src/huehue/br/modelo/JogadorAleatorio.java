@@ -4,7 +4,6 @@ import huehue.br.logica.Partida;
 import huehue.br.rede.dados.ConjuntosDados;
 import huehue.br.rede.modelo.JdvRedeAbstrata;
 import huehue.br.rede.modelo.MultilayerPerceptron3;
-import huehue.br.util.JdvUtils;
 
 /**
  * Representa um jogador que utiliza um algoritimo para determinar posições aleatórias.
@@ -27,7 +26,6 @@ public class JogadorAleatorio extends JogadorAutomato {
 		if (armazenaCasos) {
 			rede = new MultilayerPerceptron3();
 			dados = new ConjuntosDados();
-			dados.setSubstituirRepetidos(false);
 		}
 	}
 	
@@ -38,15 +36,15 @@ public class JogadorAleatorio extends JogadorAutomato {
 	
 	@Override
 	public void notificarResultado(Partida partida) {
-		if (dados != null) {
-			partida.getJogadasVencedor().forEach(
-					p -> dados.adicionarDadoES(
-							rede.traduzirEntrada(super.validaEntradas(p.getConfiguracao())),
-							rede.convertePosicaoTabuleiroEmSaida(p.getPosicaoEscolhida())));
-			
-			JdvUtils.Arquivo.salvarDados(rede, dados);
-			JdvUtils.Arquivo.incrementaVersao();
-		}
+//		if (dados != null) {
+//			partida.getJogadasVencedor().forEach(
+//					p -> dados.adicionarDadoES(
+//							rede.traduzirEntrada(super.validaEntradas(p.getConfiguracao())),
+//							rede.convertePosicaoTabuleiroEmSaida(p.getPosicaoEscolhida())));
+//			
+//			JdvUtils.Arquivo.salvarDados(rede, dados);
+//			JdvUtils.Arquivo.incrementaVersao();
+//		}
 	}
 	
 }

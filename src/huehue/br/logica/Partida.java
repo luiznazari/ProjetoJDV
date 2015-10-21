@@ -95,11 +95,11 @@ public class Partida {
 	@Getter
 	public class Jogada {
 		
-		double[] configuracao;
+		final double[] configuracao;
 		
-		int posicaoEscolhida;
+		final int posicaoEscolhida;
 		
-		public Jogada(double[] configuracao, int posicaoEscolhida) {
+		public Jogada(final double[] configuracao, final int posicaoEscolhida) {
 			this.configuracao = configuracao.clone();
 			this.posicaoEscolhida = posicaoEscolhida;
 		}

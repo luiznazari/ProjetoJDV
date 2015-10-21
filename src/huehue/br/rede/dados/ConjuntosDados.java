@@ -6,11 +6,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 
-import org.encog.ml.data.MLData;
+import org.encog.ml.data.MLDataPair;
 import org.encog.ml.data.MLDataSet;
 import org.encog.ml.data.basic.BasicMLDataSet;
 
@@ -20,23 +21,20 @@ import org.encog.ml.data.basic.BasicMLDataSet;
  * 
  * @author Luiz Felipe Nazari
  */
+@NoArgsConstructor
 public class ConjuntosDados {
 	
-	@Setter
-	private boolean substituirRepetidos = false;
-	
-	@Getter
 	private List<JdvMLDataPair> conjuntos = new ArrayList<JdvMLDataPair>();
 	
 	@Getter
 	private List<JdvMLDataPair> conjuntosTemporarios = new ArrayList<JdvMLDataPair>();
 	
-//	public ConjuntosDados(BasicMLDataSet conjuntos) {
-//		this.conjuntos = conjuntos;
-//	}
+	public ConjuntosDados(List<JdvMLDataPair> conjuntos) {
+		this.conjuntos = conjuntos;
+	}
 	
 	public void armazenarTemporarios() {
-		conjuntosTemporarios.forEach(par -> adicionarDadoES(conjuntos, par));
+		conjuntosTemporarios.forEach(par -> adicionarDadoES(par));
 		descartarTemporarios();
 	}
 	
@@ -54,44 +52,60 @@ public class ConjuntosDados {
 		adicionarDadoES(conjuntosTemporarios, par);
 	}
 	
-	public void adicionarDadoESTemporario(MLData entrada, MLData saida) {
-		adicionarDadoESTemporario(new JdvMLDataPair(entrada, saida));
-	}
-	
-	public void adicionarDadoES(MLData entrada, MLData saida) {
-		adicionarDadoES(conjuntos, new JdvMLDataPair(entrada, saida));
+	public void adicionarDadoES(JdvMLDataPair par) {
+		adicionarDadoES(conjuntos, par);
 	}
 	
 	private void adicionarDadoES(List<JdvMLDataPair> lista, JdvMLDataPair par) {
-		int indiceES = getIndiceDadoES(lista.iterator(), par);
+		Iterator<JdvMLDataPair> iterator = lista.iterator();
+		JdvMLDataPair parAtual = null;
 		
-		if (indiceES == -1)
-			lista.add(par);
-		else if (substituirRepetidos)
-			lista.set(indiceES, par);
-	}
-	
-	private int getIndiceDadoES(Iterator<JdvMLDataPair> iterator, JdvMLDataPair par) {
-		int i = 0;
+		int index = 0;
 		while (iterator.hasNext()) {
-			if (par.isEntradasIguais(iterator.next()))
-				return i;
-			i++;
+			parAtual = iterator.next();
+			
+			if (par.isEntradasIguais(parAtual.getPar())) {
+				
+				// Quando as entradas já existirem na lista e
+				// o par possuir uma pontuação menor, subistitui.
+				if (par.getPontos() > parAtual.getPontos())
+					lista.set(index, par);
+				else if (par.getPontos() == parAtual.getPontos())
+					parAtual.incrementaFrequencia();
+				
+				return;
+			}
+			
+			index++;
 		}
 		
-		return -1;
+		// Quando o par não existir, adiciona.
+		lista.add(par);
 	}
 	
 	/* ------------------------ */
 	
-	public static ConjuntosDados criaConjuntosAPartirDeArquivo(BasicMLDataSet set) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<MLDataPair> getConjuntos() {
+		return this.conjuntos.stream().map(JdvMLDataPair::getPar).collect(Collectors.toList());
 	}
 	
-	public MLDataSet getConjuntosParaSalvar() {
-		// TODO Auto-generated method stub
-		return null;
+	public MLDataSet getConjuntosSet() {
+		return new BasicMLDataSet(this.getConjuntos());
+	}
+	
+	public static ConjuntosDados criaConjuntosAPartirDeArquivo(BasicMLDataSet set) {
+		List<JdvMLDataPair> pares = set.getData().stream()
+				.map(d -> JdvMLDataPair.criaAPartirDeArquivo(d)).collect(Collectors.toList());
+		
+		return new ConjuntosDados(pares);
+	}
+	
+	public MLDataSet getConjuntosParaSalvarEmArquivo() {
+		MLDataSet set = new BasicMLDataSet();
+		
+		this.conjuntos.forEach(c -> set.add(c.getParaSalvar()));
+		
+		return set;
 	}
 	
 	public static int getEntradasAdicionaisCSV() {

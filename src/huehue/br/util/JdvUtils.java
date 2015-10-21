@@ -5,8 +5,6 @@ import huehue.br.logica.Partida;
 import huehue.br.modelo.Caractere;
 import huehue.br.modelo.Jogador;
 import huehue.br.modelo.JogadorAutomato;
-import huehue.br.modelo.JogadorMiniMax;
-import huehue.br.modelo.JogadorRNA;
 import huehue.br.rede.dados.ConjuntosDados;
 import huehue.br.rede.modelo.JdvRede;
 import huehue.br.rede.modelo.JdvRedeAbstrata;
@@ -14,6 +12,7 @@ import huehue.br.rede.modelo.MapaSaida;
 import huehue.br.rede.modelo.MultilayerPerceptron;
 import huehue.br.rede.modelo.MultilayerPerceptron2;
 import huehue.br.rede.modelo.MultilayerPerceptron3;
+import huehue.br.tela.TelaExibicao;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -48,15 +47,16 @@ public class JdvUtils {
 	public static class Tabuleiro {
 		
 		/**
-		 * Avalia se há um vencedor em dado momento no jogo e retorna os índices do tabuleiro que formaram a combinação
+		 * Avalia se há um vencedor em dado momento no jogo e retorna os índices do tabuleiro que
+		 * formaram a combinação
 		 * vencedora.
 		 * 
 		 * @param t
-		 *            a array de valores correspondentes ao tabuleiro.
+		 *        a array de valores correspondentes ao tabuleiro.
 		 * @return o array contendo os índices que formam a combinação vencedora.
 		 */
 		// @formatter:off
-		public static int[] computaIndicesVencedor(double[] t) {
+		public static int[] computaIndicesVencedor(final double[] t) {
 			int vazio = Caractere.VAZIO.getValor();
 			
 			/*
@@ -79,20 +79,26 @@ public class JdvUtils {
 						return new int[] { n[j], n[j] + i, n[j] + i * 2 };
 			}
 			
-			return new int[] { vazio };
+			return new int[0];
 		}
 		// @formatter:on
 		
 		/**
-		 * Avalia se há um vencedor em dado momento no jogo. Caso retornar zero, referente ao {@link Caractere#VAZIO},
+		 * Avalia se há um vencedor em dado momento no jogo. Caso retornar zero, referente ao
+		 * {@link Caractere#VAZIO},
 		 * não há vencedor.
 		 * 
 		 * @param t
-		 *            a array de valores correspondentes ao tabuleiro.
+		 *        a array de valores correspondentes ao tabuleiro.
 		 * @return o valor correspondente ao {@link Caractere} vencedor.
 		 */
-		public static int computaVencedor(double[] t) {
-			return ( int ) t[computaIndicesVencedor(t)[0]];
+		public static int computaVencedor(final double[] t) {
+			int[] indicesVencedor = computaIndicesVencedor(t);
+			
+			if (indicesVencedor.length > 0)
+				return ( int ) t[indicesVencedor[0]];
+			
+			return Caractere.VAZIO.getValor();
 			
 		}
 		
@@ -100,9 +106,9 @@ public class JdvUtils {
 		 * Avalia se houve um vencedor em dado momento no jogo.
 		 * 
 		 * @param t
-		 *            a array de valores correspondentes ao tabuleiro.
+		 *        a array de valores correspondentes ao tabuleiro.
 		 * @param jogadores
-		 *            os jogadores a serem analisados.
+		 *        os jogadores a serem analisados.
 		 * @return o jogador vencedor ou null caso não haja um vencedor.
 		 */
 		public static Jogador computaVencedor(double[] t, Jogador... jogadores) {
@@ -117,7 +123,7 @@ public class JdvUtils {
 		
 		/**
 		 * @param t
-		 *            o tabuleiro.
+		 *        o tabuleiro.
 		 * @return quantidade de posições vazias do tabuleiro.
 		 */
 		public static int computaEspacosVazios(double[] t) {
@@ -134,7 +140,7 @@ public class JdvUtils {
 		 * Avalia se o tabuleiro está completo, isto é, com todas as posições ocupadas.
 		 * 
 		 * @param t
-		 *            o tabuleiro
+		 *        o tabuleiro
 		 * @return <code>true</code> caso esteja completo, <code>false</code> caso contrário.
 		 */
 		public static boolean isCompleto(double[] t) {
@@ -189,7 +195,7 @@ public class JdvUtils {
 		 * @param redeBase
 		 * @param redeObjetivo
 		 * @param dirRecursos
-		 *            diretório onde do arquivo base.
+		 *        diretório onde do arquivo base.
 		 */
 		public static void converteArquivosDeDadosEntreRedes(JdvRedeAbstrata redeBase,
 				JdvRedeAbstrata redeObjetivo, String dirRecursos) {
@@ -228,7 +234,7 @@ public class JdvUtils {
 		 * Arredonda o valor especificado. O arredondamento sempre é realizado para cima.
 		 * 
 		 * @param d
-		 *            o valor.
+		 *        o valor.
 		 * @return valor arredondado.
 		 */
 		public static double valorAproximado(double d) {
@@ -244,7 +250,7 @@ public class JdvUtils {
 		 * valor, mantendo os índices dos valores no vetor de saída original.
 		 * 
 		 * @param saídas
-		 *            da rede.
+		 *        da rede.
 		 * @return lista das saídas ordenadas e mapeadas.
 		 */
 		public static List<MapaSaida> toSaidasMapeadas(double[] saidas) {
@@ -303,7 +309,7 @@ public class JdvUtils {
 		}
 		
 		public static void salvarDados(JdvRede rede, ConjuntosDados dados) {
-			salvarDados(rede.getNome(), dados.getConjuntosParaSalvar());
+			salvarDados(rede.getNome(), dados.getConjuntosParaSalvarEmArquivo());
 		}
 		
 		private static void salvarDados(String nomeArquivo, MLDataSet set) {
@@ -318,7 +324,7 @@ public class JdvUtils {
 					salvarDados(nomeArquivo, set);
 				else
 					System.err.println("Falha ao criar diretório do arquivo! Tente criá-lo manualmente: "
-							+ arquivoDados.getParent());
+						+ arquivoDados.getParent());
 			}
 		}
 		
@@ -338,7 +344,7 @@ public class JdvUtils {
 			} catch (Exception e) {
 				
 				System.out.println("Arquivo de entrada e saída \"" + caminho
-						+ "\" não encontrado! Criado conjunto vazio.");
+					+ "\" não encontrado! Criado conjunto vazio.");
 				return new ConjuntosDados();
 			}
 		}
@@ -355,7 +361,7 @@ public class JdvUtils {
 					salvarRede(rede);
 				else
 					System.err.println("Falha ao criar diretório do arquivo! Tente criá-lo manualmente: "
-							+ arquivoRede.getParent());
+						+ arquivoRede.getParent());
 			}
 		}
 		
@@ -376,7 +382,7 @@ public class JdvUtils {
 				return ( BasicNetwork ) EncogDirectoryPersistence.loadObject(stream);
 			} catch (Exception e) {
 				System.out.println("Arquivo de rede \"" + caminho
-						+ "\" não encontrado! Criada uma nova rede.");
+					+ "\" não encontrado! Criada uma nova rede.");
 				return null;
 			}
 		}
@@ -507,7 +513,7 @@ public class JdvUtils {
 			int len = t.length;
 			for (int i = 0; i < len; i++)
 				tString += preencheValor(( int ) t[i], 2)
-						+ (i != len - 1 ? ", " : "]");
+					+ (i != len - 1 ? ", " : "]");
 			
 			return tString;
 		}
@@ -566,30 +572,30 @@ public class JdvUtils {
 	}
 	
 	public static void main(String[] args) {
-//		String c = "A";
-//		
-//		String caminho = Arquivo.DIR_RECURSOS + c + "1";
-//		MLDataSet set = EncogUtility.loadCSV2Memory(caminho, 9, 9, false, Arquivo.FORMATO,
-//				false);
-//		
-//		new TelaExibicao(set);
-//		
-//		caminho = Arquivo.DIR_RECURSOS + c + "2";
-//		set = EncogUtility.loadCSV2Memory(caminho, 9, 9, false, Arquivo.FORMATO, false);
-//		
-//		new TelaExibicao(set);
-//		RNA.converteArquivosDeDadosEntreRedes(new MultilayerPerceptron2(), new MultilayerPerceptron3());
+		Arquivo.versionamento(false);
 		
-		JdvUtils.Arquivo.versionamento(1967);
+		String a = "A";
+		
+		ConjuntosDados dados1 = Arquivo.carregarDados(a + "1", 18, 9);
+		
+		new TelaExibicao(dados1.getConjuntosSet(), new MultilayerPerceptron3());
+//		
+//		ConjuntosDados dados2 = Arquivo.carregarDados(a + "2", 18, 9);
+//		
+//		new TelaExibicao(dados2.getConjuntosSet());
+		
+//		RNA.converteArquivosDeDadosEntreRedes(, new MultilayerPerceptron3());
+		
+//		JdvUtils.Arquivo.versionamento(1967);
 		
 //		JogadorAutomato um = new JogadorAleatorio(Caractere.X);
 		
-		JogadorAutomato um = new JogadorRNA(Caractere.X, false);
-		JogadorAutomato dois = new JogadorMiniMax(Caractere.O);
+//		JogadorAutomato um = new JogadorRNA(Caractere.X, false);
+//		JogadorAutomato dois = new JogadorMiniMax(Caractere.O);
 		
 //		JogadorAutomato um = new JogadorRNA(Caractere.O, false);
 //		JogadorAutomato dois = new JogadorMiniMax(Caractere.X);
-		Tabuleiro.comparaJogadores(um, dois, 100);
+//		Tabuleiro.comparaJogadores(um, dois, 100);
 		
 		Encog.getInstance().shutdown();
 	}

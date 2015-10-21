@@ -59,28 +59,24 @@ public class TelaExibicao extends JFrame {
 		JPanel tab = new JPanel(new GridLayout(3, 3));
 		tab.setSize(40, 40);
 		
-		JLabel[] jlbs = new JLabel[9];
-		
 		double[] entrada = rede.converteEntradaEmTabuleiro(par.getInput()).clone();
 		int posicao = rede.traduzirSaida(par.getIdeal());
 		entrada[posicao] = 2;
 		
-		for (int i = 0; i < 9; i++) {
-			jlbs[i] = constroiCelulaTabuleiro(i);
-		}
+		for (int i = 0; i < 9; i++)
+			tab.add(constroiCelulaTabuleiro(( int ) entrada[i]));
 		
 		return tab;
 	}
 	
-	private JLabel constroiCelulaTabuleiro(int index) {
-		JLabel celula = new JLabel(JdvUtils.Log.converteValorCaractere(index));
+	private JLabel constroiCelulaTabuleiro(int caractere) {
+		JLabel celula = new JLabel(JdvUtils.Log.converteValorCaractere(caractere));
 		
-		celula.setName("" + index);
 		celula.setHorizontalAlignment(JLabel.CENTER);
 		celula.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 14));
 		celula.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
 		
-		if (index > 1)
+		if (caractere > 1)
 			celula.setForeground(Color.RED);
 		
 		return celula;
