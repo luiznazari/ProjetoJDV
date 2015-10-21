@@ -5,7 +5,7 @@ import huehue.br.logica.Partida.Jogada;
 import huehue.br.rede.dados.ConjuntosDados;
 import huehue.br.rede.dados.JdvMLDataPair;
 import huehue.br.rede.modelo.JdvRedeAbstrata;
-import huehue.br.rede.modelo.MultilayerPerceptron3;
+import huehue.br.rede.modelo.MultilayerPerceptron2;
 import huehue.br.util.JdvUtils;
 
 import java.util.List;
@@ -38,7 +38,7 @@ public class JogadorRNA extends JogadorAutomato {
 		super(caractere);
 		this.deveTreinar = deveTreinar;
 		
-		rede = new MultilayerPerceptron3().inicializar();
+		rede = new MultilayerPerceptron2().inicializar();
 		dados = JdvUtils.Arquivo.carregarDados(rede);
 	}
 	

@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.encog.Encog;
 import org.encog.ml.data.MLData;
 import org.encog.ml.data.MLDataPair;
 import org.encog.ml.data.MLDataSet;
@@ -576,9 +575,9 @@ public class JdvUtils {
 		
 		String a = "A";
 		
-		ConjuntosDados dados1 = Arquivo.carregarDados(a + "1", 18, 9);
+		ConjuntosDados dados1 = Arquivo.carregarDados(a + "1", 9, 9);
 		
-		new TelaExibicao(dados1.getConjuntosSet(), new MultilayerPerceptron3());
+		new TelaExibicao(dados1.getConjuntosSet(), new MultilayerPerceptron2());
 //		
 //		ConjuntosDados dados2 = Arquivo.carregarDados(a + "2", 18, 9);
 //		
@@ -586,7 +585,7 @@ public class JdvUtils {
 		
 //		RNA.converteArquivosDeDadosEntreRedes(, new MultilayerPerceptron3());
 		
-//		JdvUtils.Arquivo.versionamento(1967);
+//		JdvUtils.Arquivo.versionamento(91);
 		
 //		JogadorAutomato um = new JogadorAleatorio(Caractere.X);
 		
@@ -595,9 +594,10 @@ public class JdvUtils {
 		
 //		JogadorAutomato um = new JogadorRNA(Caractere.O, false);
 //		JogadorAutomato dois = new JogadorMiniMax(Caractere.X);
-//		Tabuleiro.comparaJogadores(um, dois, 100);
 		
-		Encog.getInstance().shutdown();
+//		Tabuleiro.comparaJogadores(um, dois, 100);
+//		
+//		Encog.getInstance().shutdown();
 	}
 	
 	public static void delete_me() {

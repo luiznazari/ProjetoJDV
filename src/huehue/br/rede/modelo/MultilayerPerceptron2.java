@@ -22,14 +22,14 @@ public class MultilayerPerceptron2 extends JdvRedeAbstrata {
 	
 	public MultilayerPerceptron2() {
 		this(9, 9);
-		momentum = 0.4;
-		margemDeErro = 0.05D;
-		constanteDeAprendizagem = 0.05;
+		momentum = 0.5;
+		margemDeErro = 0.04D;
+		constanteDeAprendizagem = 0.10;
 	}
 	
 	@Override
 	public String getEstruturaRede() {
-		return "?:B->SIGMOID->27:B->SIGMOID->9:B->SIGMOID->?";
+		return "?:B->SIGMOID->27:B->SIGMOID->?";
 	}
 	
 	/**
@@ -67,21 +67,21 @@ public class MultilayerPerceptron2 extends JdvRedeAbstrata {
 	}
 	
 	public static void main(String[] args) {
-		JdvUtils.Arquivo.versionamento(961);
+		JdvUtils.Arquivo.versionamento(13);
 		JdvRedeAbstrata rede = new MultilayerPerceptron2().inicializar();
 		ConjuntosDados dados = JdvUtils.Arquivo.carregarDados(rede);
 		MLDataSet setDados = dados.getConjuntosSet();
 		
-//		rede.treinar(dados);
-//		
-//		JdvUtils.Arquivo.incrementaVersao();
-//		JdvUtils.Arquivo.salvarRede(rede);
-//		JdvUtils.Arquivo.salvarDados(rede, setDados);
+		rede.treinar(dados, 10);
+		
+		JdvUtils.Arquivo.incrementaVersao();
+		JdvUtils.Arquivo.salvarRede(rede);
+		JdvUtils.Arquivo.salvarDados(rede, dados);
 		
 //		rede.testar(setDados.get(( int ) (Math.random() * setDados.size())));
 		rede.testar(setDados);
 		
-//		rede.testar(new JdvMLDataPair(new BasicMLData(new double[] {
+//		rede.testar(new BasicMLDataPair(new BasicMLData(new double[] {
 //			-1, 0, -1, -1, 1, 1, 1, -1, 1
 //		}), new BasicMLData(new double[] {
 //			0, 1, 0, 0, 0, 0, 0, 0, 0

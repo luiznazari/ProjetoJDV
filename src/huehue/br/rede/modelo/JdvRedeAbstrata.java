@@ -1,6 +1,7 @@
 package huehue.br.rede.modelo;
 
 import huehue.br.exception.JdvException;
+import huehue.br.modelo.Caractere;
 import huehue.br.rede.dados.ConjuntosDados;
 import huehue.br.util.JdvUtils;
 
@@ -115,7 +116,17 @@ public abstract class JdvRedeAbstrata implements JdvRede {
 	 * @return posições do tabuleiro representando o conjuntos de entrada da rede.
 	 */
 	public double[] converteEntradaEmTabuleiro(MLData entrada) {
-		return entrada.getData().clone();
+		double[] entradas = entrada.getData();
+		double[] tabuleiro = new double[9];
+		
+		for (int i = 0; i < 9; i++) {
+			if (entradas[i] > 0)
+				tabuleiro[i] = Caractere.X.getValor();
+			else if (entradas[i] < 0)
+				tabuleiro[i] = Caractere.O.getValor();
+		}
+		
+		return tabuleiro;
 	}
 	
 	/**
