@@ -5,7 +5,7 @@ import huehue.br.logica.Partida.Jogada;
 import huehue.br.rede.dados.ConjuntosDados;
 import huehue.br.rede.dados.JdvMLDataPair;
 import huehue.br.rede.modelo.JdvRedeAbstrata;
-import huehue.br.rede.modelo.MultilayerPerceptron2;
+import huehue.br.rede.modelo.MultilayerPerceptron3;
 import huehue.br.util.JdvUtils;
 
 import java.util.List;
@@ -21,6 +21,8 @@ import lombok.Setter;
  */
 public class JogadorRNA extends JogadorAutomato {
 	
+	private int versaoArquivo = 0;
+	
 	@Getter
 	@Setter
 	private boolean deveTreinar = false;
@@ -35,11 +37,15 @@ public class JogadorRNA extends JogadorAutomato {
 	}
 	
 	public JogadorRNA(Caractere caractere, boolean deveTreinar) {
+		this(caractere, new MultilayerPerceptron3(), deveTreinar);
+	}
+	
+	public JogadorRNA(Caractere caractere, JdvRedeAbstrata rede, boolean deveTreinar) {
 		super(caractere);
 		this.deveTreinar = deveTreinar;
 		
-		rede = new MultilayerPerceptron2().inicializar();
-		dados = JdvUtils.Arquivo.carregarDados(rede);
+		this.rede = rede.inicializar();
+		this.dados = JdvUtils.Arquivo.carregarDados(rede);
 	}
 	
 	@Override
@@ -50,7 +56,7 @@ public class JogadorRNA extends JogadorAutomato {
 		// Escolheu uma posição já ocupada.
 		if (entradas[posicaoEscolhida] != Caractere.VAZIO.getValor()) {
 			System.err.println("A Rede computou uma posição inválida [" + posicaoEscolhida + "]."
-				+ " Escolhendo novo movimento...");
+					+ " Escolhendo novo movimento...");
 			posicaoEscolhida = super.escolhePosicao(entradas);
 		}
 		
@@ -79,9 +85,8 @@ public class JogadorRNA extends JogadorAutomato {
 		rede.treinar(dados);
 		
 		// FIXME Temporário
-		int v = JdvUtils.Arquivo.incrementaVersao();
-		
-		if (v % 10 == 0) {
+		versaoArquivo++;
+		if (versaoArquivo % 100 == 0) {
 			JdvUtils.Arquivo.salvarRede(rede);
 			JdvUtils.Arquivo.salvarDados(rede, dados);
 		}
