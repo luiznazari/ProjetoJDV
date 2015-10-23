@@ -10,7 +10,7 @@ import huehue.br.logica.Partida.Jogada;
 import huehue.br.modelo.Caractere;
 import huehue.br.modelo.Jogador;
 import huehue.br.modelo.JogadorHumano;
-import huehue.br.util.JdvUtils;
+import huehue.br.util.JdvLog;
 
 import java.util.List;
 
@@ -140,7 +140,7 @@ public class PartidaTest {
 	
 	@Before
 	public void init() {
-		JdvUtils.Log.ativo = false;
+		JdvLog.ativo = false;
 		
 		um = new JogadorHumano(Caractere.X);
 		dois = new JogadorHumano(Caractere.O);

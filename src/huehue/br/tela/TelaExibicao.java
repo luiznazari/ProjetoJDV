@@ -2,7 +2,7 @@ package huehue.br.tela;
 
 import huehue.br.rede.modelo.JdvRedeAbstrata;
 import huehue.br.rede.modelo.MultilayerPerceptron2;
-import huehue.br.util.JdvUtils;
+import huehue.br.util.JdvLog;
 
 import java.awt.Color;
 import java.awt.Container;
@@ -70,7 +70,7 @@ public class TelaExibicao extends JFrame {
 	}
 	
 	private JLabel constroiCelulaTabuleiro(int caractere) {
-		JLabel celula = new JLabel(JdvUtils.Log.converteValorCaractere(caractere));
+		JLabel celula = new JLabel(JdvLog.converteValorCaractere(caractere));
 		
 		celula.setHorizontalAlignment(JLabel.CENTER);
 		celula.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 14));

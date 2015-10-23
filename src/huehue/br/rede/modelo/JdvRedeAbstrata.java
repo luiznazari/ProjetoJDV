@@ -3,6 +3,7 @@ package huehue.br.rede.modelo;
 import huehue.br.exception.JdvException;
 import huehue.br.modelo.Caractere;
 import huehue.br.rede.dados.ConjuntosDados;
+import huehue.br.util.JdvLog;
 import huehue.br.util.JdvUtils;
 
 import java.time.Duration;
@@ -196,12 +197,12 @@ public abstract class JdvRedeAbstrata implements JdvRede {
 				falha++;
 		}
 		
-		JdvUtils.Log.resultado(tamanho, sucesso, falha);
+		JdvLog.resultado(tamanho, sucesso, falha);
 	}
 	
 	public void testar(final MLDataPair par) {
 		final MLData saida = processar(par.getInput());
-		JdvUtils.Log.resultado(par, saida, this);
+		JdvLog.resultado(par, saida, this);
 	}
 	
 	private void resetaEntradasTemporarias() {

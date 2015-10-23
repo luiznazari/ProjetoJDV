@@ -48,6 +48,10 @@ public class ConjuntosDados {
 	
 	/* Adição de conjuntos */
 	
+	public void adicionarDadoESTemporario(List<JdvMLDataPair> pares) {
+		pares.forEach(par -> adicionarDadoES(conjuntosTemporarios, par));
+	}
+	
 	public void adicionarDadoESTemporario(JdvMLDataPair par) {
 		adicionarDadoES(conjuntosTemporarios, par);
 	}

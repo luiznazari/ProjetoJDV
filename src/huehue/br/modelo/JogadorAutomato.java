@@ -1,6 +1,7 @@
 package huehue.br.modelo;
 
 import huehue.br.logica.Partida;
+import huehue.br.rede.dados.NormalizadorDados;
 
 /**
  * Classe representando um jogador autômato, as ações são determinadas por inteligências
@@ -27,7 +28,7 @@ public abstract class JogadorAutomato extends Jogador {
 	 * Por padrão, nada é realizado.
 	 * 
 	 * @param partida
-	 *        a partida contendo o histórico de jogadas realizadas e o jogador vencedor.
+	 *            a partida contendo o histórico de jogadas realizadas e o jogador vencedor.
 	 */
 	public void notificarResultado(Partida partida) {
 		// Nada a fazer.
@@ -38,7 +39,7 @@ public abstract class JogadorAutomato extends Jogador {
 	 * ocupadas serão escolhidas.
 	 * 
 	 * @param cfgTabuleiro
-	 *        configuração do tabuleiro atual.
+	 *            configuração do tabuleiro atual.
 	 * @return o índice da posição escolhida.
 	 */
 	protected int escolhePosicao(double[] cfgTabuleiro) {
@@ -56,35 +57,12 @@ public abstract class JogadorAutomato extends Jogador {
 	 * Valida os valores das entradas a serem computadas pela I.A..
 	 * 
 	 * @param entradas
-	 *        o tabuleiro.
+	 *            o tabuleiro.
 	 * @return o tabuleiro validado.
-	 * @see JogadorAutomato#validaEntradas(double[], boolean)
+	 * @see NormalizadorDados#validaEntradas(double[], boolean)
 	 */
-	protected double[] validaEntradas(double[] entradas) {
-		return validaEntradas(entradas, this.jogadorX);
-	}
-	
-	/**
-	 * Valida os valores das entradas a serem computadas pela I.A.. Caso o {@link JogadorAutomato}
-	 * em questão possuir o {@link Caractere#O}, os valores das entradas precisarão ser ajustados,
-	 * pois a rede é treinada para reconhecer o valor do {@link Caractere#X} como posição da Rede e
-	 * o {@link Caractere#O} como o adversário.
-	 * 
-	 * @param entradas
-	 *        o tabuleiro.
-	 * @param jogadorX
-	 *        informa se são entradas do jogador X.
-	 * @return o tabuleiro validado.
-	 */
-	protected double[] validaEntradas(double[] entradas, boolean jogadorX) {
-		entradas = entradas.clone();
-		
-		if (!jogadorX)
-			for (int i = 0; i < entradas.length; i++)
-				if (entradas[i] != Caractere.VAZIO.getValor())
-					entradas[i] *= -1;
-		
-		return entradas;
+	protected final double[] validaEntradas(double[] entradas) {
+		return NormalizadorDados.validaEntradas(entradas, this.jogadorX);
 	}
 	
 }

@@ -2,6 +2,7 @@ package huehue.br.logica;
 
 import huehue.br.modelo.Caractere;
 import huehue.br.modelo.Jogador;
+import huehue.br.util.JdvLog;
 import huehue.br.util.JdvUtils;
 
 import java.util.ArrayList;
@@ -41,7 +42,7 @@ public class Partida {
 		entradas[posicaoEscolhida] = caractere.getValor();
 		numeroJogadas++;
 		
-		JdvUtils.Log.partida(caractere, entradas, posicaoEscolhida);
+		JdvLog.partida(caractere, entradas, posicaoEscolhida);
 	}
 	
 	public void novaPartida() {
@@ -62,7 +63,7 @@ public class Partida {
 		this.vencedor = vencedor;
 		ordemJogadaVencedor = (numeroJogadas - 1) % 2;
 		
-		JdvUtils.Log.fimPartida(vencedor);
+		JdvLog.fimPartida(vencedor);
 	}
 	
 	public boolean isJogadaPar() {
@@ -76,6 +77,20 @@ public class Partida {
 	 * @return lista de jogadas.
 	 */
 	public List<Jogada> getJogadasVencedor() {
+		return getJogadasJogador(ordemJogadaVencedor);
+	}
+	
+	/**
+	 * Recupera o histórico de jogadas realizadas pelo jogador que perdeu a partida ou todo o histórico da partida caso
+	 * não haja um vencedor.
+	 * 
+	 * @return lista de jogadas.
+	 */
+	public List<Jogada> getJogadasPerdedor() {
+		return getJogadasJogador(ordemJogadaVencedor == 0 ? 1 : 0);
+	}
+	
+	private List<Jogada> getJogadasJogador(int ordem) {
 		List<Jogada> jogadasVencedor = new ArrayList<>();
 		
 		if (vencedor == null) {
@@ -85,7 +100,7 @@ public class Partida {
 			return jogadasVencedor;
 		}
 		
-		for (int i = ordemJogadaVencedor; i < 9; i += 2)
+		for (int i = ordem; i < 9; i += 2)
 			if (jogadas[i] != null)
 				jogadasVencedor.add(jogadas[i]);
 		
