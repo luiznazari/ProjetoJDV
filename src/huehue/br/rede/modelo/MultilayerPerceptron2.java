@@ -17,20 +17,25 @@ import org.encog.ml.data.basic.BasicMLData;
 @Getter
 public class MultilayerPerceptron2 extends JdvRedeAbstrata {
 
-	public MultilayerPerceptron2(Integer numeroEntradas, Integer numeroSaidas) {
-		super(numeroEntradas, numeroSaidas);
+	public MultilayerPerceptron2(Integer numeroEntradas, Integer numeroSaidas, String nome) {
+		super(numeroEntradas, numeroSaidas, nome);
 	}
 
 	public MultilayerPerceptron2() {
-		this(9, 9);
+		this(null);
+	}
+
+	public MultilayerPerceptron2(String nome) {
+		this(9, 9, nome);
+
 		momentum = 0.4;
-		margemDeErro = 0.1;
-		constanteDeAprendizagem = 0.1;
+		margemDeErro = 0.06;
+		constanteDeAprendizagem = 0.8;
 	}
 
 	@Override
 	public String getEstruturaRede() {
-		return "?:B->SIGMOID->27:B->SIGMOID->?";
+		return "?:B->SIGMOID->18:B->SIGMOID->?";
 	}
 
 	/**
@@ -68,16 +73,16 @@ public class MultilayerPerceptron2 extends JdvRedeAbstrata {
 	}
 
 	public static void main(String[] args) {
-		JdvUtils.Arquivo.versionamento(0);
-		JdvRedeAbstrata rede = new MultilayerPerceptron2().inicializar();
+		JdvUtils.Arquivo.versionamento(999);
+		JdvRedeAbstrata rede = new MultilayerPerceptron2("treinamento").inicializar();
 		ConjuntosDados dados = JdvUtils.Arquivo.carregarDados(rede);
-		MLDataSet setDados = dados.getConjuntosSet();
+		MLDataSet setDados = dados.getConjuntosMLSet();
 
-//		rede.treinar(dados, 10);
-//		
-//		JdvUtils.Arquivo.incrementaVersao();
-//		JdvUtils.Arquivo.salvarRede(rede);
-//		JdvUtils.Arquivo.salvarDados(rede, dados);
+//		rede.treinar(dados);
+
+		JdvUtils.Arquivo.incrementaVersao();
+		JdvUtils.Arquivo.salvarRede(rede);
+		JdvUtils.Arquivo.salvarDados(rede, dados);
 
 //		rede.testar(setDados.get(( int ) (Math.random() * setDados.size())));
 		rede.testar(setDados);

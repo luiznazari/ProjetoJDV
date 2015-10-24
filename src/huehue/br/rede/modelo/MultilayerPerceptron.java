@@ -8,11 +8,15 @@ import org.encog.ml.data.basic.BasicMLData;
 
 @Getter
 public class MultilayerPerceptron extends JdvRedeAbstrata {
-	
+
 	public MultilayerPerceptron() {
-		super(9, 1);
+		this(null);
 	}
-	
+
+	public MultilayerPerceptron(String nome) {
+		super(9, 1, nome);
+	}
+
 	/**
 	 * {@inheritDoc}
 	 * 
@@ -31,14 +35,14 @@ public class MultilayerPerceptron extends JdvRedeAbstrata {
 	@Override
 	public int traduzirSaida(MLData saida) {
 		double d = JdvUtils.RNA.valorAproximado(saida.getData(0));
-		
+
 		if (d >= 0.9)
 			return 8;
 		if (d <= 0)
 			return 0;
 		return ( int ) (d * 10);
 	}
-	
+
 	@Override
 	public MLData convertePosicaoTabuleiroEmSaida(int posicao) {
 		return new BasicMLData(new double[] {

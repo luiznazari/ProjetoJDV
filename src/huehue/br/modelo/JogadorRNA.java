@@ -67,25 +67,24 @@ public class JogadorRNA extends JogadorAutomato {
 			dados.adicionarDadoESTemporario(normalizador.criaParesJogadasVencedoras());
 			dados.adicionarDadoESTemporario(normalizador.criaParJogadaBloqueio());
 
+			if (deveTreinar)
+				aprenderJogadas(partida.getVencedor() == this);
+
 		} else {
 			// TODO empate
 		}
-
-		dados.armazenarTemporarios();
-		if (deveTreinar)
-			aprenderJogadas();
 	}
 
-	private void aprenderJogadas() {
-
-		rede.treinar(dados);
+	private void aprenderJogadas(boolean redeVenceu) {
+		rede.treinar(dados, redeVenceu);
 
 		// FIXME Temporário
-		versaoArquivo++;
-		if (versaoArquivo % 100 == 0) {
-			JdvUtils.Arquivo.salvarRede(rede);
-			JdvUtils.Arquivo.salvarDados(rede, dados);
-		}
+//		versaoArquivo++;
+//		if (versaoArquivo % 100 == 0) {
+//		JdvUtils.Arquivo.incrementaVersao();
+		JdvUtils.Arquivo.salvarRede(rede);
+		JdvUtils.Arquivo.salvarDados(rede, dados);
+//		}
 		// ----------------
 	}
 

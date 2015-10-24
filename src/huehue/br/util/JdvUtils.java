@@ -6,8 +6,8 @@ import huehue.br.modelo.Caractere;
 import huehue.br.modelo.Jogador;
 import huehue.br.modelo.JogadorAleatorio;
 import huehue.br.modelo.JogadorAutomato;
-import huehue.br.modelo.JogadorRNA;
 import huehue.br.rede.dados.ConjuntosDados;
+import huehue.br.rede.dados.JdvMLDataPair;
 import huehue.br.rede.modelo.JdvRede;
 import huehue.br.rede.modelo.JdvRedeAbstrata;
 import huehue.br.rede.modelo.MapaSaida;
@@ -26,7 +26,6 @@ import java.util.stream.Collectors;
 
 import org.encog.Encog;
 import org.encog.ml.data.MLData;
-import org.encog.ml.data.MLDataPair;
 import org.encog.ml.data.MLDataSet;
 import org.encog.ml.data.basic.BasicMLDataSet;
 import org.encog.neural.networks.BasicNetwork;
@@ -218,7 +217,7 @@ public class JdvUtils {
 					redeBase.getNumeroEntradas(), redeBase.getNumeroSaidas());
 			MLDataSet dadosRedeObjetivo = new BasicMLDataSet();
 
-			for (MLDataPair par : dados.getConjuntos()) {
+			dados.getConjuntos().stream().map(JdvMLDataPair::getParaSalvar).forEach(par -> {
 				double[] entradasBase = redeBase.converteEntradaEmTabuleiro(par.getInput());
 				MLData entradasObjetivo = redeObjetivo.traduzirEntrada(entradasBase);
 
@@ -226,7 +225,7 @@ public class JdvUtils {
 				MLData saidaObjetivo = redeObjetivo.convertePosicaoTabuleiroEmSaida(saidaBase);
 
 				dadosRedeObjetivo.add(entradasObjetivo, saidaObjetivo);
-			}
+			});
 
 			Arquivo.salvarDados("bak_" + redeObjetivo.getNome(), dadosRedeObjetivo);
 		}
@@ -391,25 +390,19 @@ public class JdvUtils {
 	}
 
 	public static void main(String[] args) {
-//		JdvUtils.Arquivo.versionamento(0);
-//
-//		JdvRedeAbstrata rede1 = new MultilayerPerceptron2();
-//		rede1.setNome(Caractere.X.getChave());
+		JdvUtils.Arquivo.versionamento(0);
 
 //		JogadorAutomato um = new JogadorMiniMax(Caractere.X);
-//		JogadorAutomato um = new JogadorAleatorio(Caractere.X);
-		JogadorAutomato um = new JogadorRNA(Caractere.X, false);
-//		JogadorAutomato um = new JogadorRNA(Caractere.X, rede1, true);
-
-//		JdvRedeAbstrata rede2 = new MultilayerPerceptron3();
-//		rede2.setNome(Caractere.O.getChave());
+		JogadorAutomato um = new JogadorAleatorio(Caractere.X);
+//		JogadorAutomato um = new JogadorRNA(Caractere.X, false);
+//		JogadorAutomato um = new JogadorRNA(Caractere.X, new MultilayerPerceptron2("treinamento"), false);
 
 //		JogadorAutomato dois = new JogadorMiniMax(Caractere.O);
 		JogadorAutomato dois = new JogadorAleatorio(Caractere.O);
 //		JogadorAutomato dois = new JogadorRNA(Caractere.O, false);
-//		JogadorAutomato dois = new JogadorRNA(Caractere.O, rede2, false);
+//		JogadorAutomato dois = new JogadorRNA(Caractere.O, new MultilayerPerceptron2("treinamento2"), false);
 
-		Tabuleiro.comparaJogadores(um, dois, 10000);
+		Tabuleiro.comparaJogadores(um, dois, 10);
 
 		Encog.getInstance().shutdown();
 
@@ -423,7 +416,7 @@ public class JdvUtils {
 		String a = "A";
 
 		ConjuntosDados dados1 = Arquivo.carregarDados(a + "1", rede.getNumeroEntradas(), rede.getNumeroSaidas());
-		new TelaExibicao(dados1.getConjuntosSet(), rede);
+		new TelaExibicao(dados1.getConjuntosMLSet(), rede);
 
 //		ConjuntosDados dados2 = Arquivo.carregarDados(a + "2", rede.getNumeroEntradas(), rede.getNumeroSaidas());
 //		new TelaExibicao(dados2.getConjuntosSet(), rede);

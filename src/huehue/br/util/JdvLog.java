@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.encog.ml.data.MLData;
 import org.encog.ml.data.MLDataPair;
+import org.encog.util.Format;
 
 /**
  * Classe utilitária para auxiliar na representação visual de estados e resultados
@@ -193,6 +194,19 @@ public class JdvLog {
 			sb.append("Vencedor: ").append(vencedor.getCaractere().getChave()).append("!");
 		else
 			sb.append("Empate!");
+
+		return logConsole(sb);
+	}
+
+	public static String iteracaoTreinamento(int iteracao, double erro, double erroEsperado) {
+		if (!ativo)
+			return "";
+
+		StringBuilder sb = new StringBuilder();
+
+		sb.append("Iteração: #").append(Format.formatInteger(iteracao)).append(" ");
+		sb.append("Erro:").append(Format.formatPercent(erro)).append(" ");
+		sb.append("Erro esperado:").append(Format.formatPercent(erroEsperado));
 
 		return logConsole(sb);
 	}

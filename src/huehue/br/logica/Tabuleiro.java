@@ -3,9 +3,9 @@ package huehue.br.logica;
 import huehue.br.exception.JdvException;
 import huehue.br.modelo.Caractere;
 import huehue.br.modelo.Jogador;
+import huehue.br.modelo.JogadorAleatorio;
 import huehue.br.modelo.JogadorAutomato;
 import huehue.br.modelo.JogadorHumano;
-import huehue.br.modelo.JogadorRNA;
 import huehue.br.tela.TelaTabuleiro;
 import huehue.br.util.JdvLog;
 import huehue.br.util.JdvUtils;
@@ -37,21 +37,15 @@ public class Tabuleiro {
 		this.tela = tela;
 		partida = new Partida();
 
-		JdvUtils.Arquivo.versionamento(5);
+		JdvUtils.Arquivo.versionamento(0);
 
-//		JdvRedeAbstrata rede1 = new MultilayerPerceptron3();
-//		rede1.setNome(Caractere.X.getChave());
-//		
-//		JdvRedeAbstrata rede2 = new MultilayerPerceptron3();
-//		rede2.setNome(Caractere.O.getChave());
-
-//		setJogadorUm(new JogadorRNA(Caractere.X, rede1, false));
-		setJogadorUm(new JogadorRNA(Caractere.X, false));
+//		setJogadorUm(new JogadorRNA(Caractere.X, new MultilayerPerceptron2("treinamento"), false));
+//		setJogadorUm(new JogadorRNA(Caractere.X, false));
 //		setJogadorUm(new JogadorHumano(Caractere.X));
-//		setJogadorUm(new JogadorAleatorio(Caractere.X));
+		setJogadorUm(new JogadorAleatorio(Caractere.X));
 //		setJogadorUm(new JogadorMiniMax(Caractere.X));
 
-//		setJogadorDois(new JogadorRNA(Caractere.O, rede2, false));
+//		setJogadorDois(new JogadorRNA(Caractere.O, new MultilayerPerceptron2("treinamento"), true));
 //		setJogadorDois(new JogadorRNA(Caractere.O, false));
 		setJogadorDois(new JogadorHumano(Caractere.O));
 //		setJogadorDois(new JogadorAleatorio(Caractere.O));

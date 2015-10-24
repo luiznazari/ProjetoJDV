@@ -3,12 +3,9 @@ package huehue.br.rede.modelo;
 import huehue.br.exception.JdvException;
 import huehue.br.modelo.Caractere;
 import huehue.br.rede.dados.ConjuntosDados;
+import huehue.br.rede.dados.Treinador;
 import huehue.br.util.JdvLog;
 import huehue.br.util.JdvUtils;
-
-import java.time.Duration;
-import java.time.LocalDateTime;
-
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,65 +15,76 @@ import org.encog.ml.data.MLDataSet;
 import org.encog.ml.data.basic.BasicMLData;
 import org.encog.ml.factory.MLMethodFactory;
 import org.encog.ml.factory.MLTrainFactory;
-import org.encog.ml.train.MLTrain;
 import org.encog.neural.networks.BasicNetwork;
-import org.encog.neural.networks.training.propagation.back.Backpropagation;
-import org.encog.util.simple.EncogUtility;
 
 @Getter
 public abstract class JdvRedeAbstrata implements JdvRede {
-	
-//	private static final String REDE_FEEDFORWARD_TANH = "?:B->TANH->5:B->TANH->?";
-	
-	private static final String REDE_FEEDFORWARD_SIGMOID = "?:B->SIGMOID->5:B->SIGMOID->?";
-	
-//	private static final String REDE_FEEDFORWARD_SEM_BIAS = "?->SIGMOID->5->SIGMOID->?";
-	
+
+	private static final String PROP_MOMENTUM = "momentum";
+
+	private static final String PROP_CONST_APRENDIZAGEM = "constante_aprendizagem";
+
+	@Setter
 	protected Double margemDeErro = 0.1D; // 10.0%
-	
-	protected Double constanteDeAprendizagem = 0.1;
-	
+
+	@Setter
 	protected Double momentum = 0.4;
-	
+
+	@Setter
+	protected Double constanteDeAprendizagem = 0.8;
+
 	protected Integer numeroEntradas;
-	
+
 	protected Integer numeroSaidas;
-	
+
 	protected String tipoTreinamento = MLTrainFactory.TYPE_BACKPROP;
-	
+
 	protected String tipoRede = MLMethodFactory.TYPE_FEEDFORWARD;
-	
+
 	@Setter
 	protected String nome;
-	
+
 	@Setter
 	protected BasicNetwork rede;
-	
+
 	protected double[] entradasTmp;
-	
-	public JdvRedeAbstrata(Integer numeroEntradas, Integer numeroSaidas) {
+
+	public JdvRedeAbstrata(Integer numeroEntradas, Integer numeroSaidas, String nome) {
 		this.numeroEntradas = numeroEntradas;
 		this.numeroSaidas = numeroSaidas;
+		this.nome = nome;
 		resetaEntradasTemporarias();
 	}
-	
+
 	public final JdvRedeAbstrata inicializar() {
 		this.rede = JdvUtils.Arquivo.carregarRede(this);
+
+		try {
+			this.momentum = rede.getPropertyDouble(PROP_MOMENTUM);
+			this.constanteDeAprendizagem = rede.getPropertyDouble(PROP_CONST_APRENDIZAGEM);
+		} catch (NullPointerException e) {}
+
 		return this;
 	}
-	
+
+	public final void atualizarRede(BasicNetwork novaRede, double constanteAprendizagem, double momentum) {
+		this.rede = novaRede;
+		this.rede.setProperty(PROP_MOMENTUM, momentum);
+		this.rede.setProperty(PROP_CONST_APRENDIZAGEM, constanteAprendizagem);
+	}
+
 	@Override
 	public String getEstruturaRede() {
-		return REDE_FEEDFORWARD_SIGMOID;
+		return "?:B->SIGMOID->18:B->SIGMOID->?";
 	}
-	
+
 	@Override
 	public String getNome() {
 		if (this.nome != null)
 			return this.nome;
 		return JdvRede.super.getNome();
 	}
-	
+
 	/**
 	 * Traduz o conjunto de posições que formam o tabuleiro ao conjunto de dados reconhecidos pela
 	 * mesma (i.e. normaliza os valores e adapta os números correspondendo ao número
@@ -91,7 +99,7 @@ public abstract class JdvRedeAbstrata implements JdvRede {
 	public MLData traduzirEntrada(double[] entradas) {
 		return new BasicMLData(entradas);
 	}
-	
+
 	/**
 	 * Traduz o valor da saída resultante do processamento da RNA.<br>
 	 * É o processo inverso do método {@link JdvRedeAbstrata#convertePosicaoTabuleiroEmSaida(int)}.
@@ -101,7 +109,7 @@ public abstract class JdvRedeAbstrata implements JdvRede {
 	 * @return valor da saída traduzido, onde: 0 <= valor <= 8.
 	 */
 	abstract public int traduzirSaida(MLData saida);
-	
+
 	/**
 	 * Converte uma posição do tabuleiro em um conjuntos de dados reconhecidos pela RNA com o
 	 * tamanho {@link JdvRede#getNumeroSaidas()}, representando o conjunto de saídas utilizados no
@@ -113,7 +121,7 @@ public abstract class JdvRedeAbstrata implements JdvRede {
 	 * @return conjunto de dados representando a posicão.
 	 */
 	abstract public MLData convertePosicaoTabuleiroEmSaida(int posicao);
-	
+
 	/**
 	 * Converte um conjunto de entradas reconhecidas pela rede, com o tamanho {@link JdvRede#getNumeroEntradas()}, para
 	 * o conjunto de posições que formam o tabuleiro
@@ -127,17 +135,17 @@ public abstract class JdvRedeAbstrata implements JdvRede {
 	public double[] converteEntradaEmTabuleiro(MLData entrada) {
 		double[] entradas = entrada.getData();
 		double[] tabuleiro = new double[9];
-		
+
 		for (int i = 0; i < 9; i++) {
 			if (entradas[i] > 0)
 				tabuleiro[i] = Caractere.X.getValor();
 			else if (entradas[i] < 0)
 				tabuleiro[i] = Caractere.O.getValor();
 		}
-		
+
 		return tabuleiro;
 	}
-	
+
 	/**
 	 * Computa a saída da rede às entradas especificadas, normalizando as entradas àquelas
 	 * reconhecidas pela rede e a saída à posição do tabuleiro.<br>
@@ -153,10 +161,10 @@ public abstract class JdvRedeAbstrata implements JdvRede {
 	public int processar(double[] entradas) {
 		MLData dadosEntrada = traduzirEntrada(entradas);
 		MLData dadosSaida = processar(dadosEntrada);
-		
+
 		return traduzirSaida(dadosSaida);
 	}
-	
+
 	/**
 	 * Computa a saída da rede à entrada especificada.
 	 * 
@@ -168,54 +176,50 @@ public abstract class JdvRedeAbstrata implements JdvRede {
 		entradasTmp = converteEntradaEmTabuleiro(entrada);
 		return rede.compute(entrada);
 	}
-	
+
 	public final void treinar(final ConjuntosDados dados) {
-		dados.embaralhar();
-		
-		LocalDateTime inicio = LocalDateTime.now();
-		
-		MLTrain train = new Backpropagation(getRede(), dados.getConjuntosSet(), constanteDeAprendizagem, momentum);
-		
-		EncogUtility.trainToError(train, getMargemDeErro());
-		
-		System.out.println("Treinamento finalizado. Tempo total: " + Duration.between(inicio, LocalDateTime.now()));
+		this.treinar(dados, null);
 	}
-	
+
+	public final void treinar(final ConjuntosDados dados, Boolean vitoriaOuEmpate) {
+		new Treinador(this, dados, vitoriaOuEmpate).treinar();
+	}
+
 	public void testar(final MLDataSet conjuntoDados) {
 		int tamanho = conjuntoDados.size();
 		int sucesso = 0;
 		int falha = 0;
-		
+
 		for (final MLDataPair par : conjuntoDados) {
 			final MLData saida = processar(par.getInput());
 			int posicao = this.traduzirSaida(saida);
 			int esperado = this.traduzirSaida(par.getIdeal());
-			
+
 			if (posicao == esperado)
 				sucesso++;
 			else
 				falha++;
 		}
-		
+
 		JdvLog.resultado(tamanho, sucesso, falha);
 	}
-	
+
 	public void testar(final MLDataPair par) {
 		final MLData saida = processar(par.getInput());
 		JdvLog.resultado(par, saida, this);
 	}
-	
+
 	private void resetaEntradasTemporarias() {
 		this.entradasTmp = new double[9];
 	}
-	
+
 	@Override
 	public BasicNetwork getRede() {
 		if (this.rede == null)
 			throw new JdvException("A rede neuronal ainda não foi inicializada! Experimente o método " + this.getNome()
 					+ ".inicializar().");
-		
+
 		return this.rede;
 	}
-	
+
 }

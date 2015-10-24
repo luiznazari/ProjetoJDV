@@ -18,6 +18,11 @@ import java.util.stream.Collectors;
  */
 public class NormalizadorDados {
 
+	private static final int BLOQUEIO = 4;
+	private static final int JOGADA_OTIMA = 3;
+	private static final int JOGADA_BOA = 2;
+	private static final int JOGADA_REGULAR = 1;
+
 	private JdvRedeAbstrata rede;
 
 	private List<Jogada> jogadasV;
@@ -43,7 +48,8 @@ public class NormalizadorDados {
 	}
 
 	public List<JdvMLDataPair> criaParesJogadasVencedoras() {
-		return jogadasV.stream().map(j -> criaParJogadaVencedora(j)).collect(Collectors.toList());
+		return jogadasV.stream().filter(j -> JdvUtils.Tabuleiro.computaEspacosVazios(j.getConfiguracao()) > 1)
+				.map(j -> criaParJogadaVencedora(j)).collect(Collectors.toList());
 	}
 
 	private JdvMLDataPair criaParJogadaVencedora(Jogada jogadaV) {
@@ -54,28 +60,28 @@ public class NormalizadorDados {
 		tabuleiro[jogadaV.getPosicaoEscolhida()] = Caractere.VAZIO.getValor();
 
 		int pontos = 1;
-		double delta = 1;
+		double margem = 1;
 
 		switch (lenJogadasV) {
 			case 3: { // Ótimo
-				pontos = 3;
-				delta = 0.9999;
+				pontos = JOGADA_OTIMA;
+				margem = 0.9999;
 				break;
 			}
 			case 4: { // Bom
-				pontos = 2;
-				delta = 0.8888;
+				pontos = JOGADA_BOA;
+				margem = 0.8888;
 				break;
 			}
 			case 5: { // Razoável
-				pontos = 1;
-				delta = 0.7777;
+				pontos = JOGADA_REGULAR;
+				margem = 0.7777;
 				break;
 			}
 		}
 
 		for (int i = 0; i < tabuleiro.length; i++)
-			tabuleiro[i] *= delta;
+			tabuleiro[i] *= margem;
 
 		for (int i = 0; i < indicesX.length; i++)
 			if (indicesX[i] != jogadaV.getPosicaoEscolhida())
@@ -92,31 +98,31 @@ public class NormalizadorDados {
 
 		double[] tabuleiro = validaEntradas(jogadaP.getConfiguracao(), !jogadorVencedorX);
 
-		tabuleiro[jogadaV.getPosicaoEscolhida()] = Caractere.X.getValor();
+		tabuleiro[jogadaV.getPosicaoEscolhida()] = Caractere.O.getValor();
 		int[] indicesX = JdvUtils.Tabuleiro.computaIndicesVencedor(tabuleiro);
 		tabuleiro[jogadaV.getPosicaoEscolhida()] = Caractere.VAZIO.getValor();
 
 		// Bloquear tem mais importância do que realizar uma jogada comum.
-		int pontos = 4;
-		double delta = 1;
+		int pontos = BLOQUEIO;
+		double margem = 1;
 
 		switch (lenJogadasP) {
 			case 2: { // Ótimo
-				delta = 0.9999;
+				margem = 0.9999;
 				break;
 			}
 			case 3: { // Bom
-				delta = 0.8888;
+				margem = 0.8888;
 				break;
 			}
 			case 4: { // Razoável
-				delta = 0.7777;
+				margem = 0.7777;
 				break;
 			}
 		}
 
 		for (int i = 0; i < tabuleiro.length; i++)
-			tabuleiro[i] *= delta;
+			tabuleiro[i] *= margem;
 
 		for (int i = 0; i < indicesX.length; i++)
 			if (indicesX[i] != jogadaV.getPosicaoEscolhida())

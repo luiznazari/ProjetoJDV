@@ -11,7 +11,11 @@ import org.encog.ml.data.MLDataSet;
 public class MultilayerPerceptron3 extends MultilayerPerceptron2 {
 
 	public MultilayerPerceptron3() {
-		super(18, 9);
+		this(null);
+	}
+
+	public MultilayerPerceptron3(String nome) {
+		super(18, 9, nome);
 		momentum = 0.6;
 		margemDeErro = 0.0867;
 		constanteDeAprendizagem = 0.1;
@@ -55,7 +59,7 @@ public class MultilayerPerceptron3 extends MultilayerPerceptron2 {
 		JdvUtils.Arquivo.versionamento(4);
 		JdvRedeAbstrata rede = new MultilayerPerceptron3().inicializar();
 		ConjuntosDados dados = JdvUtils.Arquivo.carregarDados(rede);
-		MLDataSet setDados = dados.getConjuntosSet();
+		MLDataSet setDados = dados.getConjuntosMLSet();
 
 //		rede.treinar(dados);
 //
