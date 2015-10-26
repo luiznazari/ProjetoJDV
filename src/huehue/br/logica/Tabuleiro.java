@@ -3,9 +3,10 @@ package huehue.br.logica;
 import huehue.br.exception.JdvException;
 import huehue.br.modelo.Caractere;
 import huehue.br.modelo.Jogador;
-import huehue.br.modelo.JogadorAleatorio;
 import huehue.br.modelo.JogadorAutomato;
 import huehue.br.modelo.JogadorHumano;
+import huehue.br.modelo.JogadorRNA;
+import huehue.br.rede.modelo.MultilayerPerceptron2;
 import huehue.br.tela.TelaTabuleiro;
 import huehue.br.util.JdvLog;
 import huehue.br.util.JdvUtils;
@@ -39,10 +40,10 @@ public class Tabuleiro {
 
 		JdvUtils.Arquivo.versionamento(0);
 
-//		setJogadorUm(new JogadorRNA(Caractere.X, new MultilayerPerceptron2("treinamento"), false));
+		setJogadorUm(new JogadorRNA(Caractere.X, new MultilayerPerceptron2("treinamento"), false));
 //		setJogadorUm(new JogadorRNA(Caractere.X, false));
 //		setJogadorUm(new JogadorHumano(Caractere.X));
-		setJogadorUm(new JogadorAleatorio(Caractere.X));
+//		setJogadorUm(new JogadorAleatorio(Caractere.X));
 //		setJogadorUm(new JogadorMiniMax(Caractere.X));
 
 //		setJogadorDois(new JogadorRNA(Caractere.O, new MultilayerPerceptron2("treinamento"), true));

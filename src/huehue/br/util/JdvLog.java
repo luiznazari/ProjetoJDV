@@ -199,9 +199,6 @@ public class JdvLog {
 	}
 
 	public static String iteracaoTreinamento(int iteracao, double erro, double erroEsperado) {
-		if (!ativo)
-			return "";
-
 		StringBuilder sb = new StringBuilder();
 
 		sb.append("Iteração: #").append(Format.formatInteger(iteracao)).append(" ");

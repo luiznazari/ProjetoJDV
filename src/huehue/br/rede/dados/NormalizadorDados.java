@@ -85,7 +85,7 @@ public class NormalizadorDados {
 
 		for (int i = 0; i < indicesX.length; i++)
 			if (indicesX[i] != jogadaV.getPosicaoEscolhida())
-				tabuleiro[indicesX[i]] = 0.9999;
+				tabuleiro[indicesX[i]] = 0.9999 * tabuleiro[indicesX[i]] > 0 ? 1 : -1;
 
 		JdvMLDataPair par = new JdvMLDataPair(rede.traduzirEntrada(tabuleiro),
 				rede.convertePosicaoTabuleiroEmSaida(jogadaV.getPosicaoEscolhida()), 1, pontos);
@@ -126,7 +126,7 @@ public class NormalizadorDados {
 
 		for (int i = 0; i < indicesX.length; i++)
 			if (indicesX[i] != jogadaV.getPosicaoEscolhida())
-				tabuleiro[indicesX[i]] = 0.9999;
+				tabuleiro[indicesX[i]] = 0.9999 * tabuleiro[indicesX[i]] > 0 ? 1 : -1;
 
 		JdvMLDataPair par = new JdvMLDataPair(rede.traduzirEntrada(tabuleiro),
 				rede.convertePosicaoTabuleiroEmSaida(jogadaV.getPosicaoEscolhida()), 1, pontos);

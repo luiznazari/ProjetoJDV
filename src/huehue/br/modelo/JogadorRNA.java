@@ -61,31 +61,41 @@ public class JogadorRNA extends JogadorAutomato {
 
 	@Override
 	public void notificarResultado(Partida partida) {
+		boolean vitoriaOuEmpate;
+
 		if (partida.getVencedor() != null) {
+			vitoriaOuEmpate = partida.getVencedor() == this;
+
 			NormalizadorDados normalizador = new NormalizadorDados(partida, this.rede);
 
 			dados.adicionarDadoESTemporario(normalizador.criaParesJogadasVencedoras());
 			dados.adicionarDadoESTemporario(normalizador.criaParJogadaBloqueio());
 
-			if (deveTreinar)
-				aprenderJogadas(partida.getVencedor() == this);
-
 		} else {
+			vitoriaOuEmpate = true;
+
 			// TODO empate
 		}
+
+		if (deveTreinar)
+			aprenderJogadas(vitoriaOuEmpate);
 	}
 
 	private void aprenderJogadas(boolean redeVenceu) {
 		rede.treinar(dados, redeVenceu);
 
-		// FIXME Temporário
+		// FIXME Temporários
+		salvaEstado();
+		// ----------------
+	}
+
+	public void salvaEstado() {
 //		versaoArquivo++;
 //		if (versaoArquivo % 100 == 0) {
 //		JdvUtils.Arquivo.incrementaVersao();
 		JdvUtils.Arquivo.salvarRede(rede);
 		JdvUtils.Arquivo.salvarDados(rede, dados);
 //		}
-		// ----------------
 	}
 
 }

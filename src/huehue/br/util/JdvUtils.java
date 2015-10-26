@@ -6,6 +6,7 @@ import huehue.br.modelo.Caractere;
 import huehue.br.modelo.Jogador;
 import huehue.br.modelo.JogadorAleatorio;
 import huehue.br.modelo.JogadorAutomato;
+import huehue.br.modelo.JogadorRNA;
 import huehue.br.rede.dados.ConjuntosDados;
 import huehue.br.rede.dados.JdvMLDataPair;
 import huehue.br.rede.modelo.JdvRede;
@@ -154,8 +155,8 @@ public class JdvUtils {
 
 			JdvLog.ativo = false;
 
+			Partida partida = new Partida();
 			for (int i = 0; i < numeroPartidas; i++) {
-				Partida partida = new Partida();
 				double[] t = new double[9];
 				Jogador vencedor;
 
@@ -163,9 +164,9 @@ public class JdvUtils {
 					Jogador vez;
 
 					if (partida.isJogadaPar())
-						vez = dois;
-					else
 						vez = um;
+					else
+						vez = dois;
 
 					partida.novaJogada(vez.getCaractere(), t, vez.novaJogada(t));
 				}
@@ -176,6 +177,8 @@ public class JdvUtils {
 
 				um.notificarResultado(partida);
 				dois.notificarResultado(partida);
+
+				partida.novaPartida();
 			}
 
 			JdvLog.ativo = true;
@@ -393,16 +396,17 @@ public class JdvUtils {
 		JdvUtils.Arquivo.versionamento(0);
 
 //		JogadorAutomato um = new JogadorMiniMax(Caractere.X);
-		JogadorAutomato um = new JogadorAleatorio(Caractere.X);
-//		JogadorAutomato um = new JogadorRNA(Caractere.X, false);
-//		JogadorAutomato um = new JogadorRNA(Caractere.X, new MultilayerPerceptron2("treinamento"), false);
+//		JogadorAutomato um = new JogadorAleatorio(Caractere.X);
+//		JogadorRNA um = new JogadorRNA(Caractere.X, false);
+		JogadorRNA um = new JogadorRNA(Caractere.X, new MultilayerPerceptron2("treinamento"), false);
 
 //		JogadorAutomato dois = new JogadorMiniMax(Caractere.O);
 		JogadorAutomato dois = new JogadorAleatorio(Caractere.O);
-//		JogadorAutomato dois = new JogadorRNA(Caractere.O, false);
-//		JogadorAutomato dois = new JogadorRNA(Caractere.O, new MultilayerPerceptron2("treinamento2"), false);
+//		JogadorRNA dois = new JogadorRNA(Caractere.O, false);
+//		JogadorRNA dois = new JogadorRNA(Caractere.O, new MultilayerPerceptron2("treinamento"), false);
 
-		Tabuleiro.comparaJogadores(um, dois, 10);
+		Tabuleiro.comparaJogadores(um, dois, 100);
+		um.salvaEstado();
 
 		Encog.getInstance().shutdown();
 

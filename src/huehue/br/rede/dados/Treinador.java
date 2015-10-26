@@ -4,7 +4,7 @@ import huehue.br.rede.modelo.JdvRedeAbstrata;
 import huehue.br.util.JdvLog;
 
 import java.time.Duration;
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,13 +24,19 @@ import org.encog.neural.networks.training.propagation.back.Backpropagation;
  */
 public class Treinador {
 
+	private static final double MAX_ERRO = 0.1; // 10%
+
+	private static final double MIN_ERRO = 0.03; // 3%
+
 	private static final double MAX_CONST_MOMENTUM = 0.9;
 
-	private static final double MAX_CONST_APRENDIZAGEM = 0.8;
+	private static final double MIN_CONST_MOMENTUM = 0.1;
 
-	private static final double MIN_CONST_APRENDIZAGEM = 0.1;
+	private static final double MAX_CONST_APRENDIZAGEM = 0.15;
 
-	private static final int MAX_ITERACOES = 50;
+	private static final double MIN_CONST_APRENDIZAGEM = 0.02;
+
+	private static final int MAX_ITERACOES = 100;
 
 	private static final int MAX_CICLOS_TREINAMENTO = 5;
 
@@ -60,25 +66,12 @@ public class Treinador {
 		this.momentum = rede.getMomentum();
 		this.constanteAprendizagem = rede.getConstanteDeAprendizagem();
 
-		if (dados.getConjuntos().size() != conjuntosTreinamento.size())
-			this.erro -= 0.01;
-
-		if (vitoriaOuEmpate != null) {
-			if (vitoriaOuEmpate.booleanValue())
-				this.constanteAprendizagem -= this.constanteAprendizagem * 0.05; // -5%
-			else
-				this.constanteAprendizagem += this.constanteAprendizagem * 0.05; // +5%
-
-			if (this.constanteAprendizagem > MAX_CONST_APRENDIZAGEM)
-				this.constanteAprendizagem = MAX_CONST_APRENDIZAGEM;
-			else if (this.constanteAprendizagem < MIN_CONST_APRENDIZAGEM)
-				this.constanteAprendizagem = MIN_CONST_APRENDIZAGEM;
-		}
+		balanceiaParametros(vitoriaOuEmpate);
 	}
 
 	public void treinar() {
 		System.out.println("[Treinador] Iniciando treinamento.");
-		LocalDateTime inicio = LocalDateTime.now();
+		LocalTime inicio = LocalTime.now();
 
 		tentarTreinamento(( BasicNetwork ) rede.getRede().clone());
 
@@ -86,12 +79,12 @@ public class Treinador {
 			dados.setConjuntos(conjuntosTreinamento);
 
 			System.out.println("[Treinador] Treinamento finalizado. Tempo total: "
-					+ Duration.between(inicio, LocalDateTime.now()));
+					+ Duration.between(inicio, LocalTime.now()));
 		} else {
 			dados.descartarTemporarios();
 
 			System.err.println("[Treinador] Não foi possível treinar com os novos conjuntos. Tempo total: "
-					+ Duration.between(inicio, LocalDateTime.now()));
+					+ Duration.between(inicio, LocalTime.now()));
 		}
 	}
 
@@ -122,17 +115,41 @@ public class Treinador {
 
 			if (treino.getError() <= erro) {
 				this.treinou = true;
-				this.rede.atualizarRede(( BasicNetwork ) treino.getMethod(), constanteAprendizagem, momentum);
+				this.rede.atualizarRede(( BasicNetwork ) treino.getMethod(), constanteAprendizagem, momentum, erro);
 				return;
 
 			} else {
-				this.momentum += momentum * 0.1;
-
-				if (this.momentum > MAX_CONST_MOMENTUM)
-					this.momentum = MAX_CONST_MOMENTUM;
+				this.erro = corrigeDeValor(this.erro, 0.0025, true, MAX_ERRO, MIN_ERRO);
+				this.momentum = corrigeDeValor(this.momentum, momentum * 0.1, true, MAX_CONST_MOMENTUM,
+						MIN_CONST_MOMENTUM);
 
 				System.out.println("[Treinador] Ciclo #" + i + " de treinamento não obteve êxito.");
 			}
 		}
 	}
+
+	private void balanceiaParametros(Boolean vitoriaOuEmpate) {
+		boolean temNovosConjuntos = dados.getConjuntos().size() != conjuntosTreinamento.size();
+		this.erro = corrigeDeValor(this.erro, 0.0025, temNovosConjuntos, MAX_ERRO, MIN_ERRO);
+
+		if (vitoriaOuEmpate != null) {
+			this.constanteAprendizagem = corrigeDeValor(this.constanteAprendizagem, this.constanteAprendizagem * 0.05,
+					vitoriaOuEmpate.booleanValue(), MAX_CONST_APRENDIZAGEM, MIN_CONST_APRENDIZAGEM);
+		}
+	}
+
+	private double corrigeDeValor(double valor, double variacao, boolean incrementaValor, double max, double min) {
+		if (incrementaValor)
+			valor += variacao;
+		else
+			valor -= variacao;
+
+		if (valor > max)
+			valor = max;
+		else if (valor < min)
+			valor = min;
+
+		return valor;
+	}
+
 }

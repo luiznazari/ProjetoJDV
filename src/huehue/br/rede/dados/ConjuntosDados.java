@@ -48,7 +48,14 @@ public class ConjuntosDados {
 	}
 
 	public void descartarTemporarios() {
-		conjuntosNaoTreinados.addAll(conjuntosTemporarios);
+		conjuntosTemporarios.forEach(par -> {
+			int index;
+			if ((index = conjuntosNaoTreinados.indexOf(par)) != -1) {
+				conjuntosNaoTreinados.get(index).incrementaFrequencia();
+			} else {
+				conjuntosNaoTreinados.add(par);
+			}
+		});
 		conjuntosTemporarios.clear();
 	}
 

@@ -20,6 +20,8 @@ import org.encog.neural.networks.BasicNetwork;
 @Getter
 public abstract class JdvRedeAbstrata implements JdvRede {
 
+	private static final String PROP_ERRO = "erro";
+
 	private static final String PROP_MOMENTUM = "momentum";
 
 	private static final String PROP_CONST_APRENDIZAGEM = "constante_aprendizagem";
@@ -60,15 +62,21 @@ public abstract class JdvRedeAbstrata implements JdvRede {
 		this.rede = JdvUtils.Arquivo.carregarRede(this);
 
 		try {
-			this.momentum = rede.getPropertyDouble(PROP_MOMENTUM);
 			this.constanteDeAprendizagem = rede.getPropertyDouble(PROP_CONST_APRENDIZAGEM);
+			this.margemDeErro = rede.getPropertyDouble(PROP_ERRO);
+			this.momentum = rede.getPropertyDouble(PROP_MOMENTUM);
 		} catch (NullPointerException e) {}
 
 		return this;
 	}
 
-	public final void atualizarRede(BasicNetwork novaRede, double constanteAprendizagem, double momentum) {
+	public final void atualizarRede(BasicNetwork novaRede, double constanteAprendizagem, double momentum, double erro) {
+		this.margemDeErro = erro;
+		this.momentum = momentum;
+		this.constanteDeAprendizagem = constanteAprendizagem;
+
 		this.rede = novaRede;
+		this.rede.setProperty(PROP_ERRO, erro);
 		this.rede.setProperty(PROP_MOMENTUM, momentum);
 		this.rede.setProperty(PROP_CONST_APRENDIZAGEM, constanteAprendizagem);
 	}
