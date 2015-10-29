@@ -87,12 +87,6 @@ public class MultilayerPerceptron2 extends JdvRedeAbstrata {
 //		rede.testar(setDados.get(( int ) (Math.random() * setDados.size())));
 		rede.testar(setDados);
 
-//		rede.testar(new BasicMLDataPair(new BasicMLData(new double[] {
-//			-1, 0, -1, -1, 1, 1, 1, -1, 1
-//		}), new BasicMLData(new double[] {
-//			0, 1, 0, 0, 0, 0, 0, 0, 0
-//		})));
-
 		Encog.getInstance().shutdown();
 	}
 }

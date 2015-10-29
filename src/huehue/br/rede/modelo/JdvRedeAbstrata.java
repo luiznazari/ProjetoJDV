@@ -1,7 +1,6 @@
 package huehue.br.rede.modelo;
 
 import huehue.br.exception.JdvException;
-import huehue.br.logica.Partida.Jogada;
 import huehue.br.modelo.Caractere;
 import huehue.br.rede.dados.ConjuntosDados;
 import huehue.br.rede.dados.Treinador;
@@ -132,17 +131,19 @@ public abstract class JdvRedeAbstrata implements JdvRede {
 	abstract public MLData convertePosicaoTabuleiroEmSaida(int posicao);
 	
 	/**
-	 * Converte uma jogada em um conjuntos de dados reconhecidos pela RNA com o
+	 * Converte as entradas e posição escolhida em um conjuntos de dados reconhecidos pela RNA com o
 	 * tamanho {@link JdvRede#getNumeroSaidas()}, representando o conjunto de saídas utilizados no
 	 * treinamento da rede.<br>
 	 * É o processo inverso do método {@link JdvRedeAbstrata#traduzirSaida(MLData)}.
 	 * 
-	 * @param jogada
-	 *            a jogada realizada em uma partida.
+	 * @param entradas
+	 *            as entradas do tabuleiro.
+	 * @param posicao
+	 *            a posição do tabuleiro.
 	 * @return conjunto de dados representando a posicão.
 	 */
-	public MLData convertePosicaoTabuleiroEmSaida(Jogada jogada) {
-		return convertePosicaoTabuleiroEmSaida(jogada.getPosicaoEscolhida());
+	public MLData convertePosicaoTabuleiroEmSaida(double[] entradas, int posicao) {
+		return convertePosicaoTabuleiroEmSaida(posicao);
 	}
 	
 	/**

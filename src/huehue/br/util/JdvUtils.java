@@ -15,7 +15,6 @@ import huehue.br.rede.modelo.MapaSaida;
 import huehue.br.rede.modelo.MultilayerPerceptron;
 import huehue.br.rede.modelo.MultilayerPerceptron2;
 import huehue.br.rede.modelo.MultilayerPerceptron3;
-import huehue.br.rede.modelo.MultilayerPerceptron4;
 import huehue.br.tela.TelaExibicao;
 
 import java.io.File;
@@ -401,15 +400,16 @@ public class JdvUtils {
 
 //		JogadorAutomato um = new JogadorMiniMax(Caractere.X);
 		JogadorAutomato um = new JogadorAleatorio(Caractere.X);
+//		JogadorAutomato um = new JogadorAleatorio(Caractere.X);
 //		JogadorRNA um = new JogadorRNA(Caractere.X, false);
-//		JogadorRNA um = new JogadorRNA(Caractere.X, new MultilayerPerceptron2("treinamento4"), false);
+//		JogadorRNA um = new JogadorRNA(Caractere.X, new MultilayerPerceptron2("treinamento2"), false);
 
 //		JogadorAutomato dois = new JogadorMiniMax(Caractere.O);
 //		JogadorAutomato dois = new JogadorAleatorio(Caractere.O);
 //		JogadorRNA dois = new JogadorRNA(Caractere.O, false);
-		JogadorRNA dois = new JogadorRNA(Caractere.O, new MultilayerPerceptron4("treinamento3"), false);
+		JogadorRNA dois = new JogadorRNA(Caractere.O, new MultilayerPerceptron2("treinamento2"), false);
 
-		Tabuleiro.comparaJogadores(um, dois, 1000);
+		Tabuleiro.comparaJogadores(um, dois, 500);
 //		Arquivo.incrementaVersao();
 //		dois.salvaEstado();
 
