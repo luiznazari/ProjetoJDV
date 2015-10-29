@@ -32,7 +32,7 @@ public class Treinador {
 
 	private static final double MIN_CONST_MOMENTUM = 0.1;
 
-	private static final double MAX_CONST_APRENDIZAGEM = 0.10;
+	private static final double MAX_CONST_APRENDIZAGEM = 0.09;
 
 	private static final double MIN_CONST_APRENDIZAGEM = 0.02;
 
@@ -72,6 +72,7 @@ public class Treinador {
 	public void treinar() {
 		if (conjuntosTreinamento.size() <= 0) {
 			System.out.println("[Treinador] Não é possível treinar com conjuntos vazios!");
+			return;
 		}
 
 		System.out.println("[Treinador] Iniciando treinamento.");
@@ -80,12 +81,12 @@ public class Treinador {
 		tentarTreinamento(( BasicNetwork ) rede.getRede().clone());
 
 		if (treinou) {
-			dados.setConjuntos(conjuntosTreinamento);
+//			dados.setConjuntos(conjuntosTreinamento);
 
 			System.out.println("[Treinador] Treinamento finalizado. Tempo total: "
 					+ Duration.between(inicio, LocalTime.now()));
 		} else {
-			dados.descartarTemporarios();
+//			dados.descartarTemporarios();
 
 			System.err.println("[Treinador] Não foi possível treinar com os novos conjuntos. Tempo total: "
 					+ Duration.between(inicio, LocalTime.now()));
@@ -139,7 +140,7 @@ public class Treinador {
 
 		if (vitoriaOuEmpate != null) {
 			this.constanteAprendizagem = corrigeDeValor(this.constanteAprendizagem, this.constanteAprendizagem * 0.05,
-					vitoriaOuEmpate.booleanValue(), MAX_CONST_APRENDIZAGEM, MIN_CONST_APRENDIZAGEM);
+					!vitoriaOuEmpate.booleanValue(), MAX_CONST_APRENDIZAGEM, MIN_CONST_APRENDIZAGEM);
 		}
 	}
 

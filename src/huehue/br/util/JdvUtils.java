@@ -4,8 +4,8 @@ import huehue.br.exception.JdvException;
 import huehue.br.logica.Partida;
 import huehue.br.modelo.Caractere;
 import huehue.br.modelo.Jogador;
+import huehue.br.modelo.JogadorAleatorio;
 import huehue.br.modelo.JogadorAutomato;
-import huehue.br.modelo.JogadorMiniMax;
 import huehue.br.modelo.JogadorRNA;
 import huehue.br.rede.dados.ConjuntosDados;
 import huehue.br.rede.dados.JdvMLDataPair;
@@ -313,7 +313,10 @@ public class JdvUtils {
 		}
 
 		public static void salvarDados(JdvRede rede, ConjuntosDados dados) {
-			salvarDados(rede.getNome(), dados.getConjuntosParaSalvarEmArquivo());
+			if (dados.getConjuntos().size() > 1)
+				salvarDados(rede.getNome(), dados.getConjuntosParaSalvarEmArquivo());
+			if (dados.getConjuntosTemporarios().size() > 1)
+				salvarDados(rede.getNome() + "_temp", dados.getConjuntosTemporariosParaSalvarEmArquivo());
 		}
 
 		private static void salvarDados(String nomeArquivo, MLDataSet set) {
@@ -396,17 +399,17 @@ public class JdvUtils {
 	public static void main(String[] args) {
 		JdvUtils.Arquivo.versionamento(0);
 
-		JogadorAutomato um = new JogadorMiniMax(Caractere.X);
-//		JogadorAutomato um = new JogadorAleatorio(Caractere.X);
+//		JogadorAutomato um = new JogadorMiniMax(Caractere.X);
+		JogadorAutomato um = new JogadorAleatorio(Caractere.X);
 //		JogadorRNA um = new JogadorRNA(Caractere.X, false);
 //		JogadorRNA um = new JogadorRNA(Caractere.X, new MultilayerPerceptron2("treinamento4"), false);
 
 //		JogadorAutomato dois = new JogadorMiniMax(Caractere.O);
 //		JogadorAutomato dois = new JogadorAleatorio(Caractere.O);
 //		JogadorRNA dois = new JogadorRNA(Caractere.O, false);
-		JogadorRNA dois = new JogadorRNA(Caractere.O, new MultilayerPerceptron4("treinamento4"), true);
+		JogadorRNA dois = new JogadorRNA(Caractere.O, new MultilayerPerceptron4("treinamento3"), false);
 
-		Tabuleiro.comparaJogadores(um, dois, 5);
+		Tabuleiro.comparaJogadores(um, dois, 1000);
 //		Arquivo.incrementaVersao();
 //		dois.salvaEstado();
 
@@ -416,12 +419,12 @@ public class JdvUtils {
 	}
 
 	public static void imprime_ES() {
-		JdvRedeAbstrata rede = new MultilayerPerceptron3();
+		JdvRedeAbstrata rede = new MultilayerPerceptron2();
 		Arquivo.versionamento(false);
 
-		String a = "A";
+		String a = "TreinamentoInicial";
 
-		ConjuntosDados dados1 = Arquivo.carregarDados(a + "1", rede.getNumeroEntradas(), rede.getNumeroSaidas());
+		ConjuntosDados dados1 = Arquivo.carregarDados(a, rede.getNumeroEntradas(), rede.getNumeroSaidas());
 		new TelaExibicao(dados1.getConjuntosMLSet(), rede);
 
 //		ConjuntosDados dados2 = Arquivo.carregarDados(a + "2", rede.getNumeroEntradas(), rede.getNumeroSaidas());
