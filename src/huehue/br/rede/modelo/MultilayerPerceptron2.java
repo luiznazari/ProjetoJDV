@@ -29,7 +29,7 @@ public class MultilayerPerceptron2 extends JdvRedeAbstrata {
 		this(9, 9, nome);
 
 		momentum = 0.4;
-		margemDeErro = 0.03;
+		margemDeErro = 0.06;
 		constanteDeAprendizagem = 0.1;
 	}
 

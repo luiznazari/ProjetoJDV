@@ -3,6 +3,7 @@ package huehue.br.rede.dados;
 import huehue.br.modelo.JogadorRNA;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -40,7 +41,6 @@ public class ConjuntosDados {
 		conjuntosTemporarios.clear();
 	}
 
-	@Deprecated
 	public void armazenarTemporarios() {
 		conjuntosTemporarios.forEach(par -> adicionarDadoES(par));
 		conjuntosTemporarios.clear();
@@ -106,12 +106,12 @@ public class ConjuntosDados {
 	}
 
 	public List<JdvMLDataPair> getConjuntosParaTreinamento() {
-//		List<JdvMLDataPair> conjuntosTreinamento = new ArrayList<>(conjuntos);
-//		conjuntosTemporarios.forEach(par -> adicionarDadoES(conjuntosTreinamento, par));
-//
-//		Collections.shuffle(conjuntosTreinamento);
-//		return conjuntosTreinamento;
-		return conjuntosTemporarios;
+		List<JdvMLDataPair> conjuntosTreinamento = new ArrayList<>(conjuntos);
+		conjuntosTemporarios.forEach(par -> adicionarDadoES(conjuntosTreinamento, par));
+
+		Collections.shuffle(conjuntosTreinamento);
+		return conjuntosTreinamento;
+//		return conjuntosTemporarios;
 	}
 
 	public static ConjuntosDados criaConjuntosAPartirDeArquivo(BasicMLDataSet set) {

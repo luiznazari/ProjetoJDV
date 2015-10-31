@@ -4,8 +4,8 @@ import huehue.br.exception.JdvException;
 import huehue.br.logica.Partida;
 import huehue.br.modelo.Caractere;
 import huehue.br.modelo.Jogador;
-import huehue.br.modelo.JogadorAleatorio;
 import huehue.br.modelo.JogadorAutomato;
+import huehue.br.modelo.JogadorMiniMax;
 import huehue.br.modelo.JogadorRNA;
 import huehue.br.rede.dados.ConjuntosDados;
 import huehue.br.rede.dados.JdvMLDataPair;
@@ -266,6 +266,21 @@ public class JdvUtils {
 			return listaSaida.stream().sorted((ms1, ms2) -> ms2.compareTo(ms1))
 					.collect(Collectors.toList());
 		}
+
+		public static double correcaoDeValor(double valor, double variacao, boolean incrementaValor, double max,
+				double min) {
+			if (incrementaValor)
+				valor += variacao;
+			else
+				valor -= variacao;
+
+			if (valor > max)
+				valor = max;
+			else if (valor < min)
+				valor = min;
+
+			return valor;
+		}
 	}
 
 	/**
@@ -398,18 +413,17 @@ public class JdvUtils {
 	public static void main(String[] args) {
 		JdvUtils.Arquivo.versionamento(0);
 
-//		JogadorAutomato um = new JogadorMiniMax(Caractere.X);
-		JogadorAutomato um = new JogadorAleatorio(Caractere.X);
+		JogadorAutomato um = new JogadorMiniMax(Caractere.X);
 //		JogadorAutomato um = new JogadorAleatorio(Caractere.X);
 //		JogadorRNA um = new JogadorRNA(Caractere.X, false);
-//		JogadorRNA um = new JogadorRNA(Caractere.X, new MultilayerPerceptron2("treinamento2"), false);
+//		JogadorRNA um = new JogadorRNA(Caractere.X, new MultilayerPerceptron2("treinamentoMM"), true);
 
 //		JogadorAutomato dois = new JogadorMiniMax(Caractere.O);
 //		JogadorAutomato dois = new JogadorAleatorio(Caractere.O);
 //		JogadorRNA dois = new JogadorRNA(Caractere.O, false);
-		JogadorRNA dois = new JogadorRNA(Caractere.O, new MultilayerPerceptron2("treinamento2"), false);
+		JogadorRNA dois = new JogadorRNA(Caractere.O, new MultilayerPerceptron2("treinamentoMM2"), false);
 
-		Tabuleiro.comparaJogadores(um, dois, 500);
+		Tabuleiro.comparaJogadores(um, dois, 100);
 //		Arquivo.incrementaVersao();
 //		dois.salvaEstado();
 

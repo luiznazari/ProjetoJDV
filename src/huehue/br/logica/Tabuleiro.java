@@ -5,6 +5,7 @@ import huehue.br.modelo.Caractere;
 import huehue.br.modelo.Jogador;
 import huehue.br.modelo.JogadorAutomato;
 import huehue.br.modelo.JogadorHumano;
+import huehue.br.modelo.JogadorMiniMax;
 import huehue.br.modelo.JogadorRNA;
 import huehue.br.rede.modelo.MultilayerPerceptron2;
 import huehue.br.tela.TelaTabuleiro;
@@ -40,8 +41,7 @@ public class Tabuleiro {
 
 		JdvUtils.Arquivo.versionamento(0);
 
-		setJogadorUm(new JogadorRNA(Caractere.X, new MultilayerPerceptron2("treinamento"), true));
-		JdvUtils.Arquivo.incrementaVersao();
+		setJogadorUm(new JogadorRNA(Caractere.X, new MultilayerPerceptron2("treinamentoMM2"), false));
 //		setJogadorUm(new JogadorRNA(Caractere.X, false));
 //		setJogadorUm(new JogadorHumano(Caractere.X));
 //		setJogadorUm(new JogadorAleatorio(Caractere.X));
@@ -49,9 +49,9 @@ public class Tabuleiro {
 
 //		setJogadorDois(new JogadorRNA(Caractere.O, new MultilayerPerceptron2("treinamento"), true));
 //		setJogadorDois(new JogadorRNA(Caractere.O, false));
-		setJogadorDois(new JogadorHumano(Caractere.O));
+//		setJogadorDois(new JogadorHumano(Caractere.O));
 //		setJogadorDois(new JogadorAleatorio(Caractere.O));
-//		setJogadorDois(new JogadorMiniMax(Caractere.O));
+		setJogadorDois(new JogadorMiniMax(Caractere.O));
 
 		temJogadorHumano = jogadorUm instanceof JogadorHumano || jogadorDois instanceof JogadorHumano;
 	}
