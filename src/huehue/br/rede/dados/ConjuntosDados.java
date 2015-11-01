@@ -111,7 +111,6 @@ public class ConjuntosDados {
 
 		Collections.shuffle(conjuntosTreinamento);
 		return conjuntosTreinamento;
-//		return conjuntosTemporarios;
 	}
 
 	public static ConjuntosDados criaConjuntosAPartirDeArquivo(BasicMLDataSet set) {

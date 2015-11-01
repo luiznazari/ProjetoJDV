@@ -330,14 +330,22 @@ public class JdvUtils {
 			if (dados.getConjuntos().size() > 1)
 				salvarDados(rede.getNome(), dados.getConjuntosParaSalvarEmArquivo());
 			if (dados.getConjuntosTemporarios().size() > 1)
-				salvarDados(rede.getNome() + "_temp", dados.getConjuntosTemporariosParaSalvarEmArquivo());
+				salvarDados(rede.getNome(), dados.getConjuntosTemporariosParaSalvarEmArquivo(), true);
 		}
 
 		private static void salvarDados(String nomeArquivo, MLDataSet set) {
+			salvarDados(nomeArquivo, set, false);
+		}
+
+		private static void salvarDados(String nomeArquivo, MLDataSet set, boolean temp) {
+			nomeArquivo = getNomeArquivoDados(nomeArquivo);
+			if (temp)
+				nomeArquivo.replace(".eg", "_temp.eg");
+
 			File arquivoDados = null;
 
 			try {
-				arquivoDados = new File(getNomeArquivoDados(nomeArquivo));
+				arquivoDados = new File(nomeArquivo);
 				EncogUtility.saveCSV(arquivoDados, FORMATO, set);
 
 			} catch (PersistError e) {
@@ -413,23 +421,23 @@ public class JdvUtils {
 	public static void main(String[] args) {
 		JdvUtils.Arquivo.versionamento(0);
 
-		JogadorAutomato um = new JogadorMiniMax(Caractere.X);
+//		JogadorAutomato um = new JogadorMiniMax(Caractere.X);
 //		JogadorAutomato um = new JogadorAleatorio(Caractere.X);
 //		JogadorRNA um = new JogadorRNA(Caractere.X, false);
-//		JogadorRNA um = new JogadorRNA(Caractere.X, new MultilayerPerceptron2("treinamentoMM"), true);
+		JogadorRNA um = new JogadorRNA(Caractere.X, new MultilayerPerceptron2("treinamentoMM2_a"), true);
 
-//		JogadorAutomato dois = new JogadorMiniMax(Caractere.O);
+		JogadorAutomato dois = new JogadorMiniMax(Caractere.O);
 //		JogadorAutomato dois = new JogadorAleatorio(Caractere.O);
 //		JogadorRNA dois = new JogadorRNA(Caractere.O, false);
-		JogadorRNA dois = new JogadorRNA(Caractere.O, new MultilayerPerceptron2("treinamentoMM2"), false);
+//		JogadorRNA dois = new JogadorRNA(Caractere.O, new MultilayerPerceptron2("treinamentoMM2"), false);
 
-		Tabuleiro.comparaJogadores(um, dois, 100);
-//		Arquivo.incrementaVersao();
-//		dois.salvaEstado();
+		Tabuleiro.comparaJogadores(um, dois, 1000);
+		Arquivo.incrementaVersao();
+//		um.salvaEstado();
 
 		Encog.getInstance().shutdown();
 
-//		RNA.converteArquivosDeDadosEntreRedes(new MultilayerPerceptron2(), new MultilayerPerceptron3());
+//		RNA.converteArquivosDeDadosEntreRedes(new M
 	}
 
 	public static void imprime_ES() {

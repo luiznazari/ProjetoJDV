@@ -3,7 +3,7 @@ package huehue.br.rede.modelo;
 import huehue.br.exception.JdvException;
 import huehue.br.modelo.Caractere;
 import huehue.br.rede.dados.ConjuntosDados;
-import huehue.br.rede.dados.TreinadorReforco;
+import huehue.br.rede.dados.TreinadorPadrao;
 import huehue.br.util.JdvLog;
 import huehue.br.util.JdvUtils;
 import lombok.Getter;
@@ -206,8 +206,8 @@ public abstract class JdvRedeAbstrata implements JdvRede {
 	}
 
 	public final void treinar(final ConjuntosDados dados, Boolean vitoriaOuEmpate) {
-//		new TreinadorPadrao(this, dados, vitoriaOuEmpate).treinar();
-		new TreinadorReforco(this, dados, vitoriaOuEmpate).treinar();
+		new TreinadorPadrao(this, dados, vitoriaOuEmpate).treinar();
+//		new TreinadorReforco(this, dados, vitoriaOuEmpate).treinar();
 	}
 
 	public void testar(final MLDataSet conjuntoDados) {

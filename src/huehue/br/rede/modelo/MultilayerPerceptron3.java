@@ -16,14 +16,14 @@ public class MultilayerPerceptron3 extends MultilayerPerceptron2 {
 
 	public MultilayerPerceptron3(String nome) {
 		super(18, 9, nome);
-		momentum = 0.6;
-		margemDeErro = 0.0867;
+		momentum = 0.4;
+		margemDeErro = 0.08;
 		constanteDeAprendizagem = 0.1;
 	}
 
 	@Override
 	public String getEstruturaRede() {
-		return "?:B->SIGMOID->27:B->SIGMOID->9:B->SIGMOID->?";
+		return "?:B->SIGMOID->9:B->SIGMOID->9:B->SIGMOID->?";
 	}
 
 	@Override
@@ -56,8 +56,8 @@ public class MultilayerPerceptron3 extends MultilayerPerceptron2 {
 	}
 
 	public static void main(String[] args) {
-		JdvUtils.Arquivo.versionamento(4);
-		JdvRedeAbstrata rede = new MultilayerPerceptron3().inicializar();
+		JdvUtils.Arquivo.versionamento(1);
+		JdvRedeAbstrata rede = new MultilayerPerceptron3("treinamentoMM3").inicializar();
 		ConjuntosDados dados = JdvUtils.Arquivo.carregarDados(rede);
 		MLDataSet setDados = dados.getConjuntosMLSet();
 

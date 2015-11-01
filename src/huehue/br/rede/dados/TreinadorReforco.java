@@ -24,6 +24,8 @@ import org.encog.neural.networks.training.propagation.back.Backpropagation;
  */
 public class TreinadorReforco implements Treinador {
 
+	private static final double MIN_ERRO_REFORCO = MIN_ERRO + 0.01;
+
 	private ConjuntosDados dados;
 
 	private JdvRedeAbstrata rede;
@@ -49,9 +51,11 @@ public class TreinadorReforco implements Treinador {
 				.map(JdvMLDataPair::getPar).collect(Collectors.toList()));
 
 		double erroAtual = rede.getRede().calculateError(conjunto);
-		this.erro = JdvUtils.RNA.correcaoDeValor(erroAtual, 0, true, MAX_ERRO, MIN_ERRO);
-		this.constanteAprendizagem = erro * 0.085;
 		this.momentum = 0.4;
+		this.erro = JdvUtils.RNA.correcaoDeValor(erroAtual, 0.01, false, MAX_ERRO, MIN_ERRO);
+
+		this.constanteAprendizagem = JdvUtils.RNA.correcaoDeValor(erro * 0.85, 0.0, true,
+				MAX_CONST_APRENDIZAGEM, MIN_CONST_APRENDIZAGEM);
 	}
 
 	@Override
@@ -79,13 +83,16 @@ public class TreinadorReforco implements Treinador {
 
 	private void tentarTreinamento(BasicNetwork network) {
 		MLTrain treinoCiclo = null;
-		int max_iteracoes = ( int ) ((this.erro - MIN_ERRO) * 100);
+		int max_iteracoes = ( int ) ((this.erro - MIN_ERRO_REFORCO) * 100);
+
+		if (max_iteracoes <= 0)
+			max_iteracoes = 1;
 
 		for (int i = 0; i <= max_iteracoes; i++) {
 			treinoCiclo = executaCiclosTreinamento(network, erro);
 
 			// Caso o erro do ciclo for menor do que o mínimo de erro esperado.
-			if (treinoCiclo.getError() < MIN_ERRO) {
+			if (treinoCiclo.getError() < MIN_ERRO_REFORCO) {
 				treinou = true;
 				break;
 			}
@@ -99,7 +106,7 @@ public class TreinadorReforco implements Treinador {
 			// Tenta aprimorar o treinamento.
 
 			// Diminui o erro.
-			erro = JdvUtils.RNA.correcaoDeValor(erro, 0.01, false, MAX_ERRO, MIN_ERRO);
+			erro = JdvUtils.RNA.correcaoDeValor(erro, 0.01, false, MAX_ERRO, MIN_ERRO_REFORCO);
 
 			// Diminui constante de aprendizagem.
 			constanteAprendizagem = JdvUtils.RNA.correcaoDeValor(constanteAprendizagem,
@@ -133,7 +140,7 @@ public class TreinadorReforco implements Treinador {
 
 			// Aumenta erro.
 			erroCiclo = JdvUtils.RNA.correcaoDeValor(erroCiclo, 0.0025, true,
-					MAX_ERRO, MIN_ERRO);
+					MAX_ERRO, MIN_ERRO_REFORCO);
 
 			// Aumenta momento.
 			momentum = JdvUtils.RNA.correcaoDeValor(momentum, 0.05, true,

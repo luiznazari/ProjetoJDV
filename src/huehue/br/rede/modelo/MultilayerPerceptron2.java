@@ -73,16 +73,15 @@ public class MultilayerPerceptron2 extends JdvRedeAbstrata {
 	}
 
 	public static void main(String[] args) {
-		JdvUtils.Arquivo.versionamento(0);
-		JdvRedeAbstrata rede = new MultilayerPerceptron2("treinamento").inicializar();
+		JdvUtils.Arquivo.versionamento(1);
+		JdvRedeAbstrata rede = new MultilayerPerceptron2("treinamentoMM2").inicializar();
 		ConjuntosDados dados = JdvUtils.Arquivo.carregarDados(rede);
 		MLDataSet setDados = dados.getConjuntosMLSet();
+		rede.treinar(dados);
 
-//		rede.treinar(dados);
-//
-//		JdvUtils.Arquivo.incrementaVersao();
-//		JdvUtils.Arquivo.salvarRede(rede);
-//		JdvUtils.Arquivo.salvarDados(rede, dados);
+		JdvUtils.Arquivo.incrementaVersao();
+		JdvUtils.Arquivo.salvarRede(rede);
+		JdvUtils.Arquivo.salvarDados(rede, dados);
 
 //		rede.testar(setDados.get(( int ) (Math.random() * setDados.size())));
 		rede.testar(setDados);
