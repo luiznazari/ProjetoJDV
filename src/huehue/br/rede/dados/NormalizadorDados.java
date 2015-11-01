@@ -7,6 +7,7 @@ import huehue.br.modelo.JogadorAutomato;
 import huehue.br.rede.modelo.JdvRedeAbstrata;
 import huehue.br.util.JdvUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -48,6 +49,8 @@ public class NormalizadorDados {
 	}
 
 	public List<JdvMLDataPair> criaParesJogadasVencedoras() {
+		if (lenJogadasV > 4)
+			return new ArrayList<>();
 		return jogadasV.stream().filter(j -> JdvUtils.Tabuleiro.computaEspacosVazios(j.getConfiguracao()) > 1)
 				.map(j -> criaParJogadaVencedora(j)).collect(Collectors.toList());
 	}
@@ -75,7 +78,7 @@ public class NormalizadorDados {
 			}
 			case 5: { // Razoável
 				pontos = JOGADA_REGULAR;
-				margem = 0.7777;
+				margem = 0.6666;
 				break;
 			}
 		}

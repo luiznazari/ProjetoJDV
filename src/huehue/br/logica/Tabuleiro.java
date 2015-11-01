@@ -6,7 +6,7 @@ import huehue.br.modelo.Jogador;
 import huehue.br.modelo.JogadorAutomato;
 import huehue.br.modelo.JogadorHumano;
 import huehue.br.modelo.JogadorRNA;
-import huehue.br.rede.modelo.MultilayerPerceptron2;
+import huehue.br.rede.modelo.MultilayerPerceptron3;
 import huehue.br.tela.TelaTabuleiro;
 import huehue.br.util.JdvLog;
 import huehue.br.util.JdvUtils;
@@ -40,7 +40,7 @@ public class Tabuleiro {
 
 		JdvUtils.Arquivo.versionamento(0);
 
-		setJogadorUm(new JogadorRNA(Caractere.X, new MultilayerPerceptron2("treinamentoMM2_a"), true));
+		setJogadorUm(new JogadorRNA(Caractere.X, new MultilayerPerceptron3("treinamentoMM3_d"), true));
 //		setJogadorUm(new JogadorRNA(Caractere.X, false));
 //		setJogadorUm(new JogadorHumano(Caractere.X));
 //		setJogadorUm(new JogadorAleatorio(Caractere.X));

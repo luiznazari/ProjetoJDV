@@ -3,7 +3,6 @@ package huehue.br.rede.dados;
 import huehue.br.modelo.JogadorRNA;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -109,7 +108,7 @@ public class ConjuntosDados {
 		List<JdvMLDataPair> conjuntosTreinamento = new ArrayList<>(conjuntos);
 		conjuntosTemporarios.forEach(par -> adicionarDadoES(conjuntosTreinamento, par));
 
-		Collections.shuffle(conjuntosTreinamento);
+//		Collections.shuffle(conjuntosTreinamento);
 		return conjuntosTreinamento;
 	}
 

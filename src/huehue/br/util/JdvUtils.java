@@ -419,17 +419,20 @@ public class JdvUtils {
 	}
 
 	public static void main(String[] args) {
+//		imprime_ES();
+		// @formatter:off
+		
 		JdvUtils.Arquivo.versionamento(0);
 
 //		JogadorAutomato um = new JogadorMiniMax(Caractere.X);
 //		JogadorAutomato um = new JogadorAleatorio(Caractere.X);
 //		JogadorRNA um = new JogadorRNA(Caractere.X, false);
-		JogadorRNA um = new JogadorRNA(Caractere.X, new MultilayerPerceptron2("treinamentoMM2_a"), true);
+		JogadorRNA um = new JogadorRNA(Caractere.X, new MultilayerPerceptron3("dassa"), false);
 
 		JogadorAutomato dois = new JogadorMiniMax(Caractere.O);
 //		JogadorAutomato dois = new JogadorAleatorio(Caractere.O);
 //		JogadorRNA dois = new JogadorRNA(Caractere.O, false);
-//		JogadorRNA dois = new JogadorRNA(Caractere.O, new MultilayerPerceptron2("treinamentoMM2"), false);
+//		JogadorRNA dois = new JogadorRNA(Caractere.O, new MulilayerPerceptron3("O"), true);
 
 		Tabuleiro.comparaJogadores(um, dois, 1000);
 		Arquivo.incrementaVersao();
@@ -437,14 +440,15 @@ public class JdvUtils {
 
 		Encog.getInstance().shutdown();
 
-//		RNA.converteArquivosDeDadosEntreRedes(new M
+		// @formatter:on
+
 	}
 
 	public static void imprime_ES() {
-		JdvRedeAbstrata rede = new MultilayerPerceptron2();
-		Arquivo.versionamento(false);
+		JdvRedeAbstrata rede = new MultilayerPerceptron3();
+		Arquivo.versionamento(true);
 
-		String a = "TreinamentoInicial";
+		String a = "treinamentoMM3_d";
 
 		ConjuntosDados dados1 = Arquivo.carregarDados(a, rede.getNumeroEntradas(), rede.getNumeroSaidas());
 		new TelaExibicao(dados1.getConjuntosMLSet(), rede);

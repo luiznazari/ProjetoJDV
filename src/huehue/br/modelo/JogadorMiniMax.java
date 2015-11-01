@@ -32,7 +32,7 @@ public class JogadorMiniMax extends JogadorAutomato {
 		int maiorValor = -2;
 
 		for (TabuleiroMiniMax t : tabuleiro.getFilhos()) {
-			int val = LogicaMiniMax.MiniMaxReduzido(t);
+			int val = LogicaMiniMax.MiniMax(t);
 
 			if (val > maiorValor) {
 				maiorValor = val;

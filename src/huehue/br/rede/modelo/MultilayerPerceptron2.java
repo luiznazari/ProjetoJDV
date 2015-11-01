@@ -35,7 +35,7 @@ public class MultilayerPerceptron2 extends JdvRedeAbstrata {
 
 	@Override
 	public String getEstruturaRede() {
-		return "?:B->SIGMOID->9:B->SIGMOID->9:B->SIGMOID->?";
+		return "?:B->TANH->18:B->TANH->9:B->TANH->?";
 	}
 
 	/**
