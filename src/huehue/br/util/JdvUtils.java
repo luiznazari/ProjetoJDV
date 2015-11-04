@@ -4,8 +4,8 @@ import huehue.br.exception.JdvException;
 import huehue.br.logica.Partida;
 import huehue.br.modelo.Caractere;
 import huehue.br.modelo.Jogador;
+import huehue.br.modelo.JogadorAleatorio;
 import huehue.br.modelo.JogadorAutomato;
-import huehue.br.modelo.JogadorMiniMax;
 import huehue.br.modelo.JogadorRNA;
 import huehue.br.rede.dados.ConjuntosDados;
 import huehue.br.rede.dados.JdvMLDataPair;
@@ -24,6 +24,8 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import lombok.Getter;
 
 import org.encog.Encog;
 import org.encog.ml.data.MLData;
@@ -293,6 +295,7 @@ public class JdvUtils {
 
 		private static String DIR_RECURSOS = "resources/testes/";
 
+		@Getter
 		private static boolean versionamento = false;
 
 		private static int versao = 0;
@@ -333,7 +336,7 @@ public class JdvUtils {
 				salvarDados(rede.getNome(), dados.getConjuntosTemporariosParaSalvarEmArquivo(), true);
 		}
 
-		private static void salvarDados(String nomeArquivo, MLDataSet set) {
+		public static void salvarDados(String nomeArquivo, MLDataSet set) {
 			salvarDados(nomeArquivo, set, false);
 		}
 
@@ -427,16 +430,15 @@ public class JdvUtils {
 //		JogadorAutomato um = new JogadorMiniMax(Caractere.X);
 //		JogadorAutomato um = new JogadorAleatorio(Caractere.X);
 //		JogadorRNA um = new JogadorRNA(Caractere.X, false);
-		JogadorRNA um = new JogadorRNA(Caractere.X, new MultilayerPerceptron3("dassa"), false);
+		JogadorRNA um = new JogadorRNA(Caractere.X, new MultilayerPerceptron3("treinamento_manual"), false);
 
-		JogadorAutomato dois = new JogadorMiniMax(Caractere.O);
-//		JogadorAutomato dois = new JogadorAleatorio(Caractere.O);
+//		JogadorAutomato dois = new JogadorMiniMax(Caractere.O);
+		JogadorAutomato dois = new JogadorAleatorio(Caractere.O);
 //		JogadorRNA dois = new JogadorRNA(Caractere.O, false);
 //		JogadorRNA dois = new JogadorRNA(Caractere.O, new MulilayerPerceptron3("O"), true);
-
+		
+//		Arquivo.incrementaVersao();
 		Tabuleiro.comparaJogadores(um, dois, 1000);
-		Arquivo.incrementaVersao();
-//		um.salvaEstado();
 
 		Encog.getInstance().shutdown();
 

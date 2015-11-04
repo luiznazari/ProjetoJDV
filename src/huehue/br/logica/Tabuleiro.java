@@ -7,6 +7,7 @@ import huehue.br.modelo.JogadorAutomato;
 import huehue.br.modelo.JogadorHumano;
 import huehue.br.modelo.JogadorRNA;
 import huehue.br.rede.modelo.MultilayerPerceptron3;
+import huehue.br.tela.TelaExibicao;
 import huehue.br.tela.TelaTabuleiro;
 import huehue.br.util.JdvLog;
 import huehue.br.util.JdvUtils;
@@ -19,6 +20,9 @@ import lombok.Getter;
  * @author Luiz Felipe Nazari
  */
 public class Tabuleiro {
+
+	// Variável apenas com controle via código, indica se as partidas serão salvas em arquivos.
+	boolean salvarPartidas = false;
 
 	@Getter
 	private Partida partida;
@@ -40,7 +44,7 @@ public class Tabuleiro {
 
 		JdvUtils.Arquivo.versionamento(0);
 
-		setJogadorUm(new JogadorRNA(Caractere.X, new MultilayerPerceptron3("treinamentoMM3_d"), true));
+		setJogadorUm(new JogadorRNA(Caractere.X, new MultilayerPerceptron3("treinamento_manual"), true));
 //		setJogadorUm(new JogadorRNA(Caractere.X, false));
 //		setJogadorUm(new JogadorHumano(Caractere.X));
 //		setJogadorUm(new JogadorAleatorio(Caractere.X));
@@ -94,9 +98,16 @@ public class Tabuleiro {
 			mensagemFinal = "Empate !";
 		}
 
+		if (salvarPartidas)
+			mostraPartidas();
+
 		partida.encerrar(vencedor);
 		notificarJogadores();
 		tela.fimPartida(mensagemFinal);
+	}
+
+	private void mostraPartidas() {
+		new TelaExibicao(partida.getJogadas());
 	}
 
 	private void notificarJogadores() {

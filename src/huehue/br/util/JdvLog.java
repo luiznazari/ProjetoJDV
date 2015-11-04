@@ -30,7 +30,7 @@ public class JdvLog {
 			case -1:
 				return Caractere.O.getChave();
 			case 0:
-				return Caractere.VAZIO.getChave();
+				return "   ";
 			default:
 				return "#";
 		}

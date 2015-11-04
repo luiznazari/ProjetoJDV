@@ -11,16 +11,16 @@ import lombok.Getter;
 
 public class TelaPrincipal extends JFrame {
 	private static final long serialVersionUID = 1709587359998885314L;
-	
+
 	// --------------------
-	
+
 	private JPanel pnlPrincipal;
-	
+
 	// --------------------
-	
+
 	@Getter
 	private TelaTabuleiro telaTabuleiro;
-	
+
 	public TelaPrincipal() {
 		setTitle("Jogo da Velha");
 		setContentPane(constroiPainel());
@@ -31,21 +31,21 @@ public class TelaPrincipal extends JFrame {
 		setVisible(true);
 		setResizable(false);
 		addWindowListener(new TelaPrincipalEventos());
-		
+
 		telaTabuleiro.novaPartida();
 	}
-	
+
 	private JPanel constroiPainel() {
 		pnlPrincipal = new JPanel(new BorderLayout());
 		telaTabuleiro = new TelaTabuleiro();
-		
+
 		pnlPrincipal.add(telaTabuleiro.getPainel(), BorderLayout.CENTER);
-		
+
 		return pnlPrincipal;
 	}
-	
+
 	public static void main(String[] args) {
 		new TelaPrincipal();
 	}
-	
+
 }

@@ -51,10 +51,6 @@ public class TreinadorPadrao implements Treinador {
 		this.dados = dados;
 		this.conjuntosTreinamento = dados.getConjuntosParaTreinamento();
 
-		this.erro = rede.getMargemDeErro();
-		this.momentum = rede.getMomentum();
-		this.constanteAprendizagem = rede.getConstanteDeAprendizagem();
-
 		balanceiaParametros(vitoriaOuEmpate);
 	}
 
@@ -207,6 +203,10 @@ public class TreinadorPadrao implements Treinador {
 			// Aumenta momento.
 			momentum = JdvUtils.RNA.correcaoDeValor(momentum, 0.05, true,
 					MAX_CONST_MOMENTUM, MIN_CONST_MOMENTUM);
+
+			// Aumenta constante de aprendizagem.
+			constanteAprendizagem = JdvUtils.RNA.correcaoDeValor(constanteAprendizagem,
+					constanteAprendizagem * 0.05, true, MAX_CONST_APRENDIZAGEM, MIN_CONST_APRENDIZAGEM);
 		}
 
 		return treino;
