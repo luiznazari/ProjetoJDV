@@ -18,10 +18,28 @@ public class LogicaMiniMax {
 	 * 
 	 * @param tabuleiro
 	 *            o tabuleiro a ser analisado.
-	 * @return o valor de heurística do tabuleiro.
+	 * @return o valor de heurística do elemento.
 	 */
 	public static int MiniMaxReduzido(ElementoMiniMax elemento) {
 		return -MiniMaxReduzido(elemento.getNivel(), MINIMAX_ALPHA, MINIMAX_BETA, elemento);
+	}
+
+	/**
+	 * Implementação reduzida do algoritmo MiniMax.<br>
+	 * Produz a mesma saída que {@link LogicaMiniMax#MiniMax(ElementoMiniMax)}.
+	 * 
+	 * @param tabuleiro
+	 *            o tabuleiro a ser analisado.
+	 * @param profundidade
+	 *            o valor a ser subtraído da profundidade da recurção do algoritmo.
+	 * @return o valor de heurística do elemento.
+	 */
+	public static int MiniMaxReduzido(ElementoMiniMax elemento, int profundidade) {
+		profundidade = elemento.getNivel() - profundidade;
+		if (profundidade < 1)
+			profundidade = 1;
+
+		return -MiniMaxReduzido(profundidade, MINIMAX_ALPHA, MINIMAX_BETA, elemento);
 	}
 
 	/**
@@ -71,6 +89,24 @@ public class LogicaMiniMax {
 	 */
 	public static int MiniMax(ElementoMiniMax elemento) {
 		return MiniMax(elemento.getNivel(), MINIMAX_ALPHA, MINIMAX_BETA, elemento);
+	}
+
+	/**
+	 * Implementação do algoritmo MiniMax.<br>
+	 * Produz a mesma saída que {@link LogicaMiniMax#MiniMaxReduzido(ElementoMiniMax)}.
+	 * 
+	 * @param elemento
+	 *            o elemento a ser analisado.
+	 * @param profundidade
+	 *            o valor a ser subtraído da profundidade da recurção do algoritmo.
+	 * @return o valor de heurística do elemento.
+	 */
+	public static int MiniMax(ElementoMiniMax elemento, int profundidade) {
+		profundidade = elemento.getNivel() - profundidade;
+		if (profundidade < 1)
+			profundidade = 1;
+
+		return MiniMax(profundidade, MINIMAX_ALPHA, MINIMAX_BETA, elemento);
 	}
 
 	/**

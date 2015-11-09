@@ -44,7 +44,8 @@ public class Tabuleiro {
 
 		JdvUtils.Arquivo.versionamento(0);
 
-		setJogadorUm(new JogadorRNA(Caractere.X, new MultilayerPerceptron3("treinamento_manual"), true));
+		setJogadorUm(new JogadorRNA(Caractere.X, new MultilayerPerceptron3("delete_me"), true));
+		JdvUtils.Arquivo.incrementaVersao();
 //		setJogadorUm(new JogadorRNA(Caractere.X, false));
 //		setJogadorUm(new JogadorHumano(Caractere.X));
 //		setJogadorUm(new JogadorAleatorio(Caractere.X));

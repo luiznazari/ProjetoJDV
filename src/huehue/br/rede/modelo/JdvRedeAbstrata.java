@@ -171,6 +171,19 @@ public abstract class JdvRedeAbstrata implements JdvRede {
 	}
 
 	/**
+	 * Converte um conjunto de entradas reconhecidas pela rede, com o tamanho {@link JdvRede#getNumeroEntradas()}, para
+	 * o conjunto de entradas com tamanho 9, mantendo a normalização.<br>
+	 * Utilizado para conversão de entrada entre redes diferentes.
+	 * 
+	 * @param entrada
+	 *            o conjunto de entrada da rede.
+	 * @return entrada normalizada com 9 posições.
+	 */
+	public double[] converteEntradaEmTabuleiroNormalizado(MLData entrada) {
+		return entrada.getData();
+	}
+
+	/**
 	 * Computa a saída da rede às entradas especificadas, normalizando as entradas àquelas
 	 * reconhecidas pela rede e a saída à posição do tabuleiro.<br>
 	 * A normalização de conjuntos de entradas e saídas pode variar dependendo da implementação da
