@@ -7,6 +7,7 @@ import huehue.br.util.JdvLog;
 
 import java.awt.Color;
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
@@ -17,13 +18,14 @@ import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 import org.encog.ml.data.MLDataPair;
 import org.encog.ml.data.MLDataSet;
 
 /**
  * Utilizado para mostrar tabuleiros em janelas.
- * Não, essa classe não está otimizada. ;)
+ * Não, essa classe <b>não</b> está otimizada. ;)
  * 
  * @author Luiz Felipe Nazari
  */
@@ -50,15 +52,14 @@ public class TelaExibicao extends JFrame {
 		this(null, null, jogadas);
 	}
 
-	public TelaExibicao(MLDataSet dados, JdvRedeAbstrata rede, Jogada[] jogadas) {
+	private TelaExibicao(MLDataSet dados, JdvRedeAbstrata rede, Jogada[] jogadas) {
 		this.rede = rede;
 		this.dados = dados;
 		if (jogadas != null) {
 			this.jogadas = new ArrayList<>();
 			for (Jogada j : jogadas) {
-				if (j == null) {
+				if (j == null)
 					break;
-				}
 				this.jogadas.add(j);
 			}
 		}
@@ -72,18 +73,28 @@ public class TelaExibicao extends JFrame {
 	}
 
 	private Container constroiPainel() {
-		JPanel principal = new JPanel();
+		JPanel principal = new JPanel(new FlowLayout(FlowLayout.CENTER));
 		principal.setBackground(Color.WHITE);
-		principal.setLayout(new FlowLayout(FlowLayout.CENTER));
 
-		if (dados != null)
+		int componentes = 0;
+
+		if (dados != null) {
+			componentes = dados.size();
 			for (MLDataPair par : dados)
 				principal.add(constroiPainelTabuleiro(par));
-		else
+
+		} else {
+			componentes = jogadas.size();
 			for (Jogada j : jogadas)
 				principal.add(constroiPainelTabuleiro(j));
+		}
 
-		return principal;
+		principal.setPreferredSize(new Dimension(360, componentes / 5 * 40));
+
+		JScrollPane jsp = new JScrollPane(principal);
+		jsp.setAutoscrolls(true);
+
+		return jsp;
 	}
 
 	private JPanel constroiPainelTabuleiro(MLDataPair par) {

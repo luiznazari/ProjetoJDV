@@ -1,8 +1,8 @@
 package huehue.br.util;
 
 import huehue.br.modelo.Caractere;
+import huehue.br.modelo.JogadorAleatorio;
 import huehue.br.modelo.JogadorAutomato;
-import huehue.br.modelo.JogadorMiniMax;
 import huehue.br.modelo.JogadorRNA;
 import huehue.br.rede.dados.ConjuntosDados;
 import huehue.br.rede.modelo.JdvRedeAbstrata;
@@ -25,20 +25,20 @@ public class JdvMain {
 
 	// @formatter:off
 	public static void simulaJogadas() {
-		Arquivo.versionamento(0);
+		Arquivo.versionamento(2);
 
 //		JogadorAutomato um = new JogadorMiniMax(Caractere.X);
 //		JogadorAutomato um = new JogadorAleatorio(Caractere.X);
 //		JogadorRNA um = new JogadorRNA(Caractere.X, false);
 		JogadorRNA um = new JogadorRNA(Caractere.X, new MultilayerPerceptron3("delete_me"), false);
 
-		JogadorAutomato dois = new JogadorMiniMax(Caractere.O);
-//		JogadorAutomato dois = new JogadorAleatorio(Caractere.O);
+//		JogadorAutomato dois = new JogadorMiniMax(Caractere.O);
+		JogadorAutomato dois = new JogadorAleatorio(Caractere.O);
 //		JogadorRNA dois = new JogadorRNA(Caractere.O, false);
 //		JogadorRNA dois = new JogadorRNA(Caractere.O, new MulilayerPerceptron3("O"), true);
 		
-//		Arquivo.incrementaVersao();
-		Tabuleiro.comparaJogadores(um, dois, 1000);
+		Arquivo.incrementaVersao();
+		Tabuleiro.comparaJogadores(um, dois, 100000);
 		
 		Encog.getInstance().shutdown();
 	}

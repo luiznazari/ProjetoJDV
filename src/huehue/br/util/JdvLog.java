@@ -207,4 +207,15 @@ public class JdvLog {
 
 		return logConsole(sb);
 	}
+
+	public static void erroRespostaInvalida(MapaSaida ms, double[] tabuleiro) {
+		if (!ativo)
+			return;
+
+		StringBuilder sb = new StringBuilder();
+		sb.append("Computou um resultado inválido! ").append(ms)
+				.append("\tEntradas: ").append(JdvLog.tabuleiro(tabuleiro));
+
+		System.err.println(sb.toString());
+	}
 }

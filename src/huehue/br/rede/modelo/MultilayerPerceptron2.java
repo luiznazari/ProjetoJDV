@@ -66,8 +66,7 @@ public class MultilayerPerceptron2 extends JdvRedeAbstrata {
 		if (entradasTmp[ms.index] == Caractere.VAZIO.getValor())
 			return ms.index;
 
-		System.err.println("Computou um resultado inválido! " + ms
-				+ "\tEntradas: " + JdvLog.tabuleiro(entradasTmp));
+		JdvLog.erroRespostaInvalida(ms, entradasTmp);
 		listaSaida.remove(0);
 		return buscaPrimeiroIndiceValido(listaSaida);
 	}

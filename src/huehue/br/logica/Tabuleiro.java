@@ -42,20 +42,21 @@ public class Tabuleiro {
 		this.tela = tela;
 		partida = new Partida();
 
-		JdvUtils.Arquivo.versionamento(0);
+		JdvUtils.Arquivo.versionamento(1);
 
 		setJogadorUm(new JogadorRNA(Caractere.X, new MultilayerPerceptron3("delete_me"), true));
-		JdvUtils.Arquivo.incrementaVersao();
 //		setJogadorUm(new JogadorRNA(Caractere.X, false));
 //		setJogadorUm(new JogadorHumano(Caractere.X));
 //		setJogadorUm(new JogadorAleatorio(Caractere.X));
 //		setJogadorUm(new JogadorMiniMax(Caractere.X));
 
-//		setJogadorDois(new JogadorRNA(Caractere.O, new MultilayerPerceptron2("treinamento"), true));
+//		setJogadorDois(new JogadorRNA(Caractere.O, new MultilayerPerceptron3("delete_me"), true));
 //		setJogadorDois(new JogadorRNA(Caractere.O, false));
 		setJogadorDois(new JogadorHumano(Caractere.O));
 //		setJogadorDois(new JogadorAleatorio(Caractere.O));
 //		setJogadorDois(new JogadorMiniMax(Caractere.O));
+
+		JdvUtils.Arquivo.incrementaVersao();
 
 		temJogadorHumano = jogadorUm instanceof JogadorHumano || jogadorDois instanceof JogadorHumano;
 	}
