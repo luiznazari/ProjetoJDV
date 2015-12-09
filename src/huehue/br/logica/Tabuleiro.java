@@ -42,15 +42,15 @@ public class Tabuleiro {
 		this.tela = tela;
 		partida = new Partida();
 
-		JdvUtils.Arquivo.versionamento(1);
+		JdvUtils.Arquivo.versionamento(500);
 
-		setJogadorUm(new JogadorRNA(Caractere.X, new MultilayerPerceptron3("delete_me"), true));
+		setJogadorUm(new JogadorRNA(Caractere.X, new MultilayerPerceptron3("apresentacao_novo"), true));
 //		setJogadorUm(new JogadorRNA(Caractere.X, false));
 //		setJogadorUm(new JogadorHumano(Caractere.X));
 //		setJogadorUm(new JogadorAleatorio(Caractere.X));
 //		setJogadorUm(new JogadorMiniMax(Caractere.X));
 
-//		setJogadorDois(new JogadorRNA(Caractere.O, new MultilayerPerceptron3("delete_me"), true));
+//		setJogadorDois(new JogadorRNA(Caractere.O, new MultilayerPerceptron3("apresentacao"), true));
 //		setJogadorDois(new JogadorRNA(Caractere.O, false));
 		setJogadorDois(new JogadorHumano(Caractere.O));
 //		setJogadorDois(new JogadorAleatorio(Caractere.O));
